@@ -1,5 +1,5 @@
-Parse Tree Generator
-====================
+RegExpGen
+=========
 
 Description
 -----------
