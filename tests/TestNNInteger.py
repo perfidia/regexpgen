@@ -14,8 +14,16 @@ class Test(unittest.TestCase):
 		self.assertEquals(regexpgen.nnint("%04d"), '(^[0-9]{4}$)|(^[1-9][0-9]{4,}$)')
 
 	def testDefaultNoRangeMatch(self):
-		self.assertNotEqual(re.match(regexpgen.nnint("%d"), "2"), None)
-		self.assertNotEqual(re.match(regexpgen.nnint("%d"), "200"), None)
+		self.assertEqual(re.match(regexpgen.nnint("%d"), "-2"), None)
+		self.assertNotEqual(re.match(regexpgen.nnint("%d"), "04"), None)
+		
+		self.assertNotEqual(re.match(regexpgen.nnint("%0d"), "4"), None)
+		self.assertEqual(re.match(regexpgen.nnint("%0d"), "04"), None)
+		
+		self.assertNotEqual(re.match(regexpgen.nnint("%04d"), "0001"), None)
+		self.assertEqual(re.match(regexpgen.nnint("%04d"), "-45678"), None)
+		self.assertEqual(re.match(regexpgen.nnint("%04d"), "00011"), None)
+		self.assertEqual(re.match(regexpgen.nnint("%04d"), "11"), None)
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']
