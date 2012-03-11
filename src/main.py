@@ -7,3 +7,5 @@ Created on Apr 27, 2011
 import regexpgen
 
 print regexpgen.integer("%d")
+
+print regexpgen.integer("%05d")
