@@ -12,5 +12,8 @@ Supported format:
 format jak dla interger
 '''
 
+import minteger
+
 def run(format, min, max):
-	raise Exception('unsupported')
+	f = minteger.run(format, min, max)
+	return f.replace("-?", "")

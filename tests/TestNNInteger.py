@@ -9,10 +9,9 @@ import re
 
 class Test(unittest.TestCase):
 	def testDefaultNoRangeRE(self):
-		self.assertEquals(
-				regexpgen.nnint("%d"),
-				'[0-9]+'
-		)
+		self.assertEquals(regexpgen.nnint("%d"), '[0-9]+')
+		self.assertEquals(regexpgen.nnint("%0d"), '[1-9][0-9]*')
+		self.assertEquals(regexpgen.nnint("%04d"), '(^[0-9]{4}$)|(^[1-9][0-9]{4,}$)')
 
 	def testDefaultNoRangeMatch(self):
 		self.assertNotEqual(re.match(regexpgen.nnint("%d"), "2"), None)
