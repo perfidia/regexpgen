@@ -29,33 +29,27 @@ przykłady niepoprawne dla %04d: 00011, 11
 import re
 
 def default(format, min, max):
-    return r'(-)?[0-9]+'
+    return r'-?[0-9]+'
 
 
 def no_leading_zeros(format, min, max):
-    return r'(-)?[1-9][0-9]*'
+    return r'-?[1-9][0-9]*'
 
 
 def x_signs_leading_zeros(format, min, max):
-    regex_str = r'(-)?'
-    for i in range(0, min):
-        str = '(0{%d}[0-9]{%d})|' % (min-i, i)
-        regex_str += str
-
-    regex_str += '([0-9]{%d,})' % (min+1)
-
-    return regex_str
+    m = re.search('%0([0-9]+)d', format)
+    param = m.group(1)
+    return r'(^-?[0-9]{'+param+'}$)|(^-?[1-9][0-9]{'+param+',}$)'
 
 def run(format, min, max):
     m = re.search('%0([0-9]+)d', format)
     if(m != None):
-        format = '%0Xd'
-        min = int(m.group(1))
-
-        result = {
-            '%d': default,
-            '%0d': no_leading_zeros,
-            '%0Xd': x_signs_leading_zeros,
-            }.get(format, complex)(format, min, max)
-
-        return result
+        generalFormat = '%0Xd'
+    else:
+        generalFormat = format 
+    result = {
+        '%d': default,
+        '%0d': no_leading_zeros,
+        '%0Xd': x_signs_leading_zeros,
+    }.get(generalFormat, complex)(format, min, max)
+    return result
