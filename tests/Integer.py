@@ -9,17 +9,19 @@ import re
 
 class Test(unittest.TestCase):
 	def testStartEnd(self):
-		self.assertEqual(regexpgen.integer("%d"),
-						 regexpgen.integer("%d", matchStartEnd = True))
+		pattern = r"%d"
 
-		self.assertEqual(regexpgen.integer("%d", matchStartEnd = True)[0], '^')
-		self.assertEqual(regexpgen.integer("%d", matchStartEnd = True)[-1], '$')
+		self.assertEqual(regexpgen.integer(pattern),
+						 regexpgen.integer(pattern, matchStartEnd = True))
 
-		self.assertNotEqual(regexpgen.integer("%d", matchStartEnd = True)[0], '^')
-		self.assertNotEqual(regexpgen.integer("%d", matchStartEnd = True)[-1], '$')
+		self.assertEqual(regexpgen.integer(pattern, matchStartEnd = True)[0], '^')
+		self.assertEqual(regexpgen.integer(pattern, matchStartEnd = True)[-1], '$')
+
+		self.assertNotEqual(regexpgen.integer(pattern, matchStartEnd = False)[0], '^')
+		self.assertNotEqual(regexpgen.integer(pattern, matchStartEnd = False)[-1], '$')
 
 	def testDefault(self):
-		regexp = regexpgen.integer("%d")
+		regexp = regexpgen.integer(r"%d")
 		print regexp
 
 		for i in [ i for i in xrange(-100, 10) ]:
@@ -35,7 +37,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testNoLeadingZeros(self):
-		regexp = regexpgen.integer("%0d")
+		regexp = regexpgen.integer(r"%0d")
 		print regexp
 
 		for i in [ 0 ]:
@@ -47,7 +49,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testFourDigits(self):
-		regexp = regexpgen.integer("%4d")
+		regexp = regexpgen.integer(r"%4d")
 		print regexp
 
 		for i in [ "0000", "-1000", "1000000" ]:
@@ -59,7 +61,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testTwoDigits(self):
-		regexp = regexpgen.integer("%2d")
+		regexp = regexpgen.integer(r"%2d")
 		print regexp
 
 		for i in [ "00", "01", "-10", "-77", "1000000" ]:
@@ -71,7 +73,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testRangePositive(self):
-		regexp = regexpgen.integer("%d", 0, 267)
+		regexp = regexpgen.integer(r"%d", 0, 267)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -87,7 +89,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testRangeAll(self):
-		regexp = regexpgen.integer("%d", -351, 765)
+		regexp = regexpgen.integer(r"%d", -351, 765)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -103,7 +105,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testRangeNoLeadingZeros(self):
-		regexp = regexpgen.integer("%0d", -1000, 1000)
+		regexp = regexpgen.integer(r"%0d", -1000, 1000)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -119,7 +121,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testRangeFourDigits(self):
-		regexp = regexpgen.integer("%4d", -123, 9871)
+		regexp = regexpgen.integer(r"%4d", -123, 9871)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -135,7 +137,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testRangeWithZero(self):
-		regexp = regexpgen.integer("%04d", -1, 9000)
+		regexp = regexpgen.integer(r"%04d", -1, 9000)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -155,7 +157,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testMin(self):
-		regexp = regexpgen.integer("%d", 0)
+		regexp = regexpgen.integer(r"%d", 0)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -179,7 +181,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testMinWithoutZeros(self):
-		regexp = regexpgen.integer("%0d", -351)
+		regexp = regexpgen.integer(r"%0d", -351)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -199,7 +201,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testMinWithZeros(self):
-		regexp = regexpgen.integer("%04d", min = 100)
+		regexp = regexpgen.integer(r"%04d", min = 100)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -215,7 +217,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testMax(self):
-		regexp = regexpgen.integer("%d", max = 100)
+		regexp = regexpgen.integer(r"%d", max = 100)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -235,7 +237,7 @@ class Test(unittest.TestCase):
 			self.assertNotEqual(re.match(regexp, str(i)), None)
 
 	def testMaxWithoutZeros(self):
-		regexp = regexpgen.integer("%0d", max = 100)
+		regexp = regexpgen.integer(r"%0d", max = 100)
 		print regexp
 
 		for i in [ "0", "-0" ]:
@@ -255,7 +257,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testMaxWithZeros(self):
-		regexp = regexpgen.integer("%04d", max = 100)
+		regexp = regexpgen.integer(r"%04d", max = 100)
 		print regexp
 
 		for i in [ "0", "-0" ]:
