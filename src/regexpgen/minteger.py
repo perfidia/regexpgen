@@ -39,10 +39,10 @@ def default(format, min, max):
     inminusR = -minimum(0,max)
     inplusL = maximum(0,min)
     inplusR = max
-    if(min < 0):
+    if(min is None)or(min <= 0):
         for el in rawBounds(inminusR, inminusL):
             res.append("-0*" + el)
-    if(max >= 0):
+    if(max is None)or(max >= 0):
         for el in rawBounds(inplusL, inplusR):
             res.append("0*" + el)
     return '^(' + "|".join(res) + ')$'
@@ -50,18 +50,18 @@ def default(format, min, max):
 
 def no_leading_zeros(format, min, max):
     if((min is None) and (max is None)):
-        return r'^-?[1-9][0-9]*$'
+        return r'^(-?0|-?[1-9][0-9]*)$'
     assertMinMax(min, max)
     res = list()
     inminusL = min
     if(inminusL is not None): inminusL = -min;
-    inminusR = -minimum(-1,max)
+    inminusR = -minimum(0,max)
     inplusL = maximum(0,min)
     inplusR = max
-    if(min < 0):
+    if(min is None)or(min <= 0):
         for el in rawBounds(inminusR, inminusL):
             res.append("-" + el)
-    if(max >= 0):
+    if(max is None)or(max >= 0):
         for el in rawBounds(inplusL, inplusR):
             res.append(el)
     return '^(' + "|".join(res) + ')$'

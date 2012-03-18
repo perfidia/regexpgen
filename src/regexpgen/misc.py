@@ -62,8 +62,10 @@ def rawBounds(min,max,leadingZeros=True):
         for i in range(minD+1,maxD):
             curr = "[1-9][0-9]{%d}"%(i-1)
             res.append(curr)
-        for i in range(maxD-1,0,-1):
+        for i in range(maxD,0,-1):
             if((q > 0) and (i >= q)): continue
+            if((i==maxD) and (int(maxS[0])==1)): continue
+            #if(maxD-i<=0) and (int(maxS[maxD-i])<=0): continue
             curr = ""
             for j in range(0,maxD-i):
                 curr += maxS[j]
@@ -73,7 +75,7 @@ def rawBounds(min,max,leadingZeros=True):
                 curr += "[0-9]"
             res.append(curr)
     
-    if(q == 1): # <==> res is empty
+    if((q == 1) and ( int(minS[minD-1])+1 <= int(maxS[minD-1])-1 )): # <==> res is empty
         curr = ""
         for i in range(0,minD-1):
             curr += minS[i]
