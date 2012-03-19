@@ -36,24 +36,41 @@ def default(format, min, max):
     res = list()
     inminusL = min
     if(inminusL is not None): inminusL = -min;
-    inminusR = -minimum(-1,max)
+    inminusR = -minimum(0,max)
     inplusL = maximum(0,min)
     inplusR = max
     if(min < 0):
-        res.append("-" + rawBounds(inminusR, inminusL))
-    if(max > 0):
-        res.append(rawBounds(inplusL, inplusR))
+        for el in rawBounds(inminusR, inminusL):
+            res.append("-0*" + el)
+    if(max >= 0):
+        for el in rawBounds(inplusL, inplusR):
+            res.append("0*" + el)
     return '^(' + "|".join(res) + ')$'
 
 
 def no_leading_zeros(format, min, max):
-    return r'^-?[1-9][0-9]*$'
+    if((min is None) and (max is None)):
+        return r'^-?[1-9][0-9]*$'
+    assertMinMax(min, max)
+    res = list()
+    inminusL = min
+    if(inminusL is not None): inminusL = -min;
+    inminusR = -minimum(-1,max)
+    inplusL = maximum(0,min)
+    inplusR = max
+    if(min < 0):
+        for el in rawBounds(inminusR, inminusL):
+            res.append("-" + el)
+    if(max >= 0):
+        for el in rawBounds(inplusL, inplusR):
+            res.append(el)
+    return '^(' + "|".join(res) + ')$'
 
 
 def x_signs_leading_zeros(format, min, max):
     m = re.search('%0([0-9]+)d', format)
-    param = m.group(1)
-    return r'(^-?[0-9]{' + param + '}$)|(^-?[1-9][0-9]{' + param + ',}$)'
+    param = int(m.group(1))
+    return r'(^-?[0-9]{%d}$)|(^-?[1-9][0-9]{%d,}$)'%(param,param-1)
 
 def run(format, min, max):
     m = re.search('%0([0-9]+)d', format)

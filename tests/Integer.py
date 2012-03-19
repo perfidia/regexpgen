@@ -110,7 +110,7 @@ class Test(unittest.TestCase):
 
 		for i in [ "0", "-0" ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertNotEqual(re.match(regexp, i), None)
 
 		for i in [ i for i in xrange(-1000, 1000 + 1) ]:
 			print "check", i
@@ -222,7 +222,7 @@ class Test(unittest.TestCase):
 
 		for i in [ "0", "-0" ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertNotEqual(re.match(regexp, i), None)
 
 		for i in [ i for i in xrange(-65000, 100 + 1) ]:
 			print "check", i
