@@ -19,15 +19,18 @@ def digitsNum(number):
 # non-negative min/max only
 def rawBounds(min,max,leadingZeros=True):
     assertMinMax(min, max)
-    if(min is None): min = 0;
-    elif(min>0): min -= 1;
+    res = list()
+    if((min is None) or (min == 0)): 
+        min = 0;
+        res.append("0")
+    elif(min>0): 
+        min -= 1;
     if(max is not None): max += 1;
     minD = digitsNum(min)
     maxD = digitsNum(max)
     minS = str(min)
     maxS = str(max)
     q = diffLastChars(minS, maxS)
-    res = list()
     for i in range(1,minD+1):
         if((q > 0) and (i >= q)): break
         curr = ""
