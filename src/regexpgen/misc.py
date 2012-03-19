@@ -16,6 +16,11 @@ def digitsNum(number):
     else:
         return digitsNum(number // 10) + 1
 
+def minimum(a,b):
+    return min(a,b)
+def maximum(a,b):
+    return max(a,b)
+
 # non-negative min/max only
 def rawBounds(min,max,leadingZeros=True):
     assertMinMax(min, max)

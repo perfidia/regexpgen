@@ -6,9 +6,7 @@ Created on Apr 27, 2011
 
 import regexpgen
 
-print regexpgen.misc.rawBounds(127, 12891)
-print regexpgen.misc.rawBounds(127, None)
-print regexpgen.misc.rawBounds(None, 123)
-print regexpgen.misc.rawBounds(None, None)
-print regexpgen.misc.rawBounds(129, 131)
-print regexpgen.misc.rawBounds(127, 128)
+print regexpgen.integer("%d")
+print regexpgen.integer("%d", -5, 1)
+print regexpgen.integer("%d", 126, 12234)
+

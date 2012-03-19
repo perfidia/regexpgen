@@ -26,16 +26,24 @@ opis: liczba zapisana przy pomocy X znaków, w przypadku liczb
 przykłady poprawne dla %04d: 0001, 45678
 przykłady niepoprawne dla %04d: 00011, 11
 '''
-from regexpgen.misc import assertMinMax, rawBounds
+from regexpgen.misc import assertMinMax, rawBounds, minimum, maximum
 import re
 
 def default(format, min, max):
+    if((min is None) and (max is None)):
+        return r'^-?[0-9]+$'
     assertMinMax(min, max)
-    res = ""
-    if((min is None) or (min < 0)):
-        if((max is None) or (max > 0)):
-            res += "-" + rawBounds(min, max)
-    return r'^-?[0-9]+$'
+    res = list()
+    inminusL = min
+    if(inminusL is not None): inminusL = -min;
+    inminusR = -minimum(-1,max)
+    inplusL = maximum(0,min)
+    inplusR = max
+    if(min < 0):
+        res.append("-" + rawBounds(inminusR, inminusL))
+    if(max > 0):
+        res.append(rawBounds(inplusL, inplusR))
+    return '^(' + "|".join(res) + ')$'
 
 
 def no_leading_zeros(format, min, max):
@@ -57,5 +65,5 @@ def run(format, min, max):
         '%d': default,
         '%0d': no_leading_zeros,
         '%0Xd': x_signs_leading_zeros,
-    }.get(generalFormat, complex)(format, min, max)
+    }.get(generalFormat)(format, min, max)
     return result
