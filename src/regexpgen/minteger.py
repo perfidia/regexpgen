@@ -58,34 +58,3 @@ def run(format, min, max):
         '%0Xd': x_signs_leading_zeros,
     }.get(generalFormat, complex)(format, min, max)
     return result
-
-# non-negative min/max only
-def rawBounds(min,max,leadingZeros=True):
-    assertMinMax(min, max)
-    if(min>0): min -= 1;
-    max += 1;
-    minD = digitsNum(min)
-    maxD = digitsNum(max)
-    minS = str(min)
-    maxS = str(max)
-    res = list()
-    for i in range(1,minD+1):
-        curr = ""
-        for j in range(0,minD-i):
-            curr += minS[j]
-        curr += "[%d-9]"%(int(minS[minD-i])+1)
-        for j in range(minD-i+1, minD):
-            curr += "[0-9]"
-        res.append(curr)
-    for i in range(minD+1,maxD):
-        curr = "[1-9][0-9]{%d}"%(i-1)
-        res.append(curr)
-    for i in range(maxD-1,0,-1):
-        curr = ""
-        for j in range(0,maxD-i):
-            curr += maxS[j]
-        curr += "[0-%d]"%(int(maxS[maxD-i])-1)
-        for j in range(maxD-i+1,maxD):
-            curr += "[0-9]"
-        res.append(curr)
-    return "(" + ("|".join(res)) + ")"

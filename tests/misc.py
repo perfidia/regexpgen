@@ -5,8 +5,8 @@ Created on 19-03-2012
 '''
 import unittest
 import re
-from regexpgen.misc import digitsNum
-from regexpgen.minteger import rawBounds
+from regexpgen.misc import digitsNum, diffLastChars
+from regexpgen.misc import rawBounds
 
 class Test(unittest.TestCase):
     def testDigitsNum(self):
@@ -15,6 +15,10 @@ class Test(unittest.TestCase):
         self.assertEqual(digitsNum(10), 2)
         self.assertEqual(digitsNum(02345), 4)
         self.assertEqual(digitsNum(None), None)
+        
+    def testDiffLastChars(self):
+        self.assertEqual(diffLastChars("12345","45445"), 0)
+        self.assertEqual(diffLastChars("12345","45446"), 1)
     
     def testRawBounds(self):
         self.assertNotEqual(re.match("^"+rawBounds(28, 128)+"$", "32"), None)
