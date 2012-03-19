@@ -49,7 +49,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testFourDigits(self):
-		regexp = regexpgen.integer(r"%4d")
+		regexp = regexpgen.integer(r"%04d")
 		print regexp
 
 		for i in [ "0000", "-1000", "1000000" ]:
@@ -61,7 +61,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testTwoDigits(self):
-		regexp = regexpgen.integer(r"%2d")
+		regexp = regexpgen.integer(r"%02d")
 		print regexp
 
 		for i in [ "00", "01", "-10", "-77", "1000000" ]:
@@ -121,7 +121,7 @@ class Test(unittest.TestCase):
 			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testRangeFourDigits(self):
-		regexp = regexpgen.integer(r"%4d", -123, 9871)
+		regexp = regexpgen.integer(r"%04d", -123, 9871)
 		print regexp
 
 		for i in [ "0", "-0" ]:
