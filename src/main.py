@@ -6,6 +6,4 @@ Created on Apr 27, 2011
 
 import regexpgen
 
-print regexpgen.integer("%d")
-
-print regexpgen.integer("%05d")
+print regexpgen.minteger.rawBounds(127, 12891)
