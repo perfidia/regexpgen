@@ -23,3 +23,13 @@ class Test(unittest.TestCase):
     def testRawBounds(self):
         self.assertNotEqual(re.match("^"+rawBounds(28, 128)+"$", "32"), None)
         self.assertNotEqual(re.match("^"+rawBounds(28, 128)+"$", "101"), None)
+        self.assertEqual(re.match("^"+rawBounds(17, 56)+"$", "10"), None)
+        self.assertEqual(re.match("^"+rawBounds(17, 56)+"$", "57"), None)
+        r = re.match("^"+rawBounds(28, 128)+"$", "32")
+        self.assertEqual(r.group(1), "32")
+        r = re.match("^"+rawBounds(28, 128)+"$", "101")
+        self.assertEqual(r.group(1), "101")
+        r = re.match("^"+rawBounds(17, 56)+"$", "17")
+        self.assertEqual(r.group(1), "17")
+        r = re.match("^"+rawBounds(17, 56)+"$", "56")
+        self.assertEqual(r.group(1), "56")
