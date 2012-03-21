@@ -12,6 +12,7 @@ import regexpgen
 #print regexpgen.misc.rawBounds(0, 100)
 #print regexpgen.integer(r"%d", 0)
 #print regexpgen.misc.rawBounds(0, 257)
-regexp = regexpgen.integer(r"%0d", -351)
+#print regexpgen.misc.rawBounds(0, 100, 4)
+print regexpgen.misc.rawBounds(101, None, 4)
+regexp = regexpgen.integer(r"%04d", min = 100)
 print regexp
-

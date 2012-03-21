@@ -32,14 +32,21 @@ def maximum(a,b):
         return max(a,b)
 
 # non-negative min/max only
-def rawBounds(min,max,leadingZeros=True):
+def rawBounds(min,max,minLength=0):
     assertMinMax(min, max)
+    orgMinD = digitsNum(min)
     res = list()
     if((min is None) or (min == 0)): 
         min = 0;
-        res.append("0")
+        if(minLength>0):
+            res.append("0{%d}"%minLength)
+        else:
+            res.append("0")
     elif(min>0): 
-        min -= 1;
+        if(min%10==0):
+            res.append(str(min))            
+        else:
+            min -= 1;
     if(max is not None): max += 1;
     minD = digitsNum(min)
     maxD = digitsNum(max)
@@ -48,35 +55,49 @@ def rawBounds(min,max,leadingZeros=True):
     q = diffLastChars(minS, maxS)
     for i in range(1,minD+1):
         if((q > 0) and (i >= q)): break
-        curr = ""
+        if(int(minS[minD-i]) == 9): continue
+        if(minLength>minD):
+            curr = "0{%d}"%(minLength-minD)
+        else:
+            curr = ""
         for j in range(0,minD-i):
             curr += minS[j]
-        if(int(minS[minD-i]) < 9):
-        	curr += "[%d-9]"%(int(minS[minD-i])+1)
+        curr += "[%d-9]"%(int(minS[minD-i])+1)
         for j in range(minD-i+1, minD):
             curr += "[0-9]"
         res.append(curr)
     if(max is None):
-        res.append("[1-9][0-9]{%d,}"%(minD))
+        if(minLength>orgMinD):
+            for i in range(orgMinD+1,minLength):
+                res.append("0{%d}[1-9][0-9]{%d}"%(minLength-i,i-1))
+        res.append("[1-9][0-9]{%d,}"%(orgMinD))
     else:
         for i in range(minD+1,maxD):
-            curr = "[1-9][0-9]{%d}"%(i-1)
+            if(minLength>i):
+                curr = "0{%d}[1-9][0-9]{%d}"%(minLength-i,i-1)
+            else:
+                curr = "[1-9][0-9]{%d}"%(i-1)
             res.append(curr)
         for i in range(maxD,0,-1):
             if((q > 0) and (i >= q)): continue
             if((i==maxD) and (int(maxS[0])==1)): continue
-            #if(maxD-i<=0) and (int(maxS[maxD-i])<=0): continue
-            curr = ""
+            if(int(maxS[maxD-i]) <= 0): continue
+            if(minLength>maxD):
+                curr = "0{%d}"%(minLength-maxD)
+            else:
+                curr = ""
             for j in range(0,maxD-i):
                 curr += maxS[j]
-            if(int(maxS[maxD-i]) > 0):
-            	curr += "[0-%d]"%(int(maxS[maxD-i])-1)
+            curr += "[0-%d]"%(int(maxS[maxD-i])-1)
             for j in range(maxD-i+1,maxD):
                 curr += "[0-9]"
             res.append(curr)
     
     if((q == 1) and ( int(minS[minD-1])+1 <= int(maxS[minD-1])-1 )): # <==> res is empty
-        curr = ""
+        if(minLength > minD):
+            curr = "0{%d}"%(minLength-minD)
+        else:
+            curr = ""
         for i in range(0,minD-1):
             curr += minS[i]
         curr += "[%d-%d]"%(int(minS[minD-1])+1,int(maxS[minD-1])-1)

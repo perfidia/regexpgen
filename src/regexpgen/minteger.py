@@ -70,7 +70,22 @@ def no_leading_zeros(format, min, max):
 def x_signs_leading_zeros(format, min, max):
     m = re.search('%0([0-9]+)d', format)
     param = int(m.group(1))
-    return r'(^-?[0-9]{%d}$)|(^-?[1-9][0-9]{%d,}$)'%(param,param-1)
+    if((min is None) and (max is None)):
+        return r'^(-?[0-9]{%d}|-?[1-9][0-9]{%d,})$'%(param,param-1)
+    assertMinMax(min, max)
+    res = list()
+    inminusL = min
+    if(inminusL is not None): inminusL = -min;
+    inminusR = -minimum(0,max)
+    inplusL = maximum(0,min)
+    inplusR = max
+    if(min is None)or(min <= 0):
+        for el in rawBounds(inminusR, inminusL, param):
+            res.append("-" + el)
+    if(max is None)or(max >= 0):
+        for el in rawBounds(inplusL, inplusR, param):
+            res.append(el)
+    return '^(' + "|".join(res) + ')$'
 
 def run(format, min, max):
     m = re.search('%0([0-9]+)d', format)

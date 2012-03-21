@@ -126,13 +126,13 @@ class Test(unittest.TestCase):
 
 		for i in [ "0", "-0" ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertEqual(re.match(regexp, str(i)), None)
 
-		for i in [ i for i in xrange(-123, 9871 + 1) ]:
+		for i in [ i for i in xrange(-123, 999 + 1) ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertEqual(re.match(regexp, str(i)), None)
 
-		for i in [ "a", "-9871", "-125", "-124", "9872", "9873", "45678" ]:
+		for i in [ "-9871", "-0125", "-0124", "9872", "9873", "45678" ]:
 			print "check", i
 			self.assertEqual(re.match(regexp, str(i)), None)
 
@@ -142,17 +142,17 @@ class Test(unittest.TestCase):
 
 		for i in [ "0", "-0" ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertEqual(re.match(regexp, str(i)), None)
 
-		for i in [ i for i in xrange(-1, 9000 + 1) ]:
+		for i in [ i for i in xrange(-1, 999 + 1) ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertEqual(re.match(regexp, str(i)), None)
 
 		for i in [ "0000", "-0001", "0023", "0123" ]:
 			print "check", i
 			self.assertNotEqual(re.match(regexp, str(i)), None)
 
-		for i in [ "a", "-3", "-2", "9001", "9002", "09873", "45678" ]:
+		for i in [ "-0003", "-0002", "9001", "9002", "9873", "45678" ]:
 			print "check", i
 			self.assertEqual(re.match(regexp, str(i)), None)
 
@@ -206,15 +206,19 @@ class Test(unittest.TestCase):
 
 		for i in [ "0", "-0" ]:
 			print "check", i
+			self.assertEqual(re.match(regexp, str(i)), None)
+
+		for i in [ "%04d" % i for i in xrange(-65000 , 99 + 1) ]:
+			print "check", i
+			self.assertEqual(re.match(regexp, str(i)), None)
+
+		for i in [ "a", "-1", "22", "01", "010", "-010", "0099" ]:
+			print "check", i
+			self.assertEqual(re.match(regexp, str(i)), None)
+			
+		for i in [ "12345","0101" ]:
+			print "check", i
 			self.assertNotEqual(re.match(regexp, str(i)), None)
-
-		for i in [ "%04d" % i for i in xrange(-65000 , 100 + 1) ]:
-			print "check", i
-			self.assertEqual(re.match(regexp, str(i)), None)
-
-		for i in [ "a", "-1", "22", "01", "010", "-010" ]:
-			print "check", i
-			self.assertEqual(re.match(regexp, str(i)), None)
 
 	def testMax(self):
 		regexp = regexpgen.integer(r"%d", max = 100)
@@ -262,9 +266,9 @@ class Test(unittest.TestCase):
 
 		for i in [ "0", "-0" ]:
 			print "check", i
-			self.assertNotEqual(re.match(regexp, str(i)), None)
+			self.assertEqual(re.match(regexp, str(i)), None)
 
-		for i in [ "%04d" % i for i in xrange(-65000 , 100 + 1) ]:
+		for i in [ "%04d" % i for i in xrange(-9000 , -1000 + 1) ]:
 			print "check", i
 			self.assertNotEqual(re.match(regexp, str(i)), None)
 
