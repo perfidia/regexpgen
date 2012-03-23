@@ -26,7 +26,7 @@ class Test(unittest.TestCase):
 			print "check", i
 			self.assertNotEqual(re.match(regexp, str(i)), None)
 
-		for i in [ i for i in xrange(-65000, 0 + 1) ]:
+		for i in [ i for i in xrange(-65000, -1 + 1) ]:
 			print "check", i
 			self.assertEqual(re.match(regexp, str(i)), None)
 

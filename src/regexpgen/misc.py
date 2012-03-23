@@ -70,7 +70,9 @@ def rawBounds(min,max,minLength=0):
         if(minLength>orgMinD):
             for i in range(orgMinD+1,minLength):
                 res.append("0{%d}[1-9][0-9]{%d}"%(minLength-i,i-1))
-        res.append("[1-9][0-9]{%d,}"%(orgMinD))
+            res.append("[1-9][0-9]{%d,}"%(minLength-1))
+        else:
+            res.append("[1-9][0-9]{%d,}"%(orgMinD))
     else:
         for i in range(minD+1,maxD):
             if(minLength>i):
