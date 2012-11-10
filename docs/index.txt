@@ -1,0 +1,14 @@
+Welcome to SeleShot 's documentation!
+================================================
+
+SeleShot allows to get a screen shot of a whole webpage and a part of it.
+
+Contents:
+
+.. toctree::
+	:maxdepth: 2
+
+	_static/installation
+	_static/api
+	_static/todo
+

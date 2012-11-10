@@ -3,6 +3,7 @@ Created on Mar 15, 2012
 
 @author: Bartosz Alchimowicz
 '''
+
 import unittest
 import regexpgen
 import re
@@ -215,7 +216,7 @@ class Test(unittest.TestCase):
 		for i in [ "a", "-1", "22", "01", "010", "-010", "0099" ]:
 			print "check", i
 			self.assertEqual(re.match(regexp, str(i)), None)
-			
+
 		for i in [ "12345","0101" ]:
 			print "check", i
 			self.assertNotEqual(re.match(regexp, str(i)), None)

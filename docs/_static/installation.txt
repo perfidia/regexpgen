@@ -1,0 +1,7 @@
+Installation
+============
+
+The following libraries are required:
+
+    * python 2.7
+    * python-setuptools

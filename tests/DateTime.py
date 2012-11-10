@@ -4,6 +4,15 @@ Created on Mar 16, 2012
 @author: Bartosz Alchimowicz
 '''
 
+###########################################
+# this generator is unsupported, skipping #
+###########################################
+
+import sys
+sys.exit(0)
+
+###########################################
+
 import unittest
 import regexpgen
 import re

@@ -22,7 +22,11 @@ Installation
 Getting started
 ---------------
 
-TBD
+	>>> import regexpgen
+	>>> pattern = r"%d"
+	>>> regexp = regexpgen.integer(pattern)
+	>>> print regexp
+	^-?[0-9]+$
 
 Authors
 -------

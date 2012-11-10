@@ -1,0 +1,9 @@
+TODO
+====
+
+* mreal, mdate, mtime, mdatetime
+* more tests
+* matchStartEnd = False by default
+* move startEndMatcher function somewhere else (misc?)
+* PEP 8
+* provide description of format used by printf function
