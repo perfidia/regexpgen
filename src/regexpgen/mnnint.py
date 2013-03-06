@@ -12,15 +12,27 @@ Supported format:
 format jak dla interger
 '''
 
-import minteger
+import builder
+import re
 from regexpgen.misc import assertMinMax
 
 def run(format, min, max):
 	assertMinMax(min, max)
 	if(max is not None) and (max < 0):
 		raise Exception("Invalid parameters (max<0)")
-	if(min is None) or (min < 0):
-		min = 0;
-	f = minteger.run(format, min, max)
-	f = f.replace("-0","0")
-	return f
+
+	b = builder.NNIntegerRegexBuilder()
+
+	if format == "%0d":
+		b.CreateNNIntegerRegex(format, min, max)
+		return "^("+b.BuildRegEx()+")$"
+
+	if format == "%d":
+		b.CreateNNIntegerRegex(format, min, max)
+		return "^(0*("+b.BuildRegEx()+"))$"
+
+	if re.match('%0([0-9]+)d', format):
+		m = re.search('%0([0-9]+)d', format)
+		zeros = int(m.group(1))
+		b.CreateNNIntegerRegex(format, min, max, zeros)
+		return "^("+b.BuildRegEx()+")$"
