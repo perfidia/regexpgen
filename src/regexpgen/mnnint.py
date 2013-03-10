@@ -15,9 +15,9 @@ format jak dla interger
 import builder
 from regexpgen.misc import assertMinMax
 
-def run(frmt, minV, maxV, startEndMatcher):
+def run(frmt, minV, maxV):
 	assertMinMax(minV, maxV)
-	if(max is not None) and (maxV < 0):
+	if(maxV is not None) and (maxV < 0):
 		raise Exception("Invalid parameters (max<0)")
 
 	b = builder.RegexBuilder()
