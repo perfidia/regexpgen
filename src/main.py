@@ -6,9 +6,11 @@ Created on Apr 27, 2011
 
 import regexpgen
 
-print regexpgen.nnint("%04d")
+#print regexpgen.nnint("%0d")
+#print regexpgen.nnint("%04d", 71, 2319)
 #print regexpgen.integer("%d", -5, 1)
-#print regexpgen.integer("%d", 126, 12234)
+print regexpgen.nnint("%01d", )
+#print regexpgen.integer("%07d", 432, 12234)
 #print regexpgen.misc.rawBounds(0, 100)
 #print regexpgen.integer(r"%d", 0)
 #print regexpgen.misc.rawBounds(0, 257)
