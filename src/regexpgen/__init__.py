@@ -17,7 +17,7 @@ def nnint(format, min = None, max = None, matchStartEnd = True):
 	:return: regular expression for a given format
 	"""
 
-	return startEndMatcher(mnnint.run(format, min, max), matchStartEnd)
+	return mnnint.run(format, min, max, matchStartEnd)
 
 def integer(format, min = None, max = None, matchStartEnd = True):
 	"""Generate regular expression for an integer.
@@ -30,7 +30,7 @@ def integer(format, min = None, max = None, matchStartEnd = True):
 	:return: regular expression for a given format
 	"""
 
-	return startEndMatcher(minteger.run(format, min, max), matchStartEnd)
+	return minteger.run(format, min, max)
 
 #def real(format, min = None, max = None, matchStartEnd = True):
 #	return startEndMatcher(mreal.run(format, min, max), matchStartEnd)

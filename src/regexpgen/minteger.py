@@ -28,6 +28,7 @@ przykłady niepoprawne dla %04d: 00011, 11
 '''
 from regexpgen.misc import assertMinMax, rawBounds, minimum, maximum
 import re
+import builder
 
 def default(format, min, max):
     if((min is None) and (max is None)):
@@ -88,14 +89,11 @@ def x_signs_leading_zeros(format, min, max):
     return '^(' + "|".join(res) + ')$'
 
 def run(format, min, max):
-    m = re.search('%0([0-9]+)d', format)
-    if(m != None):
-        generalFormat = '%0Xd'
-    else:
-        generalFormat = format 
-    result = {
-        '%d': default,
-        '%0d': no_leading_zeros,
-        '%0Xd': x_signs_leading_zeros,
-    }.get(generalFormat)(format, min, max)
-    return result
+
+    assertMinMax(min, max)
+    if(max is not None) and (max < 0):
+        raise Exception("Invalid parameters (max<0)")
+
+    b = builder.RegexBuilder()
+    b.CreateIntegerRegex(format, min, max)
+    return b.BuildRegEx()
