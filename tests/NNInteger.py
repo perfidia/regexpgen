@@ -13,6 +13,7 @@ class Test(unittest.TestCase):
 
 	def testDefault(self):
 		random.seed(0);
+
 		for i in xrange(0, 1100):
 			scale = len(str(i))
 			self.__runTest1__(scale, False, False);

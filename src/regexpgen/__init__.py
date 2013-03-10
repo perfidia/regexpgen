@@ -17,7 +17,7 @@ def nnint(format, min = None, max = None, matchStartEnd = True):
 	:return: regular expression for a given format
 	"""
 
-	return mnnint.run(format, min, max, matchStartEnd)
+	return mnnint.run(format, min, max)
 
 def integer(format, min = None, max = None, matchStartEnd = True):
 	"""Generate regular expression for an integer.

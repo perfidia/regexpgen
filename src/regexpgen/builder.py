@@ -28,7 +28,7 @@ class RegexBuilder(object):
             self.base = "^({0})$"
         if self.format == "%d":
             self.base = "^(0*({0}))$"
-        m = re.match('%0([0-9]+)d', self.format)
+        m = re.match("%0([0-9]+)d", self.format)
         if m:
             self.base = "^({0})$"
 

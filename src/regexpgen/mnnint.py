@@ -15,10 +15,10 @@ format jak dla interger
 import builder
 from regexpgen.misc import assertMinMax
 
-def run(format, min, max, startEndMatcher):
-	assertMinMax(min, max)
-	if(max is not None) and (max < 0):
+def run(frmt, minV, maxV, startEndMatcher):
+	assertMinMax(minV, maxV)
+	if(max is not None) and (maxV < 0):
 		raise Exception("Invalid parameters (max<0)")
 
 	b = builder.RegexBuilder()
-	return b.CreateNNIntegerRegex(format, min, max)
+	return b.CreateNNIntegerRegex(frmt, minV, maxV)

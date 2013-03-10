@@ -89,7 +89,6 @@ def x_signs_leading_zeros(format, min, max):
     return '^(' + "|".join(res) + ')$'
 
 def run(format, min, max):
-
     assertMinMax(min, max)
     if(max is not None) and (max < 0):
         raise Exception("Invalid parameters (max<0)")
