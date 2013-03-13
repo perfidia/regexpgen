@@ -284,8 +284,7 @@ class Test(unittest.TestCase):
 #			self.assertEqual(re.match(regexp, str(i)), None)
 #
 	def testDefault(self):
-		random.seed(2);
-		print regexpgen.integer("%d", -7319, -7089)
+		random.seed(3);
 		for i in xrange(0, 1100):
 			scale = len(str(i))
 			self._runTest1(scale, False, False);

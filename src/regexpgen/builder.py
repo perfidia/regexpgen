@@ -307,9 +307,9 @@ class RegexBuilder(object):
 
                 lastIndex = len(left) - 1
                 if not self.sameDigit("0", str(left)):
-                    while lastIndex >= 0 and left[0] != newMa[0]:
+                    while lastIndex >= 0 and (left[0] != newMa[0] or len(left) != len(newMa)):
                         if lastIndex == 0:
-                            right = str(int(newMa[0])-1) + '9'*(len(left)-1)
+                            right = str(int(newMa[0])-1) + '9'*(len(newMa)-1)
                             resultRanges.append((sames + left, sames + right))
                         else:
                             trailing = len(left) - lastIndex - 1
@@ -321,6 +321,9 @@ class RegexBuilder(object):
                             resultRanges.append((sames + left, sames + right))
                             lastIndex -= (1 + i)
                         left = str(int(right) + 1)
+                        diff = len(right) - len(left)
+                        left = diff*"0" + left
+
 
                 right = str(ranges[-1][0])
                 while right != newMa:
