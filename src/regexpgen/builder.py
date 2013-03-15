@@ -165,6 +165,22 @@ class RegexBuilder(object):
 
 
 
+    def CreateRealRegex(self, frmt, minV, maxV):
+        return " "
+#        if frmt == "%d" and minV is None and maxV is not None:
+
+
+#        if frmt == "%d" and minV is None and maxV is None:
+#
+#        if frmt == "%d" and minV is not None and maxV is None:
+#
+#        if frmt == "%d" and minV is not None and maxV is not None:
+#
+#        if frmt == "%0d" and minV is None and maxV is None:
+#
+#        if frmt == "%0d" and minV is not None and maxV is None:
+#
+#        if frmt == "%0d" and minV is None and maxV is not None:
 
     def CreateNNIntegerRegex(self, frmt, minV, maxV):
         m = re.match('%0([0-9]+)d', frmt)

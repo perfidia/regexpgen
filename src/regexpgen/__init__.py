@@ -4,7 +4,7 @@
 Set of functions to generate regular expressions from a pattern similar to printf function.
 '''
 
-import minteger, mnnint #,  mreal, mdate, mtime, mdatetime
+import minteger, mnnint, mreal#, mdate, mtime, mdatetime
 
 def nnint(format, min = None, max = None, matchStartEnd = True):
 	"""Generate regular expression for a non negative integer.
@@ -32,8 +32,8 @@ def integer(format, min = None, max = None, matchStartEnd = True):
 
 	return minteger.run(format, min, max)
 
-#def real(format, min = None, max = None, matchStartEnd = True):
-#	return startEndMatcher(mreal.run(format, min, max), matchStartEnd)
+def real(format, min = None, max = None, matchStartEnd = True):
+	return mreal.run(format, min, max)
 #
 #def date(format, min = None, max = None, timezone = None, matchStartEnd = True):
 #	return startEndMatcher(mdate.run(format, min, max, timezone), matchStartEnd)

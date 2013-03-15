@@ -32,13 +32,18 @@ opis: X jest ignorowany (działa jak '%.Ylf')
 
 FORMAT = '%0X.Ylf'
 opis: zera wiodące są wymagane, liczba jest zapisana przy wykorzystaniu co najmniej X znaków (łącznie z kropoką),
-      po przecinku można wprowadzić dokładnie Y cyfr, 
+      po przecinku można wprowadzić dokładnie Y cyfr,
       jeżeli liczba zaweira mniej niż X znaków to przestrzeń należy wypełnić zerami
 przykłady poprawne dla %5.2lf: 022.1, 32431.2, 012.9
 przykłady poprawne dla %5.2lf: 22.1, 111.122
 '''
+import builder
+from regexpgen.misc import assertMinMax
 
 SEPARATOR = '.'
 
 def run(format, min, max):
-	raise Exception('unsupported')
+    assertMinMax(min, max)
+
+    b = builder.RegexBuilder()
+    return  b.CreateRealRegex(format, min, max)
