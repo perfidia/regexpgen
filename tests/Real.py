@@ -44,14 +44,14 @@ class Test(unittest.TestCase):
 		random.seed(3);
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self._runTest1(scale, False, False);
+		#	self._runTest1(scale, False, False);
 			self._runTest1(scale, False, True);
-			self._runTest1(scale, True, False);
-			self._runTest1(scale, True, True);
-			self._runTest2(scale, False, False);
+#			self._runTest1(scale, True, False);
+#			self._runTest1(scale, True, True);
+#			self._runTest2(scale, False, False);
 			self._runTest2(scale, False, True);
-			self._runTest2(scale, True, False);
-			self._runTest2(scale, True, True);
+#			self._runTest2(scale, True, False);
+#			self._runTest2(scale, True, True);
 			print i
 
 	def _runTest1(self, scale, setMin, setMax):
@@ -59,6 +59,7 @@ class Test(unittest.TestCase):
 		max = random.uniform(min, min + 5**scale) #zeby testowalo tez np -100 do -10
 
 		format = "%lf"
+		print None, max
 		regexp = regexpgen.real(format, min if setMin else None, max if setMax else None)
 		info = lambda value: self._getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 

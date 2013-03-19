@@ -164,23 +164,104 @@ class RegexBuilder(object):
                     return "^({0})$".format(result)
 
 
+#UWAGA
+#calcRealRegex wydaje sie dzialac dobrze, ale to ponizej nie, nie mam juz dzisiaj sily, ale to co warto na pewno zrobic to zrobic jakas metode
+#ktora bedzie tworzyla nowy obiekt buildera i wywolywala CreateRegexy, bo kazde wywolanie "zanieczyszcza" nam stan tego obiektu (inny base, alternatvies itd.
+#poza tym trzeba przesledzic kazda sciezke (najlepiej rozpisac to) i bo tak jak wczesniej mielismy taka "metode proxy" (createNNinteger) to teraz nie mamy
+#wiec jak chcemy dac np min=5, a max=None to trzeba recznie zrobic od 5 do 9 a potem do tego dopisac [1-9][0-9]+
+#oprocz tego te uwagi ktore mielismy, czyli nazwy metod, zbedne pliki powywalac itd
 
     def CreateRealRegex(self, frmt, minV, maxV):
-        return " "
-#        if frmt == "%d" and minV is None and maxV is not None:
+        self.alternatives = [[]]
+        self.currentIndex = 0
+        self.base = "{0}"
+        zeros = ""
+        if frmt == "%lf":
+            self.base = "0*({0})"
+            zeros = "0*"
+
+        #%0d
+        if minV is None and maxV is None:
+            if frmt == "%lf":
+                self.AddElement("-?([0-9]+(\.[0-9]+|0)?)")
+            if frmt == "%0lf":
+                self.AddElement("-?([1-9][0-9]*(\.[0-9]+)?|0)")
+            return "^({0})$".format(self.BuildRegEx())
+
+        if minV is None and maxV is not None:
+            if maxV < 0:
+                minV = -maxV
+                splitted = str(minV).split(".")
+                if len(splitted) > 1:
+                    maxV = "{0}.{1}".format(len(splitted[0])*"9", len(splitted[1])*"9")
+                else:
+                    maxV = "9"*len(str(minV))
+                ans = self.calculateRealRegex(minV, maxV)
+                minV = int(maxV.split(".")[0]) + 1
+
+                self.CreateIntegerRegex("%0d", minV, None)
+
+                return "^(-((" + zeros + "{0})|("+zeros+"{1})))$".format(ans, self.BuildPartRegEx())
+            else:
+                result = "-(" + zeros + "[1-9][0-9]*(\.[0-9]+)?|0)"
+
+                minV = 0
+                ans = self.calculateRealRegex(minV, maxV)
+
+                result += "|-?(" + zeros + "({0}))".format(ans)
 
 
-#        if frmt == "%d" and minV is None and maxV is None:
-#
-#        if frmt == "%d" and minV is not None and maxV is None:
-#
-#        if frmt == "%d" and minV is not None and maxV is not None:
-#
-#        if frmt == "%0d" and minV is None and maxV is None:
-#
-#        if frmt == "%0d" and minV is not None and maxV is None:
-#
-#        if frmt == "%0d" and minV is None and maxV is not None:
+              #  minV = maxV + 1
+               # maxV = None
+              #  self.CreateNNIntegerRegex(frmt, minV, maxV)
+               # result += "|-({0})".format(self.BuildRegEx())
+                return "^({0})$".format(result)
+
+        if minV is not None and maxV is None:
+            maxV = -minV
+            minV = 0
+            self.calculateRegex(minV, maxV)
+            result = "-?({0})".format(self.BuildRegEx())
+            minV = maxV + 1
+            maxV = None
+            self.CreateNNIntegerRegex(frmt, minV, maxV)
+            result += "|{0}".format(self.BuildRegEx())
+            return "^({0})$".format(result)
+
+        if minV is not None and maxV is not None:
+            if minV <= 0 and maxV <= 0:
+                tempMinV = minV
+                minV = -maxV
+                maxV = -tempMinV
+                self.calculateRegex(minV, maxV)
+                return "^-({0})$".format(self.BuildRegEx())
+            else: #n-, n+
+                if (-minV < maxV):
+                    mxV = maxV
+                    maxV = -minV
+                    minV = 0
+                    self.calculateRealRegex(minV, maxV)
+                    result = "-?({0})".format(self.BuildRegEx())
+                    minV = maxV + 1
+                    maxV = mxV
+                    self.calculateRealRegex(minV, maxV)
+                    result += "|{0}".format(self.BuildRegEx())
+                    return "^({0})$".format(result)
+                else:
+                    mnV = minV
+                    minV = 0
+                    self.calculateRegex(minV, maxV)
+                    result = "-?({0})".format(self.BuildRegEx())
+                    minV = maxV + 1
+                    maxV = -mnV
+                    if minV <= maxV:
+                        self.calculateRegex(minV, maxV)
+                        result += "|-({0})".format(self.BuildRegEx())
+                    return "^({0})$".format(result)
+
+
+
+
 
     def CreateNNIntegerRegex(self, frmt, minV, maxV):
         m = re.match('%0([0-9]+)d', frmt)
@@ -247,6 +328,66 @@ class RegexBuilder(object):
 
         return "^({0})$".format(self.BuildRegEx())
 
+    def calculateRealRegex(self, mi, ma):
+        groupMin = str(mi).split(".")
+        groupMax = str(ma).split(".")
+
+        if(len(groupMin) > 1):
+            miIntPart = str(mi).split(".")[0]
+            min = str(mi).split(".")[1]
+        else:
+            miIntPart = str(mi)
+            min = "0"
+
+        if(len(groupMax) > 1):
+            maIntPart = str(ma).split(".")[0]
+            max = str(ma).split(".")[1]
+        else:
+            maIntPart = str(ma)
+            max = "0"
+
+        while len(min) < len(str(max)):
+            min = min + "0"
+        while len(str(min)) > len(max):
+            max = max + "0"
+
+        format =  "%0" + str(len(max))+ "d"
+
+        if miIntPart == maIntPart:
+            print format, min, str(int(max)-1)
+            x = self.CreateIntegerRegex(format, int(min), int(max)-1)
+            x = x.replace("^", "").replace("$", "")
+            return "{0}\.({1}[0-9]*|{2}0*)?".format(miIntPart, x, max)
+        else:
+            x = self.CreateIntegerRegex(format, int(min), "9"*len(min))
+            x = x.replace("^", "").replace("$", "")
+            y = self.CreateIntegerRegex(format, 0, int(max) - 1)
+            y = y.replace("^", "").replace("$", "")
+            z = self.CreateIntegerRegex(format, int(miIntPart) + 1, int(maIntPart)-1)
+            z = z.replace("^", "").replace("$", "")
+
+            ans = "{0}(\.({1}[0-9]*))?".format(miIntPart, x)
+            if int(miIntPart) + 1 <= int(maIntPart)-1:
+                ans += "|{0}(\.[0-9]+)?".format(z)
+            ans += "|{0}(\.({1}[0-9]*))?".format(maIntPart, y)
+            ans += "|{0}(\.{1}0*)?".format(maIntPart, max)
+
+            return ans;
+
+    def BuildPartRegEx(self):
+        result = ""
+        for alternative in self.alternatives:
+            if alternative != []:
+                m = re.match("^.+-+.+$", str(alternative))
+                if len(alternative) == 1 and m == None:
+                    result += "0" * (self.zeros - len(str(alternative[0])))
+                #    result += "0" * (self.zeros - len(alternative))
+                else:
+                    result += "0" * (self.zeros - len(alternative))
+                for element in alternative:
+                    result += element
+                result += "|"
+        return result[:-1];
 
     def calculateRegex(self, mi, ma):
         if mi == ma:
