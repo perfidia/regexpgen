@@ -51,12 +51,12 @@ class Test(unittest.TestCase):
 			scale = len(str(i))
 			self._runTest1(scale, False, False);
 			self._runTest1(scale, False, True);
-#			self._runTest1(scale, True, False);
-#			self._runTest1(scale, True, True);
+			self._runTest1(scale, True, False);
+			self._runTest1(scale, True, True);
 			self._runTest2(scale, False, False);
 			self._runTest2(scale, False, True);
-#			self._runTest2(scale, True, False);
-#			self._runTest2(scale, True, True);
+			self._runTest2(scale, True, False);
+			self._runTest2(scale, True, True);
 			print i
 
 	def _runTest1(self, scale, setMin, setMax):
@@ -91,7 +91,7 @@ class Test(unittest.TestCase):
  		rest = math.fabs(rest)
  		i = rangeLeft
  		if (setMin):
- 		 	while i <= min - 1:
+ 		 	while i < min:
 			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 			 	i = i + 1.05
 		while i <= max:
@@ -140,7 +140,7 @@ class Test(unittest.TestCase):
  		rest = math.fabs(rest)
  		i = rangeLeft
  		if (setMin):
- 		 	while i <= min - 1:
+ 		 	while i < min :
 			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 			 	i = i + 1.05
 		while i <= max:

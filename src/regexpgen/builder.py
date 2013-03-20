@@ -1,4 +1,5 @@
 import re
+import math
 
 class RegexBuilder(object):
     def __init__(self):
@@ -202,70 +203,44 @@ class RegexBuilder(object):
                     maxV = "9"*len(str(minV))
                 ans = self.calculateRealRegex(minV, maxV)
                 minV = int(maxV.split(".")[0]) + 1
-
                 ans2 = self.executeIntegerCalculation("%0d", minV, None)
-
                 return "^(-({0}({1})|{0}({2})\.[0-9]*))$".format(zeros, ans, ans2)
             else:
                 result = "-(" + zeros + "([1-9][0-9]*|0)(\.[0-9]+)?|0)"
-
                 minV = 0
                 ans = self.calculateRealRegex(minV, maxV)
-
                 result += "|-?(" + zeros + "({0}))".format(ans)
-
-
-              #  minV = maxV + 1
-               # maxV = None
-              #  self.CreateNNIntegerRegex(frmt, minV, maxV)
-               # result += "|-({0})".format(self.BuildRegEx())
                 return "^({0})$".format(result)
 
         if minV is not None and maxV is None:
-            maxV = -minV
-            minV = 0
-            self.calculateRegex(minV, maxV)
-            result = "-?({0})".format(self.BuildRegEx())
-            minV = maxV + 1
-            maxV = None
-            self.CreateNNIntegerRegex(frmt, minV, maxV)
-            result += "|{0}".format(self.BuildRegEx())
-            return "^({0})$".format(result)
+            if minV <=0:
+                result = "-{0}({1})".format(zeros, self.calculateRealRegex(0, -minV))
+                ans = self.executeIntegerCalculation("%0d", 0, None)
+                result += "|{0}({1})\.[0-9]+".format(zeros, ans)
+                return "^({0})$".format(result)
+            else:
+                ans = "{0}".format(self.calculateRealRegex(minV, minV+1))
+                ans2 = "{0}\.([0-9]+)".format(self.executeIntegerCalculation("%0d", int(math.floor(minV + 1)), None))
+                return "^({0}({1}|{2}))$".format(zeros, ans, ans2)
 
         if minV is not None and maxV is not None:
             if minV <= 0 and maxV <= 0:
                 tempMinV = minV
                 minV = -maxV
                 maxV = -tempMinV
-                self.calculateRegex(minV, maxV)
-                return "^-({0})$".format(self.BuildRegEx())
-            else: #n-, n+
-                if (-minV < maxV):
-                    mxV = maxV
-                    maxV = -minV
-                    minV = 0
-                    self.calculateRealRegex(minV, maxV)
-                    result = "-?({0})".format(self.BuildRegEx())
-                    minV = maxV + 1
-                    maxV = mxV
-                    self.calculateRealRegex(minV, maxV)
-                    result += "|{0}".format(self.BuildRegEx())
-                    return "^({0})$".format(result)
+                return "^-({0}({1}))$".format(zeros, self.calculateRealRegex(minV, maxV))
+            else:
+                if minV <= 0 and maxV >= 0:
+                    if math.fabs(minV) < maxV:
+                        result = "-?({0}({1}))".format(zeros,self.calculateRealRegex(0, -minV))
+                        result += "|{0}({1})".format(zeros,self.calculateRealRegex(-minV, maxV))
+                        return "^({0})$".format(result)
+                    else:
+                        result = "-?({0}({1}))".format(zeros,self.calculateRealRegex(0, maxV))
+                        result += "|-{0}({1})".format(zeros,self.calculateRealRegex(maxV, -minV))
+                        return "^({0}({1}))$".format(zeros, result)
                 else:
-                    mnV = minV
-                    minV = 0
-                    self.calculateRegex(minV, maxV)
-                    result = "-?({0})".format(self.BuildRegEx())
-                    minV = maxV + 1
-                    maxV = -mnV
-                    if minV <= maxV:
-                        self.calculateRegex(minV, maxV)
-                        result += "|-({0})".format(self.BuildRegEx())
-                    return "^({0})$".format(result)
-
-
-
-
+                    return "^({0}({1}))$".format(zeros, self.calculateRealRegex(minV, maxV))
 
     def CreateNNIntegerRegex(self, frmt, minV, maxV):
         m = re.match('%0([0-9]+)d', frmt)
@@ -367,7 +342,7 @@ class RegexBuilder(object):
             if int(miIntPart) + 1 < int(maIntPart)-1:
                 z = self.executeIntegerCalculation("%0d", int(miIntPart) + 1, int(maIntPart)-1)# tu inny format bo liczymy dla czsci cakowitych
             else:
-                z = ""
+                z = str(int(miIntPart) + 1)
 
             ans = "{0}(\.({1}[0-9]*))?".format(miIntPart, x)
             if int(miIntPart) + 1 <= int(maIntPart)-1:
