@@ -40,15 +40,20 @@ class Test(unittest.TestCase):
 #			self.assertEqual(re.match(regexp, str(i)), None)
 
 
+	def frange(self, x, y, jump):
+  		while x < y:
+  			yield x
+      		x += jump
+
 	def testDefault(self):
 		random.seed(3);
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-		#	self._runTest1(scale, False, False);
+			self._runTest1(scale, False, False);
 			self._runTest1(scale, False, True);
 #			self._runTest1(scale, True, False);
 #			self._runTest1(scale, True, True);
-#			self._runTest2(scale, False, False);
+			self._runTest2(scale, False, False);
 			self._runTest2(scale, False, True);
 #			self._runTest2(scale, True, False);
 #			self._runTest2(scale, True, True);
@@ -59,7 +64,7 @@ class Test(unittest.TestCase):
 		max = random.uniform(min, min + 5**scale) #zeby testowalo tez np -100 do -10
 
 		format = "%lf"
-		print None, max
+		#print None, max
 		regexp = regexpgen.real(format, min if setMin else None, max if setMax else None)
 		info = lambda value: self._getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
@@ -83,12 +88,13 @@ class Test(unittest.TestCase):
 			rangeRight = 100
 
  		rest = min - int(min)
+ 		rest = math.fabs(rest)
+ 		i = rangeLeft
  		if (setMin):
- 		 	for i in xrange(int(rangeLeft), int(min) - 1):
- 		 		i = i + rest
+ 		 	while i <= min - 1:
 			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
-		for i in xrange(int(min), int(max)):
-			i = i + rest
+			 	i = i + 1.05
+		while i <= max:
 			if i >= 0:
 				a = "0" + str(i); b = "00" + str(i); c = "000" + str(i); d = "0000" + str(i);
 			else:
@@ -98,10 +104,11 @@ class Test(unittest.TestCase):
 			self.assertTrue(re.match(regexp, b), info(b))
 			self.assertTrue(re.match(regexp, c), info(c))
 			self.assertTrue(re.match(regexp, d), info(d))
+			i = i + 1.05
 		if (setMax):
-			for i in xrange(int(max)+1, int(rangeRight)):
-				i = i + rest
+			while i <= rangeRight:
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
+				i = i + 1.05
 
 	def _runTest2(self, scale, setMin, setMax):
 		min = random.uniform(-1*(10**scale), 10**scale)
@@ -130,12 +137,14 @@ class Test(unittest.TestCase):
 			rangeRight = 100
 
  		rest = min - int(min)
+ 		rest = math.fabs(rest)
+ 		i = rangeLeft
  		if (setMin):
- 		 	for i in xrange(int(rangeLeft), int(min) - 1):
- 		 		i = i + rest
+ 		 	while i <= min - 1:
 			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
-		for i in xrange(int(min), int(max)):
-			i = i + rest
+			 	i = i + 1.05
+		while i <= max:
+			#print int(min), int(max)
 			if i >= 0:
 				a = "0" + str(i); b = "00" + str(i); c = "000" + str(i); d = "0000" + str(i);
 			else:
@@ -145,10 +154,11 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, b), info(b))
 			self.assertFalse(re.match(regexp, c), info(c))
 			self.assertFalse(re.match(regexp, d), info(d))
+			i = i + 1.05
 		if (setMax):
-			for i in xrange(int(max)+1, int(rangeRight)):
-				i = i + rest
+			while i <= rangeRight:
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
+				i = i + 1.05
 
 	def _getInfo(self, i, regexp, format, min, max):
 		return "Failed! Number: {0}, min: {1}, max: {2}, format: {3}, regexp: {4}".format(i, str(min), str(max), format, regexp)

@@ -171,6 +171,10 @@ class RegexBuilder(object):
 #wiec jak chcemy dac np min=5, a max=None to trzeba recznie zrobic od 5 do 9 a potem do tego dopisac [1-9][0-9]+
 #oprocz tego te uwagi ktore mielismy, czyli nazwy metod, zbedne pliki powywalac itd
 
+    def executeIntegerCalculation(self, frmt, minV, maxV):
+        b = RegexBuilder()
+        return b.CreateIntegerRegex(frmt, minV, maxV).replace("^", "").replace("$", "")
+
     def CreateRealRegex(self, frmt, minV, maxV):
         self.alternatives = [[]]
         self.currentIndex = 0
@@ -185,7 +189,7 @@ class RegexBuilder(object):
             if frmt == "%lf":
                 self.AddElement("-?([0-9]+(\.[0-9]+|0)?)")
             if frmt == "%0lf":
-                self.AddElement("-?([1-9][0-9]*(\.[0-9]+)?|0)")
+                self.AddElement("-?(([1-9][0-9]*|0)(\.[0-9]+)?)")
             return "^({0})$".format(self.BuildRegEx())
 
         if minV is None and maxV is not None:
@@ -199,11 +203,11 @@ class RegexBuilder(object):
                 ans = self.calculateRealRegex(minV, maxV)
                 minV = int(maxV.split(".")[0]) + 1
 
-                self.CreateIntegerRegex("%0d", minV, None)
+                ans2 = self.executeIntegerCalculation("%0d", minV, None)
 
-                return "^(-((" + zeros + "{0})|("+zeros+"{1})))$".format(ans, self.BuildPartRegEx())
+                return "^(-({0}({1})|{0}({2})\.[0-9]*))$".format(zeros, ans, ans2)
             else:
-                result = "-(" + zeros + "[1-9][0-9]*(\.[0-9]+)?|0)"
+                result = "-(" + zeros + "([1-9][0-9]*|0)(\.[0-9]+)?|0)"
 
                 minV = 0
                 ans = self.calculateRealRegex(minV, maxV)
@@ -354,17 +358,16 @@ class RegexBuilder(object):
         format =  "%0" + str(len(max))+ "d"
 
         if miIntPart == maIntPart:
-            print format, min, str(int(max)-1)
-            x = self.CreateIntegerRegex(format, int(min), int(max)-1)
-            x = x.replace("^", "").replace("$", "")
+            #print format, min, str(int(max)-1)
+            x = self.executeIntegerCalculation(format, int(min), int(max)-1)
             return "{0}\.({1}[0-9]*|{2}0*)?".format(miIntPart, x, max)
         else:
-            x = self.CreateIntegerRegex(format, int(min), "9"*len(min))
-            x = x.replace("^", "").replace("$", "")
-            y = self.CreateIntegerRegex(format, 0, int(max) - 1)
-            y = y.replace("^", "").replace("$", "")
-            z = self.CreateIntegerRegex(format, int(miIntPart) + 1, int(maIntPart)-1)
-            z = z.replace("^", "").replace("$", "")
+            x = self.executeIntegerCalculation(format, int(min), "9"*len(min)).replace("[0-9]", "")
+            y = self.executeIntegerCalculation(format, 0, int(max) - 1).replace("[0-9]", "")
+            if int(miIntPart) + 1 < int(maIntPart)-1:
+                z = self.executeIntegerCalculation("%0d", int(miIntPart) + 1, int(maIntPart)-1)# tu inny format bo liczymy dla czsci cakowitych
+            else:
+                z = ""
 
             ans = "{0}(\.({1}[0-9]*))?".format(miIntPart, x)
             if int(miIntPart) + 1 <= int(maIntPart)-1:
