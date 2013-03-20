@@ -17,18 +17,18 @@ class Test(unittest.TestCase):
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self._runTest1(scale, False, False);
-			self._runTest1(scale, False, True);
-			self._runTest1(scale, True, False);
-			self._runTest1(scale, True, True);
-			self._runTest2(scale, False, False);
-			self._runTest2(scale, False, True);
-			self._runTest2(scale, True, False);
-			self._runTest2(scale, True, True);
-			self._runTest3(scale, False, False);
-			self._runTest3(scale, False, True);
-			self._runTest3(scale, True, False);
-			self._runTest3(scale, True, True);
+			self.__runTest1(scale, False, False);
+			self.__runTest1(scale, False, True);
+			self.__runTest1(scale, True, False);
+			self.__runTest1(scale, True, True);
+			self.__runTest2(scale, False, False);
+			self.__runTest2(scale, False, True);
+			self.__runTest2(scale, True, False);
+			self.__runTest2(scale, True, True);
+			self.__runTest3(scale, False, False);
+			self.__runTest3(scale, False, True);
+			self.__runTest3(scale, True, False);
+			self.__runTest3(scale, True, True);
 			print i
 
 	def __runTest1(self, scale, setMin, setMax):
@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
 		max = random.randint(min, min + 5**scale) #zeby testowalo tez np -100 do -10
 		format = "%d"
 		regexp = regexpgen.integer(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self.__getInfo__(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
 		if min < 0 and max < 0:
 			rangeLeft = min*2
@@ -79,7 +79,7 @@ class Test(unittest.TestCase):
 		max = random.randint(min, min + 5**scale) #zeby testowalo tez np -100 do -10
 		format = "%0d"
 		regexp = regexpgen.integer(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self.__getInfo__(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
 		if min < 0 and max < 0:
 			rangeLeft = min*2
@@ -123,7 +123,7 @@ class Test(unittest.TestCase):
 		max = random.randint(min, min + 5**scale) #zeby testowalo tez np -100 do -10
 		format = "%0{0}d".format(scale)
 		regexp = regexpgen.integer(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self.__getInfo__(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
 		if min < 0 and max < 0:
 			rangeLeft = min*2

@@ -17,18 +17,18 @@ class Test(unittest.TestCase):
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self.__runTest1__(scale, False, False);
-			self.__runTest1__(scale, False, True);
-			self.__runTest1__(scale, True, False);
-			self.__runTest1__(scale, True, True);
-			self.__runTest2__(scale, False, False);
-			self.__runTest2__(scale, False, True);
-			self.__runTest2__(scale, True, False);
-			self.__runTest2__(scale, True, True);
-			self.__runTest3__(scale, False, False);
-			self.__runTest3__(scale, False, True);
-			self.__runTest3__(scale, True, False);
-			self.__runTest3__(scale, True, True);
+			self.__runTest1(scale, False, False);
+			self.__runTest1(scale, False, True);
+			self.__runTest1(scale, True, False);
+			self.__runTest1(scale, True, True);
+			self.__runTest2(scale, False, False);
+			self.__runTest2(scale, False, True);
+			self.__runTest2(scale, True, False);
+			self.__runTest2(scale, True, True);
+			self.__runTest3(scale, False, False);
+			self.__runTest3(scale, False, True);
+			self.__runTest3(scale, True, False);
+			self.__runTest3(scale, True, True);
 			print i
 
 	def __runTest1(self, scale, setMin, setMax):
@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
 		max = random.randint(min, min + 10**scale)
 		format = "%d"
 		regexp = regexpgen.nnint(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self.__getInfo__(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 		for i in xrange(-max * 2, -1):
 			self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 		for i in xrange(0, min - 1):
@@ -57,7 +57,7 @@ class Test(unittest.TestCase):
 		max = random.randint(min, min + 10**scale)
 		format = "%0d"
 		regexp = regexpgen.nnint(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self.__getInfo__(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 		for i in xrange(-max * 2, -1):
 			self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 		for i in xrange(0, min - 1):
@@ -79,7 +79,7 @@ class Test(unittest.TestCase):
 		max = random.randint(min, min + 10**scale)
 		format = "%0{0}d".format(scale)
 		regexp = regexpgen.nnint(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self.__getInfo__(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 		for i in xrange(-max * 2, -1):
 			a = "-" + getZeros(i) + str(math.fabs(i));
 			self.assertFalse(re.match(regexp, str(i)), info(str(i)))

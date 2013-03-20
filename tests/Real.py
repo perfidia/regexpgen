@@ -17,14 +17,14 @@ class Test(unittest.TestCase):
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self._runTest1(scale, False, False);
-			self._runTest1(scale, False, True);
-			self._runTest1(scale, True, False);
-			self._runTest1(scale, True, True);
-			self._runTest2(scale, False, False);
-			self._runTest2(scale, False, True);
-			self._runTest2(scale, True, False);
-			self._runTest2(scale, True, True);
+			self.__runTest1(scale, False, False);
+			self.__runTest1(scale, False, True);
+			self.__runTest1(scale, True, False);
+			self.__runTest1(scale, True, True);
+			self.__runTest2(scale, False, False);
+			self.__runTest2(scale, False, True);
+			self.__runTest2(scale, True, False);
+			self.__runTest2(scale, True, True);
 			print i
 
 	def __runTest1(self, scale, setMin, setMax):
@@ -33,7 +33,7 @@ class Test(unittest.TestCase):
 
 		format = "%lf"
 		regexp = regexpgen.real(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self._getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
 		if min < 0 and max < 0:
 			rangeLeft = min*2
@@ -82,7 +82,7 @@ class Test(unittest.TestCase):
 		max = random.uniform(min, min + 5**scale)
 		format = "%0lf"
 		regexp = regexpgen.real(format, min if setMin else None, max if setMax else None)
-		info = lambda value: self._getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
+		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
 		if min < 0 and max < 0:
 			rangeLeft = min*2
