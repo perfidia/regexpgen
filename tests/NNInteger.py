@@ -1,8 +1,9 @@
 '''
 Created on Mar 16, 2012
 
-@author: Bartosz Alchimowicz
+@authors: Joanna Binczewska, Dawid Kowalski
 '''
+
 import unittest
 import regexpgen
 import re
@@ -30,7 +31,7 @@ class Test(unittest.TestCase):
 			self.__runTest3__(scale, True, True);
 			print i
 
-	def __runTest1__(self, scale, setMin, setMax):
+	def __runTest1(self, scale, setMin, setMax):
 		min = random.randint(0, 10**scale) if setMin else 0
 		max = random.randint(min, min + 10**scale)
 		format = "%d"
@@ -51,7 +52,7 @@ class Test(unittest.TestCase):
 			for i in xrange(max+1, max * 2):
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
 
-	def __runTest2__(self, scale, setMin, setMax):
+	def __runTest2(self, scale, setMin, setMax):
 		min = random.randint(0, 10**scale) if setMin else 0
 		max = random.randint(min, min + 10**scale)
 		format = "%0d"
@@ -72,7 +73,7 @@ class Test(unittest.TestCase):
 			for i in xrange(max+1, max * 2):
 				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 
-	def __runTest3__(self, scale, setMin, setMax):
+	def __runTest3(self, scale, setMin, setMax):
 		getZeros = lambda x: (scale - len(str(x)))*"0"
 		min = random.randint(0, 10**scale) if setMin else 0
 		max = random.randint(min, min + 10**scale)
@@ -103,7 +104,7 @@ class Test(unittest.TestCase):
 				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 				self.assertFalse(re.match(regexp, a), info(a))
 
-	def __getInfo__(self, i, regexp, format, min, max):
+	def __getInfo(self, i, regexp, format, min, max):
 		return "Failed! Number: {0}, min: {1}, max: {2}, format: {3}, regexp: {4}".format(i, str(min), str(max), format, regexp)
 
 
