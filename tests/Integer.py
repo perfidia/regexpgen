@@ -57,9 +57,9 @@ class Test(unittest.TestCase):
 			rangeLeft = -100
 			rangeRight = 100
 
- 		if (setMin):
- 		 	for i in xrange(rangeLeft, min - 1):
-			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
+		if setMin:
+			for i in xrange(rangeLeft, min - 1):
+				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 		for i in xrange(min, max):
 			if i >= 0:
 				a = "0" + str(i); b = "00" + str(i); c = "000" + str(i); d = "0000" + str(i);
@@ -70,7 +70,7 @@ class Test(unittest.TestCase):
 			self.assertTrue(re.match(regexp, b), info(b))
 			self.assertTrue(re.match(regexp, c), info(c))
 			self.assertTrue(re.match(regexp, d), info(d))
-		if (setMax):
+		if setMax:
 			for i in xrange(max+1, rangeRight):
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
 
@@ -100,7 +100,7 @@ class Test(unittest.TestCase):
 			rangeLeft = -100
 			rangeRight = 100
 
- 		if (setMin):
+		if setMin:
  		 	for i in xrange(rangeLeft, min - 1):
 			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 		for i in xrange(min, max):
@@ -113,7 +113,7 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, b), info(b))
 			self.assertFalse(re.match(regexp, c), info(c))
 			self.assertFalse(re.match(regexp, d), info(d))
-		if (setMax):
+		if setMax:
 			for i in xrange(max+1, rangeRight):
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
 
@@ -144,7 +144,7 @@ class Test(unittest.TestCase):
 			rangeLeft = -100
 			rangeRight = 100
 
-		if (setMin):
+		if setMin:
 			for i in xrange(rangeLeft, min - 1):
 				if i < 0:
 					a = "-" + getZeros(int(math.fabs(i))) + str(int(math.fabs(i)))
@@ -153,7 +153,7 @@ class Test(unittest.TestCase):
 				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 				self.assertFalse(re.match(regexp, a), info(a))
 		for i in xrange(min, max):
-			if (len(str(i)) > scale):
+			if len(str(i)) > scale:
 				break
 			zeros = getZeros(int(math.fabs(i)))
 			if i < 0:
@@ -163,13 +163,13 @@ class Test(unittest.TestCase):
 				a = zeros + str(i); b = zeros + "0" + str(i)
 			self.assertTrue(re.match(regexp, a), info(a))
 			self.assertFalse(re.match(regexp, b), info(b))
-			if (len(zeros) > 0):
+			if len(zeros) > 0:
 				if i < 0:
 					c = "-" + zeros[:-1] + str(int(math.fabs(i))) #cuts last zero
 				else:
 					c = zeros[:-1] + str(i) #cuts last zero
 				self.assertFalse(re.match(regexp, c), info(c))
-		if (setMax):
+		if setMax:
 			for i in xrange(max+1, rangeRight):
 				if i < 0:
 					a = "-" + getZeros(int(math.fabs(i))) + str(int(math.fabs(i)))

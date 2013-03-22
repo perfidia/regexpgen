@@ -21,8 +21,8 @@ class RegexBuilder(object):
         self.setBase = True
 
     def __startNextAlternative(self):
-        if (len(self.alternatives[self.currentIndex]) == 0):
-            return;
+        if len(self.alternatives[self.currentIndex]) == 0:
+            return
         self.alternatives.append([])
         self.currentIndex = self.currentIndex + 1
 
@@ -56,7 +56,7 @@ class RegexBuilder(object):
                 for element in alternative:
                     result += element
                 result += "|"
-        return self.base.format(result[:-1]);
+        return self.base.format(result[:-1])
 
     def __addRange(self, mi, ma):
         if mi == ma:
@@ -79,10 +79,10 @@ class RegexBuilder(object):
             self.createNNIntegerRegex(frmt, minV, maxV)
             return "^({0})$".format(self.__buildRegEx())
         m = re.match('%0([0-9]+)d', frmt)
-        if (m):
+        if m:
             self.zeros = int(m.group(1))
         self.alternatives = [[]]
-        self.currentIndex = 0;
+        self.currentIndex = 0
         self.base = "{0}"
 
         #%0Xd
@@ -140,7 +140,7 @@ class RegexBuilder(object):
                 self.__calculateRegex(minV, maxV)
                 return "^-({0})$".format(self.__buildRegEx())
             else: #n-, n+
-                if (-minV < maxV):
+                if -minV < maxV:
                     mxV = maxV
                     maxV = -minV
                     minV = 0
@@ -235,12 +235,12 @@ class RegexBuilder(object):
 
     def createNNIntegerRegex(self, frmt, minV, maxV):
         m = re.match('%0([0-9]+)d', frmt)
-        if (m):
+        if m:
             self.zeros = int(m.group(1))
         self.alternatives = [[]]
         self.currentIndex = 0
         self.format = frmt
-        self.__setNNRegExpBase();
+        self.__setNNRegExpBase()
 
         #%d
         if frmt == "%d" and minV is None and maxV is not None:
@@ -258,7 +258,7 @@ class RegexBuilder(object):
 
         #%0d
         if frmt == "%0d" and minV is None and maxV is None:
-            if (self.zeros == 0):
+            if self.zeros == 0:
                 self.__addElement("[1-9][0-9]*|0")
             else:
                 multiple = "" if self.zeros == 1 else "{{{0}}}".format(str(self.zeros))
@@ -328,7 +328,11 @@ class RegexBuilder(object):
             return "{0}\.({1}[0-9]*|{2}0*)?".format(miIntPart, x, max)
         else:
             x = self.__executeIntegerCalculation(format, int(min), "9"*len(min)).replace("[0-9]", "")
-            y = self.__executeIntegerCalculation(format, 0, int(max) - 1).replace("[0-9]", "")
+            if int(max) != 0:
+                y = self.__executeIntegerCalculation(format, 0, int(max) - 1).replace("[0-9]", "")
+            else:
+                y = None
+
             if int(miIntPart) + 1 < int(maIntPart)-1:
                 z = self.__executeIntegerCalculation("%0d", int(miIntPart) + 1, int(maIntPart)-1)
             else:
@@ -337,10 +341,11 @@ class RegexBuilder(object):
             ans = "{0}(\.({1}[0-9]*))?".format(miIntPart, x)
             if int(miIntPart) + 1 <= int(maIntPart)-1:
                 ans += "|{0}(\.[0-9]+)?".format(z)
-            ans += "|{0}(\.({1}[0-9]*))?".format(maIntPart, y)
+            if y != None:
+                ans += "|{0}(\.({1}[0-9]*))?".format(maIntPart, y)
             ans += "|{0}(\.{1}0*)?".format(maIntPart, max)
 
-            return ans;
+            return ans
 
     def __buildPartRegEx(self):
         result = ""
@@ -354,7 +359,7 @@ class RegexBuilder(object):
                 for element in alternative:
                     result += element
                 result += "|"
-        return result[:-1];
+        return result[:-1]
 
     def __calculateRegex(self, mi, ma):
         if mi == ma:
@@ -396,7 +401,7 @@ class RegexBuilder(object):
                 while lastIndex >= 0:
                     trailing = l - lastIndex - 1                        #how many digits after current one
                     nextNines = left[0:lastIndex][::-1]                 #reversed digits before current one
-                    i = 0;
+                    i = 0
                     while i < len(nextNines) and nextNines[i] == '9':
                         i += 1
                     right = left[0:lastIndex] + '9' + '9'*trailing
@@ -414,7 +419,7 @@ class RegexBuilder(object):
                     else:
                         trailing = l - lastIndex - 1
                         nextNines = left[0:lastIndex][::-1]
-                        i = 0;
+                        i = 0
                         while i < len(nextNines) and nextNines[i] == '9':
                             i += 1
                         right = left[0:lastIndex] + '9' + '9'*trailing
@@ -438,7 +443,7 @@ class RegexBuilder(object):
                         else:
                             trailing = len(left) - lastIndex - 1
                             nextNines = left[0:lastIndex][::-1]
-                            i = 0;
+                            i = 0
                             while i < len(nextNines) and nextNines[i] == '9':
                                 i += 1
                             right = left[0:lastIndex] + '9' + '9'*trailing
@@ -488,7 +493,8 @@ class RegexBuilder(object):
         newNumber = ma
         if self.zeros != 0 and len(str(ma)) != self.zeros:
             newNumber = (self.zeros - len(str(ma)))* "0" + str(ma)
-        m = re.match("^(" + self.__buildRegEx() + ")$", str(newNumber))
+        xeas = self.__buildRegEx()
+        m = re.match("^(" + xeas + ")$", str(newNumber))
         if m == None:
             self.__addRange(ma, ma)
             self.__startNextAlternative()

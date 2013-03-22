@@ -48,7 +48,7 @@ class Test(unittest.TestCase):
 			self.assertTrue(re.match(regexp, b), info(b))
 			self.assertTrue(re.match(regexp, c), info(c))
 			self.assertTrue(re.match(regexp, d), info(d))
-		if (setMax):
+		if setMax:
 			for i in xrange(max+1, max * 2):
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
 
@@ -69,7 +69,7 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, b), info(b))
 			self.assertFalse(re.match(regexp, c), info(c))
 			self.assertFalse(re.match(regexp, d), info(d))
-		if (setMax):
+		if setMax:
 			for i in xrange(max+1, max * 2):
 				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 
@@ -89,16 +89,16 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 			self.assertFalse(re.match(regexp, a), info(a))
 		for i in xrange(min, max):
-			if (len(str(i)) > scale):
+			if len(str(i)) > scale:
 				break
 			zeros = getZeros(i)
 			a = zeros + str(i); b = zeros + "0" + str(i);
 			self.assertTrue(re.match(regexp, a), info(a))
 			self.assertFalse(re.match(regexp, b), info(b))
-			if (len(zeros) > 0):
+			if len(zeros) > 0:
 				c = zeros[:-1] + str(i) #cuts last zero
 				self.assertFalse(re.match(regexp, c), info(c))
-		if (setMax):
+		if setMax:
 			for i in xrange(max+1, max * 2):
 				a = getZeros(i) + str(i)
 				self.assertFalse(re.match(regexp, str(i)), info(str(i)))

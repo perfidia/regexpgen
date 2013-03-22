@@ -5,6 +5,7 @@ Set of functions to generate regular expressions from a pattern similar to print
 '''
 
 import builder
+import re
 #import mdate, mtime, mdatetime
 
 def nnint(format, min = None, max = None, matchStartEnd = True):
@@ -22,10 +23,23 @@ def nnint(format, min = None, max = None, matchStartEnd = True):
 
 	format jak dla interger
 	"""
+	try:
+		if min is not None:
+			if str(min) != str(int(min)):
+				raise
+		if max is not None:
+			if str(max) != str(int(max)):
+				raise
+	except:
+		raise ValueError("Bad input")
+
+	if (format not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", format):
+		raise ValueError("Bad format")
+
 	if (min is not None) and (max is not None) and (min>max):
-		raise Exception("Invalid parameters (min>max)")
-	if (max is not None) and (max < 0):
-		raise Exception("Invalid parameters (max<0)")
+		raise ValueError("Invalid parameters (min>max)")
+	if (min is not None) and (min < 0):
+		raise ValueError("Invalid parameters (min<0)")
 
 	b = builder.RegexBuilder()
 	return b.createNNIntegerRegex(format, min, max)
@@ -60,15 +74,26 @@ def integer(format, min = None, max = None, matchStartEnd = True):
 	przykłady poprawne dla %04d: 0001, 45678
 	przykłady niepoprawne dla %04d: 00011, 11
 	"""
+	try:
+		if min is not None:
+			int(min)
+		if max is not None:
+			int(max)
+	except:
+		raise ValueError("Bad input")
+
+	if (format not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", format):
+		raise ValueError("Bad format")
+
 	if (min is not None) and (max is not None) and (min>max):
-		raise Exception("Invalid parameters (min>max)")
+		raise ValueError("Invalid parameters (min>max)")
 
 	b = builder.RegexBuilder()
 	return b.createIntegerRegex(format, min, max)
 
 def real(format, min = None, max = None, matchStartEnd = True):
 	'''
-	Generowanie wyrażenie regularnego dla liczba reczywistych.
+	Generowanie wyrażenie regularnego dla liczba rzeczywistych.
 
 	Supported format:
 
@@ -101,19 +126,27 @@ def real(format, min = None, max = None, matchStartEnd = True):
 	przykłady poprawne dla %5.2lf: 22.1, 111.122
 	'''
 
+	try:
+		if min is not None:
+			float(min)
+		if max is not None:
+			float(max)
+	except:
+		raise ValueError("Bad input")
+
 	if (min is not None) and (max is not None) and (min>max):
-		raise Exception("Invalid parameters (min>max)")
-	if (format not in ["%lf", "%0lf"]):
-		raise Exception("unsupported format")
+		raise ValueError("Invalid parameters (min>max)")
+	if format not in ["%lf", "%0lf"]:
+		raise ValueError("Bad format")
 
 	b = builder.RegexBuilder()
 	return  b.createRealRegex(format, min, max)
 
 def ip(min1 = 0, max1 = 255, min2 = 0, max2 = 255, min3 = 0, max3 = 255, min4 = 0, max4 = 255, separator = "\."):
 	if min1 > max1 or min2 > max2 or min3 > max3 or min4 > max4:
-		raise Exception("Invalid parameters (min > max)")
+		raise ValueError("Invalid parameters (min > max)")
 	if (min1 < 0 or min1 > 255 or min2 < 0 or min2 > 255 or min3 < 0 or min3 > 255 or min4 < 0 or min4 > 255):
-		raise Exception("Invalid parameters (must be between o and 255)")
+		raise ValueError("Invalid parameters (must be between o and 255)")
 
 	ans = ""
 

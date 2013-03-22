@@ -54,13 +54,13 @@ class Test(unittest.TestCase):
 			rangeLeft = -100
 			rangeRight = 100
 
- 		rest = min - int(min)
- 		rest = math.fabs(rest)
- 		i = rangeLeft
- 		if (setMin):
- 		 	while i < min:
-			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
-			 	i = i + 1.05
+		rest = min - int(min)
+		rest = math.fabs(rest)
+		i = rangeLeft
+		if setMin:
+			while i < min:
+				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
+				i = i + 1.05
 		while i <= max:
 			if i >= 0:
 				a = "0" + str(i); b = "00" + str(i); c = "000" + str(i); d = "0000" + str(i);
@@ -72,7 +72,7 @@ class Test(unittest.TestCase):
 			self.assertTrue(re.match(regexp, c), info(c))
 			self.assertTrue(re.match(regexp, d), info(d))
 			i = i + 1.05
-		if (setMax):
+		if setMax:
 			while i <= rangeRight:
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
 				i = i + 1.05
@@ -104,11 +104,11 @@ class Test(unittest.TestCase):
 			rangeRight = 100
 
  		rest = min - int(min)
- 		rest = math.fabs(rest)
- 		i = rangeLeft
- 		if (setMin):
- 		 	while i < min :
-			 	self.assertFalse(re.match(regexp, str(i)), info(str(i)))
+		rest = math.fabs(rest)
+		i = rangeLeft
+		if setMin:
+			while i < min :
+				self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 			 	i = i + 1.05
 		while i <= max:
 			if i >= 0:
@@ -121,18 +121,13 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, c), info(c))
 			self.assertFalse(re.match(regexp, d), info(d))
 			i = i + 1.05
-		if (setMax):
+		if setMax:
 			while i <= rangeRight:
 				self.assertFalse(re.search(regexp, str(i)), info(str(i)))
 				i = i + 1.05
 
 	def __getInfo(self, i, regexp, format, min, max):
 		return "Failed! Number: {0}, min: {1}, max: {2}, format: {3}, regexp: {4}".format(i, str(min), str(max), format, regexp)
-
-	def __frange(self, x, y, jump):
-  		while x < y:
-  			yield x
-      		x += jump
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']
