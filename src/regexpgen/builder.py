@@ -265,7 +265,7 @@ class RegexBuilder(object):
                 return "^({0})$".format(result)
 
         if minV is not None and maxV is None:
-            if minV <=0:
+            if minV <0:
                 result = "-{0}({1})".format(zeros, self.calculateRealRegex(0, -minV, digitsReal))
                 ans = self.__executeIntegerCalculation("%0d", 0, None)
                 result += "|{0}({1})\.{2}".format(zeros, ans, endingReal)
