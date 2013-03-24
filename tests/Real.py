@@ -17,14 +17,14 @@ class Test(unittest.TestCase):
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self.__runTest1(scale, False, False);
-			self.__runTest1(scale, False, True);
-			self.__runTest1(scale, True, False);
-			self.__runTest1(scale, True, True);
-			self.__runTest2(scale, False, False);
-			self.__runTest2(scale, False, True);
-			self.__runTest2(scale, True, False);
-			self.__runTest2(scale, True, True);
+#			self.__runTest1(scale, False, False);
+#			self.__runTest1(scale, False, True);
+#			self.__runTest1(scale, True, False);
+#			self.__runTest1(scale, True, True);
+#			self.__runTest2(scale, False, False);
+#			self.__runTest2(scale, False, True);
+#			self.__runTest2(scale, True, False);
+#			self.__runTest2(scale, True, True);
 			self.__runTest3(scale, False, False);
 			self.__runTest3(scale, False, True);
 			self.__runTest3(scale, True, False);
@@ -100,13 +100,13 @@ class Test(unittest.TestCase):
 		min = random.uniform(-1*(10**scale), 10**scale)
 		max = random.uniform(min, min + 5**scale)
 		format = "%0.{0}lf".format(scale)
+		min = float(self.__sliceFloat(min, scale))
+		max = float(self.__sliceFloat(max, scale))
 		regexp = regexpgen.real(format, min if setMin else None, max if setMax else None)
 		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 
 		(rangeLeft, rangeRight) = self.__getRanges(min, max)
 
- 		rest = min - int(min)
-		rest = math.fabs(rest)
 		i = rangeLeft
 		if setMin:
 			while i < min :
@@ -157,9 +157,14 @@ class Test(unittest.TestCase):
 		else:
 			x = splitted[1]
 
-		return float(splitted[0] + "." + x)
+		if x == "":
+			return splitted[0]
+
+		return splitted[0] + "." + x
 
 	def __getRanges(self, min, max):
+		min = float(min)
+		max = float(max)
 		if min < 0 and max < 0:
 			rangeLeft = min*2
 			rangeRight = -min*2
