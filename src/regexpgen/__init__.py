@@ -136,8 +136,8 @@ def real(format, min = None, max = None, matchStartEnd = True):
 
 	if (min is not None) and (max is not None) and (min>max):
 		raise ValueError("Invalid parameters (min>max)")
-	if format not in ["%lf", "%0lf"]:
-		raise ValueError("Bad format")
+#	if format not in ["%lf", "%0lf"]:
+#		raise ValueError("Bad format")
 
 	b = builder.RegexBuilder()
 	return  b.createRealRegex(format, min, max)

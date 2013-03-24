@@ -17,14 +17,14 @@ class Test(unittest.TestCase):
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-#			self.__runTest1(scale, False, False);
-#			self.__runTest1(scale, False, True);
-#			self.__runTest1(scale, True, False);
-#			self.__runTest1(scale, True, True);
-#			self.__runTest2(scale, False, False);
-#			self.__runTest2(scale, False, True);
-#			self.__runTest2(scale, True, False);
-#			self.__runTest2(scale, True, True);
+			self.__runTest1(scale, False, False);
+			self.__runTest1(scale, False, True);
+			self.__runTest1(scale, True, False);
+			self.__runTest1(scale, True, True);
+			self.__runTest2(scale, False, False);
+			self.__runTest2(scale, False, True);
+			self.__runTest2(scale, True, False);
+			self.__runTest2(scale, True, True);
 			self.__runTest3(scale, False, False);
 			self.__runTest3(scale, False, True);
 			self.__runTest3(scale, True, False);
@@ -128,8 +128,8 @@ class Test(unittest.TestCase):
 			z = self.__sliceFloat(i, scale + 1)
 
 			self.assertTrue(re.match(regexp, str(y)), info(str(y)))
-			if (x != y):
-				self.assertFalse(re.match(regexp, str(x)), info(str(x)))
+			#if (x != y):
+			#	self.assertFalse(re.match(regexp, str(x)), info(str(x)))
 
 			self.assertFalse(re.match(regexp, str(z)), info(str(z)))
 			self.assertFalse(re.match(regexp, a), info(a))
@@ -138,6 +138,7 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, d), info(d))
 			i = i + 1.05
 		if setMax:
+			i = i + 1.05
 			while i <= rangeRight:
 				x = self.__sliceFloat(i, scale - 1 if scale > 0 else 0)
 				y = self.__sliceFloat(i, scale)
