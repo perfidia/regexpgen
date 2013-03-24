@@ -1,7 +1,7 @@
 '''
 Created on Apr 27, 2011
 
-@author: Bartosz Alchimowicz
+@authors: Joanna Binczewska, Dawid Kowalski
 '''
 
 import regexpgen

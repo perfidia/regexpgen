@@ -109,7 +109,7 @@ class Test(unittest.TestCase):
 
 		i = rangeLeft
 		if setMin:
-			while i < min :
+			while i < min - 1.05:
 				x = self.__sliceFloat(i, scale - 1 if scale > 0 else 0)
 				y = self.__sliceFloat(i, scale)
 				z = self.__sliceFloat(i, scale + 1)
@@ -117,6 +117,7 @@ class Test(unittest.TestCase):
 				self.assertFalse(re.match(regexp, str(y)), info(str(y)))
 				self.assertFalse(re.match(regexp, str(z)), info(str(z)))
 			 	i = i + 1.05
+			i = i + 1.05
 		while i <= max:
 			if i >= 0:
 				a = "0" + str(i); b = "00" + str(i); c = "000" + str(i); d = "0000" + str(i);

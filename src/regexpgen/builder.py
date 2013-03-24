@@ -241,7 +241,7 @@ class RegexBuilder(object):
                 minV = -maxV
                 splitted = str(minV).split(".")
                 if len(splitted) > 1:
-                    maxV = "{0}.{1}".format(len(splitted[0])*"9", len(splitted[1])*"9")
+                    maxV = "{0}.{1}".format(len(splitted[0])*"9", len(splitted[1])*"9" if digitsReal == None else digitsReal*"9")
                 else:
                     maxV = "9"*len(str(minV))
                 ans = self.calculateRealRegex(minV, maxV, digitsReal)
