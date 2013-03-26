@@ -181,26 +181,22 @@ class RegexBuilder(object):
 
         #%0.Ylf zera wiodace niedozwolone lub '%X.Ylf'
         m = re.match('%0\.([0-9]+)lf', frmt)
-
         if m:
             digitsReal = int(m.group(1))
 
-        m = re.match('%*([1-9]+)\.([0-9]+)lf', frmt)
-
+        m = re.match('%([1-9]+)\.([0-9]+)lf', frmt)
         if m:
             digitsReal = int(m.group(2))
 
         #%.Ylf zera wiodace dozwolone
         m = re.match('%\.([0-9]+)lf', frmt)
-
         if m:
-            self.base = "0*({0})"
+            self.base = "{0}"
             zeros = "0*"
             digitsReal = int(m.group(1))
 
         #%0X.Ylf
         m = re.match('%0([0-9]+)\.([0-9]+)lf', frmt)
-
         if m:
             digitsAll = int(m.group(1))
             digitsReal = int(m.group(2))
@@ -208,16 +204,14 @@ class RegexBuilder(object):
             if digitsAll > digitsReal:
                 digitsAll = digitsReal - digitsAll - 1
 
-#        if minV is not None and len(str(minV).split(".")[1]) < digitsReal:
-#            minV = str(minV) + "0"*(digitsReal - len(str(minV).split(".")[1]))
-#
-#        if maxV is not None and len(str(maxV).split(".")[1]) < digitsReal:
-#            maxV = str(maxV) + "0"*(digitsReal - len(str(maxV).split(".")[1]))
+        if digitsReal != None:
+            if (minV != None and len(str(minV).split(".")[1]) > digitsReal) or (maxV != None and len(str(maxV).split(".")[1]) > digitsReal) or digitsReal == 0:
+                raise ValueError("Bad input")
 
         if digitsReal == None:
             endingReal = "[0-9]+"
         else:
-            endingReal = "[0-9]{" + str(digitsReal) + "}"
+            endingReal = "[0-9]{" + str(digitsReal) + "}" if digitsReal > 1 else "[0-9]"
 
         if digitsInt != None and minV is not None and maxV is None:
             maxV = int(digitsAll * "9")
@@ -232,7 +226,7 @@ class RegexBuilder(object):
             if frmt == "%0lf":
                 self.__addElement("-?(([1-9][0-9]*|0)(\.[0-9]+)?)")
             if digitsReal != None:
-                self.__addElement("-?(([1-9][0-9]*|0)(\.{0}))".format(endingReal))
+                self.__addElement("-?{0}(([1-9][0-9]*|0)(\.{1})?)".format(zeros, endingReal))
 
             return "^({0})$".format(self.__buildRegEx())
 
@@ -240,17 +234,16 @@ class RegexBuilder(object):
             if maxV < 0:
                 minV = -maxV
                 splitted = str(minV).split(".")
-                if len(splitted) > 1:
-                    maxV = "{0}.{1}".format(len(splitted[0])*"9", len(splitted[1])*"9" if digitsReal == None else digitsReal*"9")
-                else:
-                    maxV = "9"*len(str(minV))
+                maxV = "{0}.{1}".format("1" + len(splitted[0])*"0", len(splitted[1])*"0")# if digitsReal == None else digitsReal*"9")
+
                 ans = self.calculateRealRegex(minV, maxV, digitsReal)
-                minV = int(maxV.split(".")[0]) + 1
+                minV = int(maxV.split(".")[0])
                 ans2 = self.__executeIntegerCalculation("%0d", minV, None)
                 if digitsReal == None:
-                    return "^(-({0}({1})|{0}({2})\.{3}))$".format(zeros, ans, ans2, endingReal)
+                    return r"^-({0}({1})|{0}({2})\.{3})$".format(zeros, ans, ans2, endingReal)
+                    #return "^(-({0}({1}))|{0}({2})(\.{3})?)$".format(zeros, ans, ans2, endingReal)
                 else:
-                    return "^(-({0}({1})|{0}({2})\.{3}))$".format(zeros, ans, ans2, endingReal).replace("?", "")
+                    return r"^-({0}({1})|{0}({2})\.{3})$".format(zeros, ans, ans2.replace("?", ""), endingReal)
             else:
                 if digitsReal == None:
                     result = "-(" + zeros + "([1-9][0-9]*|0)(\." + endingReal + ")?)"
@@ -280,7 +273,6 @@ class RegexBuilder(object):
                     return "^({0}({1}|{2}))$".format(zeros, ans, ans2)
                 else:
                     return "^({0}({1}|{2}))$".format(zeros, ans, ans2).replace("?", "")
-
 
         if minV is not None and maxV is not None:
             if minV <= 0 and maxV <= 0:
@@ -383,6 +375,10 @@ class RegexBuilder(object):
         return "^({0})$".format(self.__buildRegEx())
 
     def calculateRealRegex(self, mi, ma, digits):
+        if mi == 0.0:
+            mi = 0.0
+        if ma == 0.0:
+            ma = 0.0
         groupMin = str(mi).split(".")
         groupMax = str(ma).split(".")
 
@@ -411,11 +407,14 @@ class RegexBuilder(object):
             format =  "%0" + str(digits)+ "d"
 
         if miIntPart == maIntPart:
+            if min == max:
+                return "{0}\.{1}".format(miIntPart, min)
             x = self.__executeIntegerCalculation(format, int(min), int(max)-1)
             if digits == None:
-                return "{0}\.({1}[0-9]*|{2}0*)?".format(miIntPart, x, max)
+                x = x.replace("[0-9]", "")
+                return "{0}\.({1}[0-9]*|{2}0*)".format(miIntPart, x, max)
             else:
-                return "{0}\.({1}|{2})?".format(miIntPart, x, max)
+                return "{0}\.({1}|{2})".format(miIntPart, x, max)
         else:
             if digits == None:
                 x = self.__executeIntegerCalculation(format, int(min), "9"*len(min)).replace("[0-9]", "")
@@ -435,19 +434,19 @@ class RegexBuilder(object):
                 z = str(int(miIntPart) + 1)
 
             if digits == None:
-                ans = "{0}(\.({1}[0-9]*))?".format(miIntPart, x)
+                ans = "{0}(\.{1}[0-9]*)".format(miIntPart, x)
                 if int(miIntPart) + 1 <= int(maIntPart)-1:
-                    ans += "|{0}(\.[0-9]+)?".format(z)
+                    ans += "|{0}\.[0-9]+".format(z)
                 if y != None:
-                    ans += "|{0}(\.({1}[0-9]*))?".format(maIntPart, y)
-                ans += "|{0}(\.{1}0*)?".format(maIntPart, max)
+                    ans += "|{0}(\.{1}[0-9]*)".format(maIntPart, y)
+                ans += "|{0}\.{1}0*".format(maIntPart, max)
             else:
                 ans = "{0}\.({1})".format(miIntPart, x)
                 if int(miIntPart) + 1 <= int(maIntPart)-1:
-                    ans += "|{0}(\.[0-9]{{{1}}})?".format(z, digits)
+                    ans += "|{0}\.[0-9]{{{1}}}".format(z, digits)
                 if y != None:
-                    ans += "|{0}(\.({1}))?".format(maIntPart, y)
-                ans += "|{0}(\.{1})?".format(maIntPart, max)
+                    ans += "|{0}\.({1})".format(maIntPart, y)
+                ans += "|{0}\.{1}".format(maIntPart, max)
 
             return ans
 

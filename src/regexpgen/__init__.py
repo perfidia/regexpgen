@@ -132,7 +132,7 @@ def real(format, min = None, max = None, matchStartEnd = True):
 		if max is not None:
 			float(max)
 	except:
-		raise ValueError("Bad input")
+		raise ValueError("Bad input" + str(min))
 
 	if (min is not None) and (max is not None) and (min>max):
 		raise ValueError("Invalid parameters (min>max)")
@@ -163,6 +163,23 @@ def ip(min1 = 0, max1 = 255, min2 = 0, max2 = 255, min3 = 0, max3 = 255, min4 = 
 	ans += b.createNNIntegerRegex("%0d", min4, max4)
 
 	return "^({0})$".format(ans.replace("^", "").replace("$", ""))
+
+def concatenate(list):
+	result = ""
+	for element in list:
+		if len(element) == 1:
+			result += element[0]
+		elif len(element) == 4:
+			if element[0] == "int":
+				b = builder.RegexBuilder()
+				result += b.createIntegerRegex(element[1], int(element[2]), int(element[3])).replace("^", "")
+			elif element[0] == "real":
+				result += b.createRealRegex(element[1], int(element[2]), int(element[3])).replace("^", "")
+			else:
+				raise ValueError("Bad input")
+		else:
+			raise ValueError("Bad input")
+	return "^({0})$".format(result.replace("^", "").replace("$", ""))
 
 #def date(format, min = None, max = None, timezone = None, matchStartEnd = True):
 #	return startEndMatcher(mdate.run(format, min, max, timezone), matchStartEnd)
