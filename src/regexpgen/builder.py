@@ -275,7 +275,7 @@ class RegexBuilder(object):
                     return "^({0}({1}|{2}))$".format(zeros, ans, ans2).replace("?", "")
 
         if minV is not None and maxV is not None:
-            if minV <= 0 and maxV <= 0:
+            if minV < 0 and maxV < 0:
                 tempMinV = minV
                 minV = -maxV
                 maxV = -tempMinV
@@ -301,7 +301,7 @@ class RegexBuilder(object):
                             result = "-?({0}({1}))".format(zeros,self.calculateRealRegex(0, maxV, digitsReal).replace("?", ""))
                             result += "|-{0}({1})".format(zeros,self.calculateRealRegex(maxV, -minV, digitsReal).replace("?", ""))
 
-                        return "^({0}({1}))$".format(zeros, result)
+                        return "^({0})$".format(result)
 
                 else:
                     if digitsReal == None:

@@ -22,11 +22,11 @@ Installation
 Getting started
 ---------------
 
-	>>> import regexpgen
-	>>> pattern = r"%d"
-	>>> regexp = regexpgen.integer(pattern)
-	>>> print regexp
-	^-?[0-9]+$
+    >>> import regexpgen
+    >>> pattern = r"%d"
+    >>> regexp = regexpgen.integer(pattern)
+    >>> print regexp
+    ^-?[0-9]+$
 
 Authors
 -------
