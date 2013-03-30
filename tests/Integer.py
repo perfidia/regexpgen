@@ -104,8 +104,9 @@ class Test(unittest.TestCase):
 			rangeRight = 100
 
 		if setMin:
-			  for i in xrange(rangeLeft, min - 1):
-				 self.assertFalse(re.match(regexp, str(i)), info(str(i)))
+				for i in xrange(rangeLeft, min - 1):
+					self.assertFalse(re.match(regexp, str(i)), info(str(i)))
+
 		for i in xrange(min, max):
 			if i >= 0:
 				a = "0" + str(i); b = "00" + str(i); c = "000" + str(i); d = "0000" + str(i);
@@ -185,16 +186,16 @@ class Test(unittest.TestCase):
 		return "Failed! Number: {0}, min: {1}, max: {2}, format: {3}, regexp: {4}".format(i, str(min), str(max), format, regexp)
 
 	def __testForWrongFormat(self):
-		self.assertRaises(ValueError, regexpgen.integer,"%0lf", 100, 1000)
-		self.assertRaises(ValueError, regexpgen.integer,"%.lf", 100, 1000)
-		self.assertRaises(ValueError, regexpgen.integer,"aaaaaaaaa", None, 1000)
-		self.assertRaises(ValueError, regexpgen.integer,"%0.2lf", None, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, "%0lf", 100, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, "%.lf", 100, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, "aaaaaaaaa", None, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, "%0.2lf", None, 1000)
 
 	def __testForWrongInput(self):
-		self.assertRaises(ValueError, regexpgen.nnint,"%0d", 100.6757, 100)
-		self.assertRaises(ValueError, regexpgen.nnint,"%0d", 100, 100.564)
-		self.assertRaises(ValueError, regexpgen.nnint,"%d", 100.34, 100.0)
-		self.assertRaises(ValueError, regexpgen.nnint,"%d", 100.435, 100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100.6757, 100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100, 100.564)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.34, 100.0)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.435, 100)
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']
