@@ -190,12 +190,14 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.integer, "%.lf", 100, 1000)
 		self.assertRaises(ValueError, regexpgen.integer, "aaaaaaaaa", None, 1000)
 		self.assertRaises(ValueError, regexpgen.integer, "%0.2lf", None, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, None, None, 1000)
 
 	def __testForWrongInput(self):
-		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100.6757, 100)
-		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100, 100.564)
-		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.34, 100.0)
-		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.435, 100)
+		self.assertRaises(ValueError, regexpgen.integer, "%0d", 100.6757, 100)
+		self.assertRaises(ValueError, regexpgen.integer, "%0d", 100, 100.564)
+		self.assertRaises(ValueError, regexpgen.integer, "%d", 100.34, 100.0)
+		self.assertRaises(ValueError, regexpgen.integer, "%d", 100.435, 100)
+		self.assertRaises(ValueError, regexpgen.integer, "%d", -1000.3, 1000)
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']

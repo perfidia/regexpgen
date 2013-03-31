@@ -75,9 +75,26 @@ class RegexBuilder(object):
 		return True
 
 	def createIntegerRegex(self, frmt, minV, maxV):
+		try:
+			if minV is not None:
+				if str(minV) != str(int(minV)):
+					raise
+			if maxV is not None:
+				if str(maxV) != str(int(maxV)):
+					raise
+		except:
+			raise ValueError("Bad input")
+	
+		if (frmt == None) or (frmt not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", frmt):
+			raise ValueError("Bad format")
+	
+		if (minV is not None) and (maxV is not None) and (minV>maxV):
+			raise ValueError("Invalid parameters (minV>maxV)")
+		
 		if minV >= 0 and (maxV >= 0 or maxV is None):
 			self.createNNIntegerRegex(frmt, minV, maxV)
 			return "^({0})$".format(self.__buildRegEx())
+		
 		m = re.match('%0([0-9]+)d', frmt)
 		if m:
 			self.zeros = int(m.group(1))
@@ -168,6 +185,21 @@ class RegexBuilder(object):
 		return b.createIntegerRegex(frmt, minV, maxV).replace("^", "").replace("$", "")
 
 	def createRealRegex(self, frmt, minV, maxV):
+		try:
+			if minV is not None:
+				float(minV)
+			if maxV is not None:
+				float(maxV)
+		except:
+			raise ValueError("Bad input: " + str(minV))
+	
+		if (minV is not None) and (maxV is not None) and (minV>maxV):
+			raise ValueError("Invalid parameters (min>max)")
+		if (frmt == None) or frmt not in ["%lf", "%0lf"] and not re.match("^%.[0-9]+lf$", frmt) and not re.match("^%0.[0-9]+lf$", frmt):
+			raise ValueError("Bad format")
+		if (minV is not None and re.match("^-?[0-9]+\.[0-9]+$", str(minV)) is None) or (maxV is not None and re.match("^-?[0-9]+\.[0-9]+$", str(maxV)) is None):
+			raise ValueError("Invalid parameters - real expected")
+
 		self.alternatives = [[]]
 		self.currentIndex = 0
 		self.base = "{0}"
@@ -310,6 +342,24 @@ class RegexBuilder(object):
 						return "^({0}({1}))$".format(zeros, self.calculateRealRegex(minV, maxV, digitsReal)).replace("?", "")
 
 	def createNNIntegerRegex(self, frmt, minV, maxV):
+		try:
+			if minV is not None:
+				if str(minV) != str(int(minV)):
+					raise
+			if maxV is not None:
+				if str(maxV) != str(int(maxV)):
+					raise
+		except:
+			raise ValueError("Bad input")
+	
+		if (frmt == None) or (frmt not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", frmt):
+			raise ValueError("Bad format")
+	
+		if (minV is not None) and (maxV is not None) and (minV>maxV):
+			raise ValueError("Invalid parameters (minV>maxV)")
+		if (minV is not None) and (minV < 0):
+			raise ValueError("Invalid parameters (minV<0)")
+
 		m = re.match('%0([0-9]+)d', frmt)
 		if m:
 			self.zeros = int(m.group(1))

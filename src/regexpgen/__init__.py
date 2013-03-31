@@ -8,54 +8,37 @@ import builder
 import re
 #import mdate, mtime, mdatetime
 
-def nnint(format, min = None, max = None, matchStartEnd = True):
+def nnint(frmt, minV = None, maxV = None, matchStartEnd = True):
 	"""Generate regular expression for a non negative integer.
 
-	:param format: format similar to C printf function
-	:param min: optional minimum value
-	:param max: optional maximum value
+	:param frmt: frmt similar to C printf function
+	:param minV: optional minimum value
+	:param maxV: optional maximum value
 	:param matchStartEnd: True if ^ at the beginning and $ at the ending of regexp are required
 
-	:return: regular expression for a given format
+	:return: regular expression for a given frmt
 	Generowanie wyrażenie regularnego dla non-negative integers (0, 1, 2, 3...).
 
-	Supported format:
+	Supported frmt:
 
-	format jak dla interger
+	frmt jak dla interger
 	"""
-	try:
-		if min is not None:
-			if str(min) != str(int(min)):
-				raise
-		if max is not None:
-			if str(max) != str(int(max)):
-				raise
-	except:
-		raise ValueError("Bad input")
-
-	if (format not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", format):
-		raise ValueError("Bad format")
-
-	if (min is not None) and (max is not None) and (min>max):
-		raise ValueError("Invalid parameters (min>max)")
-	if (min is not None) and (min < 0):
-		raise ValueError("Invalid parameters (min<0)")
-
+	
 	b = builder.RegexBuilder()
-	return b.createNNIntegerRegex(format, min, max)
+	return b.createNNIntegerRegex(frmt, minV, maxV)
 
-def integer(format, min = None, max = None, matchStartEnd = True):
+def integer(frmt, minV = None, maxV = None, matchStartEnd = True):
 	"""Generate regular expression for an integer.
 
-	:param format: format similar to C printf function
-	:param min: optional minimum value
-	:param max: optional maximum value
+	:param frmt: frmt similar to C printf function
+	:param minV: optional minimum value
+	:param maxV: optional maximum value
 	:param matchStartEnd: True if ^ at the beginning and $ at the ending of regexp are required
 
-	:return: regular expression for a given format
+	:return: regular expression for a given frmt
 	Generowanie wyrażenie regularnego dla integers (-2, -1, 0, 1, 2, 3...).
 
-	Supported format:
+	Supported frmt:
 
 	FORMAT = '%d'
 	opis: zera wiodące są opcjonalne,
@@ -74,22 +57,9 @@ def integer(format, min = None, max = None, matchStartEnd = True):
 	przykłady poprawne dla %04d: 0001, 45678
 	przykłady niepoprawne dla %04d: 00011, 11
 	"""
-	try:
-		if min is not None:
-			int(min)
-		if max is not None:
-			int(max)
-	except:
-		raise ValueError("Bad input")
-
-	if (format not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", format):
-		raise ValueError("Bad format")
-
-	if (min is not None) and (max is not None) and (min>max):
-		raise ValueError("Invalid parameters (min>max)")
-
+	
 	b = builder.RegexBuilder()
-	return b.createIntegerRegex(format, min, max)
+	return b.createIntegerRegex(frmt, minV, maxV)
 
 def real(format, min = None, max = None, matchStartEnd = True):
 	'''
@@ -125,21 +95,6 @@ def real(format, min = None, max = None, matchStartEnd = True):
 	przykłady poprawne dla %5.2lf: 022.1, 32431.2, 012.9
 	przykłady poprawne dla %5.2lf: 22.1, 111.122
 	'''
-
-	try:
-		if min is not None:
-			float(min)
-		if max is not None:
-			float(max)
-	except:
-		raise ValueError("Bad input" + str(min))
-
-	if (min is not None) and (max is not None) and (min>max):
-		raise ValueError("Invalid parameters (min>max)")
-	if format not in ["%lf", "%0lf"] and not re.match("^%.[0-9]+lf$", format) and not re.match("^%0.[0-9]+lf$", format):
-		raise ValueError("Bad format")
-	if (min is not None and re.match("^-?[0-9]+\.[0-9]+$", str(min)) is None) or (max is not None and re.match("^-?[0-9]+\.[0-9]+$", str(max)) is None):
-		raise ValueError("Invalid parameters - real expected")
 
 	b = builder.RegexBuilder()
 	return  b.createRealRegex(format, min, max)

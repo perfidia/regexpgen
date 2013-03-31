@@ -132,16 +132,22 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.nnint,"%02d", None, -100)
 
 	def __testForWrongFormat(self):
-		self.assertRaises(ValueError, regexpgen.nnint,"%0lf", 100, 1000)
-		self.assertRaises(ValueError, regexpgen.nnint,"%.lf", 100, 1000)
-		self.assertRaises(ValueError, regexpgen.nnint,"aaaaaaaaa", None, 1000)
-		self.assertRaises(ValueError, regexpgen.nnint,"%0.2lf", None, 1000)
+		self.assertRaises(ValueError, regexpgen.nnint, "%0lf", 100, 1000)
+		self.assertRaises(ValueError, regexpgen.nnint, "%.lf", 100, 1000)
+		self.assertRaises(ValueError, regexpgen.nnint, "aaaaaaaaa", None, 1000)
+		self.assertRaises(ValueError, regexpgen.nnint, "%0.2lf", None, 1000)
+		self.assertRaises(ValueError, regexpgen.nnint, None, None, 1000)
+		
 
 	def __testForWrongInput(self):
-		self.assertRaises(ValueError, regexpgen.nnint,"%0d", 100.6757, 100)
-		self.assertRaises(ValueError, regexpgen.nnint,"%0d", 100, 100.564)
-		self.assertRaises(ValueError, regexpgen.nnint,"%d", 100.34, 100.0)
-		self.assertRaises(ValueError, regexpgen.nnint,"%d", 100.435, 100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100.6757, 100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100, 100.564)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.34, 100.0)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.435, 100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", -100.34, 100.0)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.435, -100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", -100, 100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100, -100)
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']

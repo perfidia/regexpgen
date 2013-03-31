@@ -299,7 +299,8 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.real,"%0d", -100.0, 1000.0)
 		self.assertRaises(ValueError, regexpgen.real,"%d", 100.0, 1000.0)
 		self.assertRaises(ValueError, regexpgen.real,"aaaaaaaaa", None, 1000.0)
-		self.assertRaises(ValueError, regexpgen.real,"%00.2lf", None, 1000.0)
+		self.assertRaises(ValueError, regexpgen.real, "%0.2lf", None, 1000)
+		self.assertRaises(ValueError, regexpgen.real, None, None, 1000)
 
 	def __testForWrongInput(self):
 		self.assertRaises(ValueError, regexpgen.real,"%lf", -100, 1000)
