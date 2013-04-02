@@ -195,7 +195,7 @@ class RegexBuilder(object):
 
 		if (minV is not None) and (maxV is not None) and (minV>maxV):
 			raise ValueError("Invalid parameters (min>max)")
-		if (frmt == None) or frmt not in ["%lf", "%0lf"] and not re.match("^%.[0-9]+lf$", frmt) and not re.match("^%0.[0-9]+lf$", frmt):
+		if (frmt == None) or frmt not in ["%lf", "%0lf"] and not re.match("^%\.[0-9]+lf$", frmt) and not re.match("^%0\.[0-9]+lf$", frmt) and not re.match("^%[1-9][0-9]*\.[0-9]+lf$", frmt):
 			raise ValueError("Bad format")
 		if (minV is not None and re.match("^-?[0-9]+\.[0-9]+$", str(minV)) is None) or (maxV is not None and re.match("^-?[0-9]+\.[0-9]+$", str(maxV)) is None):
 			raise ValueError("Invalid parameters - real expected")
@@ -211,13 +211,16 @@ class RegexBuilder(object):
 			self.base = "0*({0})"
 			zeros = "0*"
 
-		#%0.Ylf zera wiodace niedozwolone lub '%X.Ylf'
+		#%0.Ylf zera wiodace niedozwolone
 		m = re.match('%0\.([0-9]+)lf', frmt)
 		if m:
 			digitsReal = int(m.group(1))
 
-		m = re.match('%([1-9]+)\.([0-9]+)lf', frmt)
+		#%X.Ylf'
+		m = re.match('%([1-9][0-9]*)\.([0-9]+)lf', frmt)
 		if m:
+			self.base = "{0}"
+			zeros = "0*"
 			digitsReal = int(m.group(2))
 
 		#%.Ylf zera wiodace dozwolone
@@ -465,7 +468,7 @@ class RegexBuilder(object):
 			x = self.__executeIntegerCalculation(format, int(min), int(max)-1)
 			if digits == None:
 				x = x.replace("[0-9]", "")
-				return "{0}\.({1}[0-9]*|{2}0*)".format(miIntPart, x, max)
+				return "{0}\.({1}[0-9]*|{2}0*)".format(miIntPart, x, maxBefore)
 			else:
 				return "{0}\.({1}|{2})".format(miIntPart, x, max)
 		else:
