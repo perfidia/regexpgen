@@ -84,17 +84,17 @@ class RegexBuilder(object):
 					raise
 		except:
 			raise ValueError("Bad input")
-	
+
 		if (frmt == None) or (frmt not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", frmt):
 			raise ValueError("Bad format")
-	
+
 		if (minV is not None) and (maxV is not None) and (minV>maxV):
 			raise ValueError("Invalid parameters (minV>maxV)")
-		
+
 		if minV >= 0 and (maxV >= 0 or maxV is None):
 			self.createNNIntegerRegex(frmt, minV, maxV)
 			return "^({0})$".format(self.__buildRegEx())
-		
+
 		m = re.match('%0([0-9]+)d', frmt)
 		if m:
 			self.zeros = int(m.group(1))
@@ -192,7 +192,7 @@ class RegexBuilder(object):
 				float(maxV)
 		except:
 			raise ValueError("Bad input: " + str(minV))
-	
+
 		if (minV is not None) and (maxV is not None) and (minV>maxV):
 			raise ValueError("Invalid parameters (min>max)")
 		if (frmt == None) or frmt not in ["%lf", "%0lf"] and not re.match("^%.[0-9]+lf$", frmt) and not re.match("^%0.[0-9]+lf$", frmt):
@@ -351,10 +351,10 @@ class RegexBuilder(object):
 					raise
 		except:
 			raise ValueError("Bad input")
-	
+
 		if (frmt == None) or (frmt not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", frmt):
 			raise ValueError("Bad format")
-	
+
 		if (minV is not None) and (maxV is not None) and (minV>maxV):
 			raise ValueError("Invalid parameters (minV>maxV)")
 		if (minV is not None) and (minV < 0):
@@ -446,6 +446,9 @@ class RegexBuilder(object):
 			maIntPart = str(ma)
 			max = "0"
 
+		maxBefore = max
+		minBefore = min
+
 		while len(min) < len(str(max)) or len(min) < digits:
 			min = min + "0"
 		while len(str(min)) > len(max) or len(max) < digits:
@@ -484,12 +487,13 @@ class RegexBuilder(object):
 				z = str(int(miIntPart) + 1)
 
 			if digits == None:
-				ans = "{0}(\.{1}[0-9]*)".format(miIntPart, x)
+				ans = "{0}\.{1}".format(miIntPart, minBefore)
+				ans += "|{0}(\.{1}[0-9]*)".format(miIntPart, x)
 				if int(miIntPart) + 1 <= int(maIntPart)-1:
 					ans += "|{0}\.[0-9]+".format(z)
 				if y != None:
 					ans += "|{0}(\.{1}[0-9]*)".format(maIntPart, y)
-				ans += "|{0}\.{1}0*".format(maIntPart, max)
+				ans += "|{0}\.{1}0*".format(maIntPart, maxBefore)
 			else:
 				ans = "{0}\.({1})".format(miIntPart, x)
 				if int(miIntPart) + 1 <= int(maIntPart)-1:

@@ -61,6 +61,7 @@ class Test(unittest.TestCase):
 
 		i = rangeLeft
 		if setMin:
+			self.assertTrue(re.search(regexp, self.__str(min)), info(self.__str(min)))
 			while float(self.__str(i)) < float(self.__str(min)):
 				self.assertFalse(re.match(regexp, self.__str(i)), info(self.__str(i)))
 				i = i + step
@@ -76,6 +77,7 @@ class Test(unittest.TestCase):
 			self.assertTrue(re.match(regexp, d), info(d))
 			i = i + step
 		if setMax:
+			self.assertTrue(re.search(regexp, self.__str(max)), info(self.__str(max)))
 			while i <= rangeRight:
 				self.assertFalse(re.search(regexp, self.__str(i)), info(self.__str(i)))
 				i = i + step
@@ -100,6 +102,7 @@ class Test(unittest.TestCase):
 
 		i = rangeLeft
 		if setMin:
+			self.assertTrue(re.search(regexp, self.__str(min)), info(self.__str(min)))
 			while float(self.__str(i)) < float(self.__str(min)):
 				self.assertFalse(re.match(regexp, self.__str(i)), info(self.__str(i)))
 				i = i + step
@@ -115,6 +118,7 @@ class Test(unittest.TestCase):
 			self.assertFalse(re.match(regexp, d), info(d))
 			i = i + step
 		if setMax:
+			self.assertTrue(re.search(regexp, self.__str(max)), info(self.__str(max)))
 			while i <= rangeRight:
 				self.assertFalse(re.search(regexp, self.__str(i)), info(self.__str(i)))
 				i = i + step

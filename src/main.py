@@ -5,6 +5,7 @@ Created on Apr 27, 2011
 '''
 
 import regexpgen
+import re
 
 print regexpgen.nnint("%04d", 71, 2319)
 print regexpgen.integer("%0d", -521, 132)
