@@ -23,3 +23,5 @@ import re
 #])
 
 print regexpgen.real("%lf", 88.7653193745, 88.920716654)
+print regexpgen.real("%3.1lf", None, None)
+print re.match(regexpgen.real("%3.1lf", None, None), "11.1")
