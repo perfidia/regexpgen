@@ -370,6 +370,7 @@ class RegexBuilder(object):
             return "^({0}\.{1})$".format(ans, endingReal)
 
 
+
     def createNNIntegerRegex(self, frmt, minV, maxV):
         try:
             if minV is not None:
@@ -488,25 +489,27 @@ class RegexBuilder(object):
         else:
             format =  "%0" + str(digits)+ "d"
 
+        remove = digits == None
+
         if miIntPart == maIntPart:
             if min == max:
                 return "{0}\.{1}".format(miIntPart, min)
-            x = self.__executeIntegerCalculation(format, int(min), int(max)-1)
+            x = self.__generateAlternativesForReal(format, int(min), int(max) - 1, remove)
             if digits == None:
-                x = x.replace("[0-9]", "")
+                x = re.sub("\[0\-9\](?!\*)", "",x)
                 return "{0}\.({1}[0-9]*|{2}0*)".format(miIntPart, x, maxBefore)
             else:
                 return "{0}\.({1}|{2})".format(miIntPart, x, max)
         else:
             if digits == None:
-                x = self.__executeIntegerCalculation(format, int(min), "9"*len(min)).replace("[0-9]", "")
+                x =  self.__generateAlternativesForReal(format, int(min), "9"*len(min), remove)
             else:
-                x = self.__executeIntegerCalculation(format, int(min), "9"*len(min))
+                x = self.__generateAlternativesForReal(format, int(min), "9"*len(min), remove)
             if int(max) != 0:
                 if digits == None:
-                    y = self.__executeIntegerCalculation(format, 0, int(max) - 1).replace("[0-9]", "")
+                    y = self.__generateAlternativesForReal(format, 0, int(max) - 1, remove)
                 else:
-                    y = self.__executeIntegerCalculation(format, 0, int(max) - 1)
+                    y = self.__generateAlternativesForReal(format, 0, int(max) - 1, remove)
             else:
                 y = None
 
@@ -517,11 +520,11 @@ class RegexBuilder(object):
 
             if digits == None:
                 ans = "{0}\.{1}".format(miIntPart, minBefore)
-                ans += "|{0}(\.{1}[0-9]*)".format(miIntPart, x)
+                ans += "|{0}(\.{1})".format(miIntPart, x)
                 if int(miIntPart) + 1 <= int(maIntPart)-1:
                     ans += "|{0}\.[0-9]+".format(z)
                 if y != None:
-                    ans += "|{0}(\.{1}[0-9]*)".format(maIntPart, y)
+                    ans += "|{0}(\.{1})".format(maIntPart, y)
                 ans += "|{0}\.{1}0*".format(maIntPart, maxBefore)
             else:
                 ans = "{0}\.({1})".format(miIntPart, x)
@@ -532,6 +535,47 @@ class RegexBuilder(object):
                 ans += "|{0}\.{1}".format(maIntPart, max)
 
             return ans
+
+    def __generateAlternativesForReal(self, format, min, max, remove):
+        result = "(";
+        if str(min) == str(max):
+            result += str(max)
+#        if len(str(min)) == 1 and len(str(max)) == 1:
+#            result += "[" + str(min) + "-" + str(max) + "])";
+#            return result;
+
+        m = re.match('%0([0-9]+)d', format)
+        if m:
+            digits = int(m.group(1))
+
+        sub = len(str(max))
+        if sub < digits:
+            count = digits - sub
+            while count != 0:
+                result +=  count * "0" + "|"
+                count -= 1
+
+        for i in xrange(len(str(max))):
+            newMin = str(int(str(min)[0:i + 1]) + 1)
+            if newMin != "10":
+                newMax = str(max)[0:i + 1]
+                if newMin < newMax:
+                    if i != len(str(max)) - 1:
+                        x = digits - (sub - 1 - i)
+                        a = self.__executeIntegerCalculation("%0" + str(x) + "d", newMin, newMax)
+                        #if remove:
+                            #a = re.sub("\[0\-9\](?!\*)", "", a)                            
+                        result += a + "|"
+                    else:
+                        a = self.__executeIntegerCalculation("%0" + str(digits) + "d", str(min)[0:i + 1], newMax)
+                        if remove:
+                           # a = re.sub("\[0\-9\](?!\*)", "", a)
+                      #      a = re.sub("\]\|", "]*|", a)
+                            a += "[0-9]*"
+                        result += a
+        result += ")"
+
+        return result
 
 
 
@@ -568,7 +612,7 @@ class RegexBuilder(object):
         frm = mi
         for i in xrange(minl, maxl + 1):
             to = 10**i - 1
-            ranges.append((frm, to if to < ma else ma))
+            ranges.append((frm, to if to < int(ma) else ma))
             frm = to + 1
 
         resultRanges = []

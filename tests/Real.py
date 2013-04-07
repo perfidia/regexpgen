@@ -23,10 +23,10 @@ class Test(unittest.TestCase):
                 for j in [True, False]:
                     for k in [True, False]:
                         scale = len(self.__str(i))
-#                        self.__runTest1(scale, False, False, j, k);
-#                        self.__runTest1(scale, False, True, j, k);
-#                        self.__runTest1(scale, True, False, j, k);
-#                        self.__runTest1(scale, True, True, j, k);
+                        self.__runTest1(scale, False, False, j, k);
+                        self.__runTest1(scale, False, True, j, k);
+                        self.__runTest1(scale, True, False, j, k);
+                        self.__runTest1(scale, True, True, j, k);
 #                        self.__runTest2(scale, False, False, j, k);
 #                        self.__runTest2(scale, False, True, j, k);
 #                        self.__runTest2(scale, True, False, j, k);
@@ -43,7 +43,7 @@ class Test(unittest.TestCase):
 #                        self.__runTest5(scale, False, True, j, k);
 #                        self.__runTest5(scale, True, False, j, k);
 #                        self.__runTest5(scale, True, True, j, k);
-                        self.__runTest6(scale, False, False, j, k);
+#                        self.__runTest6(scale, False, False, j, k);
 #                        self.__runTest6(scale, False, True, j, k);
 #                        self.__runTest6(scale, True, False, j, k);
 #                        self.__runTest6(scale, True, True, j, k);
@@ -90,6 +90,13 @@ class Test(unittest.TestCase):
                 self.assertFalse(re.search(regexp, self.__str(i)), info(self.__str(i)))
                 i = i + step
 
+        if setMax and float(max) > 0:
+            splitted = self.__str(max).split(".")
+            if len(splitted[1]) > 1:
+                test = splitted[0] + "." + splitted[1][:-1]
+                test = float(test)
+                self.assertTrue(re.match(regexp, self.__str(test)), info(self.__str(test)))
+
     def __runTest2(self, scale, setMin, setMax, useInt, stepInt):
 
         if useInt:
@@ -120,6 +127,7 @@ class Test(unittest.TestCase):
             else:
                 a = "-0" + self.__str(-i); b = "-00" + self.__str(-i); c = "-000" + self.__str(-i); d = "-0000" + self.__str(-i);
             self.assertTrue(re.match(regexp, self.__str(i)), info(self.__str(i)))
+
             self.assertFalse(re.match(regexp, a), info(a))
             self.assertFalse(re.match(regexp, b), info(b))
             self.assertFalse(re.match(regexp, c), info(c))
@@ -130,6 +138,8 @@ class Test(unittest.TestCase):
             while i <= rangeRight:
                 self.assertFalse(re.search(regexp, self.__str(i)), info(self.__str(i)))
                 i = i + step
+
+
 
     def __runTest3(self, scale, setMin, setMax, useInt, stepInt):
         if useInt:
