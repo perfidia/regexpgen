@@ -539,10 +539,7 @@ class RegexBuilder(object):
     def __generateAlternativesForReal(self, format, min, max, remove):
         result = "(";
         if str(min) == str(max):
-            result += str(max)
-#        if len(str(min)) == 1 and len(str(max)) == 1:
-#            result += "[" + str(min) + "-" + str(max) + "])";
-#            return result;
+            result += str(max) 
 
         m = re.match('%0([0-9]+)d', format)
         if m:
@@ -556,7 +553,8 @@ class RegexBuilder(object):
                 count -= 1
 
         for i in xrange(len(str(max))):
-            newMin = str(int(str(min)[0:i + 1]) + 1)
+            newMin = str(int(str("0"* (digits - len(str(min))) + str(min))[0:i + 1]) + 1)
+            
             if newMin != "10":
                 newMax = str(max)[0:i + 1]
                 if newMin < newMax:

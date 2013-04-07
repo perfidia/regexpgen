@@ -27,26 +27,26 @@ class Test(unittest.TestCase):
                         self.__runTest1(scale, False, True, j, k);
                         self.__runTest1(scale, True, False, j, k);
                         self.__runTest1(scale, True, True, j, k);
-#                        self.__runTest2(scale, False, False, j, k);
-#                        self.__runTest2(scale, False, True, j, k);
-#                        self.__runTest2(scale, True, False, j, k);
-#                        self.__runTest2(scale, True, True, j, k);
-#                        self.__runTest3(scale, False, False, j, k);
-#                        self.__runTest3(scale, False, True, j, k);
-#                        self.__runTest3(scale, True, False, j, k);
-#                        self.__runTest3(scale, True, True, j, k);
-#                        self.__runTest4(scale, False, False, j, k);
-#                        self.__runTest4(scale, False, True, j, k);
-#                        self.__runTest4(scale, True, False, j, k);
-#                        self.__runTest4(scale, True, True, j, k);
-#                        self.__runTest5(scale, False, False, j, k);
-#                        self.__runTest5(scale, False, True, j, k);
-#                        self.__runTest5(scale, True, False, j, k);
-#                        self.__runTest5(scale, True, True, j, k);
-#                        self.__runTest6(scale, False, False, j, k);
-#                        self.__runTest6(scale, False, True, j, k);
-#                        self.__runTest6(scale, True, False, j, k);
-#                        self.__runTest6(scale, True, True, j, k);
+                        self.__runTest2(scale, False, False, j, k);
+                        self.__runTest2(scale, False, True, j, k);
+                        self.__runTest2(scale, True, False, j, k);
+                        self.__runTest2(scale, True, True, j, k);
+#                         self.__runTest3(scale, False, False, j, k);
+#                         self.__runTest3(scale, False, True, j, k);
+#                         self.__runTest3(scale, True, False, j, k);
+#                         self.__runTest3(scale, True, True, j, k);
+#                         self.__runTest4(scale, False, False, j, k);
+#                         self.__runTest4(scale, False, True, j, k);
+#                         self.__runTest4(scale, True, False, j, k);
+#                         self.__runTest4(scale, True, True, j, k);
+#                         self.__runTest5(scale, False, False, j, k);
+#                         self.__runTest5(scale, False, True, j, k);
+#                         self.__runTest5(scale, True, False, j, k);
+#                         self.__runTest5(scale, True, True, j, k);
+ #                       self.__runTest6(scale, False, False, j, k);
+#                         self.__runTest6(scale, False, True, j, k);
+#                         self.__runTest6(scale, True, False, j, k);
+#                         self.__runTest6(scale, True, True, j, k);
                 print a,i
 
     def __runTest1(self, scale, setMin, setMax, useInt, stepInt):

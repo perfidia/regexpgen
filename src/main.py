@@ -21,7 +21,6 @@ import re
 #		('\.',),
 #		('int', "%d", 0, 240)
 #]
-
 x = regexpgen.real("%lf", 6.063, 9.493)
 print x
 print re.match(x, "9.49") # powinno byc match
