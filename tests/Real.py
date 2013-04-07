@@ -24,29 +24,29 @@ class Test(unittest.TestCase):
                 for j in [True, False]:
                     for k in [True, False]:
                         scale = len(self.__str(i))
-                        self.__runTest1(scale, False, False, j, k);
-                        self.__runTest1(scale, False, True, j, k);
-                        self.__runTest1(scale, True, False, j, k);
-                        self.__runTest1(scale, True, True, j, k);
-                        self.__runTest2(scale, False, False, j, k);
-                        self.__runTest2(scale, False, True, j, k);
-                        self.__runTest2(scale, True, False, j, k);
-                        self.__runTest2(scale, True, True, j, k);
-                        self.__runTest3(scale, False, False, j, k);
-                        self.__runTest3(scale, False, True, j, k);
-                        self.__runTest3(scale, True, False, j, k);
-                        self.__runTest3(scale, True, True, j, k);
-                        self.__runTest4(scale, False, False, j, k);
-                        self.__runTest4(scale, False, True, j, k);
-                        self.__runTest4(scale, True, False, j, k);
-                        self.__runTest4(scale, True, True, j, k);
-                        self.__runTest5(scale, False, False, j, k);
-                        self.__runTest5(scale, False, True, j, k);
-                        self.__runTest5(scale, True, False, j, k);
-                        self.__runTest5(scale, True, True, j, k);
- #                       self.__runTest6(scale, False, False, j, k);
+#                        self.__runTest1(scale, False, False, j, k);
+#                        self.__runTest1(scale, False, True, j, k);
+#                        self.__runTest1(scale, True, False, j, k);
+#                        self.__runTest1(scale, True, True, j, k);
+#                        self.__runTest2(scale, False, False, j, k);
+#                        self.__runTest2(scale, False, True, j, k);
+#                        self.__runTest2(scale, True, False, j, k);
+#                        self.__runTest2(scale, True, True, j, k);
+#                        self.__runTest3(scale, False, False, j, k);
+#                        self.__runTest3(scale, False, True, j, k);
+#                        self.__runTest3(scale, True, False, j, k);
+#                        self.__runTest3(scale, True, True, j, k);
+#                        self.__runTest4(scale, False, False, j, k);
+#                        self.__runTest4(scale, False, True, j, k);
+#                        self.__runTest4(scale, True, False, j, k);
+#                        self.__runTest4(scale, True, True, j, k);
+#                        self.__runTest5(scale, False, False, j, k);
+#                        self.__runTest5(scale, False, True, j, k);
+#                        self.__runTest5(scale, True, False, j, k);
+#                        self.__runTest5(scale, True, True, j, k);
+                        self.__runTest6(scale, False, False, j, k);
 #                         self.__runTest6(scale, False, True, j, k);
-#                         self.__runTest6(scale, True, False, j, k);
+                        self.__runTest6(scale, True, False, j, k);
 #                         self.__runTest6(scale, True, True, j, k);
                 print a,i
 
@@ -378,9 +378,11 @@ class Test(unittest.TestCase):
                 x = self.__sliceFloat(i, scaleR - 1 if scaleR > 0 else 0)
                 y = self.__sliceFloat(i, scaleR)
                 z = self.__sliceFloat(i, scaleR + 1)
-                x = self.__sliceFloatIntPart(x, scaleI - 1 if scaleI > 0 else 0)
-                y = self.__sliceFloatIntPart(y, scaleI)
+
+                x = self.__sliceFloatIntPart(x, scaleI + 1)
+                y = self.__sliceFloatIntPart(y, scaleI + 1)
                 z = self.__sliceFloatIntPart(z, scaleI + 1)
+
                 if scale > 1:
                     self.assertFalse(re.match(regexp, self.__str(x)), info(self.__str(x)))
                 self.assertFalse(re.match(regexp, self.__str(y)), info(self.__str(y)))
@@ -407,15 +409,15 @@ class Test(unittest.TestCase):
 
             x = self.__sliceFloatIntPart(x, scaleI - 1 if scaleI > 1 else 0)
             y = self.__sliceFloatIntPart(y, scaleI)
-            z = self.__sliceFloatIntPart(z, scaleI + 1)
+            z = self.__sliceFloatIntPart(z, scaleI)
             a = self.__sliceFloatIntPart(a, scaleI)
             b = self.__sliceFloatIntPart(b, scaleI)
             c = self.__sliceFloatIntPart(c, scaleI)
             d = self.__sliceFloatIntPart(d, scaleI)
-            aa = self.__sliceFloatIntPart(aa, scaleI + 1)
-            bb = self.__sliceFloatIntPart(bb, scaleI + 1)
-            cc = self.__sliceFloatIntPart(cc, scaleI + 1)
-            dd = self.__sliceFloatIntPart(dd, scaleI + 1)
+            aa = self.__sliceFloatIntPart(aa, scaleI)
+            bb = self.__sliceFloatIntPart(bb, scaleI)
+            cc = self.__sliceFloatIntPart(cc, scaleI)
+            dd = self.__sliceFloatIntPart(dd, scaleI)
 
             self.assertTrue(re.match(regexp, self.__str(y)), info(self.__str(y)))
             if scale > 2:
@@ -430,6 +432,46 @@ class Test(unittest.TestCase):
             self.assertFalse(re.match(regexp, bb), info(bb))
             self.assertFalse(re.match(regexp, cc), info(cc))
             self.assertFalse(re.match(regexp, dd), info(dd))
+
+            ######################################################################
+
+            x = self.__sliceFloat(i, scaleR - 1 if scaleR > 1 else 0)
+            y = self.__sliceFloat(i, scaleR)
+            z = self.__sliceFloat(i, scaleR)
+            a = self.__sliceFloat(a, scaleR)
+            b = self.__sliceFloat(b, scaleR)
+            c = self.__sliceFloat(c, scaleR)
+            d = self.__sliceFloat(d, scaleR)
+            aa = self.__sliceFloat(a, scaleR)
+            bb = self.__sliceFloat(b, scaleR)
+            cc = self.__sliceFloat(c, scaleR)
+            dd = self.__sliceFloat(d, scaleR)
+
+            x = self.__sliceFloatIntPart(x, scaleI - 1 if scaleI > 1 else 0)
+            y = self.__sliceFloatIntPart(y, scaleI)
+            z = self.__sliceFloatIntPart(z, scaleI + 1)
+            a = self.__sliceFloatIntPart(a, scaleI)
+            b = self.__sliceFloatIntPart(b, scaleI)
+            c = self.__sliceFloatIntPart(c, scaleI)
+            d = self.__sliceFloatIntPart(d, scaleI)
+            aa = self.__sliceFloatIntPart(aa, scaleI + 1)
+            bb = self.__sliceFloatIntPart(bb, scaleI + 1)
+            cc = self.__sliceFloatIntPart(cc, scaleI + 1)
+            dd = self.__sliceFloatIntPart(dd, scaleI + 1)
+
+            self.assertTrue(re.match(regexp, self.__str(y)), info(self.__str(y)))
+            if scale > 2:
+                self.assertFalse(re.match(regexp, self.__str(x)), info(self.__str(x)))
+
+            self.assertTrue(re.match(regexp, self.__str(z)), info(self.__str(z)))
+            self.assertTrue(re.match(regexp, a), info(a))
+            self.assertTrue(re.match(regexp, b), info(b))
+            self.assertTrue(re.match(regexp, c), info(c))
+            self.assertTrue(re.match(regexp, d), info(d))
+            self.assertTrue(re.match(regexp, aa), info(aa))
+            self.assertTrue(re.match(regexp, bb), info(bb))
+            self.assertTrue(re.match(regexp, cc), info(cc))
+            self.assertTrue(re.match(regexp, dd), info(dd))
             i = i + step
         if setMax:
             i = i + step
@@ -473,11 +515,29 @@ class Test(unittest.TestCase):
         if len(splitted[0]) > scale:
             x = splitted[0][0:scale]
         elif len(splitted[0]) < scale:
-            x = splitted[0] + "0"*(scale - len(splitted[0]))
+            x = "0"*(scale - len(splitted[0])) + splitted[0]
         else:
             x = splitted[0]
 
         return  minus + x + "." + splitted[1]
+
+#    def __sliceFloatIntPartFront(self, f, scale):
+#        splitted = self.__str(f).split(".")
+#
+#        if str(f).find("-") >= 0:
+#            minus = "-"
+#            splitted[0] = splitted[0][1:]
+#        else:
+#            minus = ""
+#
+#        if len(splitted[0]) > scale:
+#            x = splitted[0][scale:]
+#        elif len(splitted[0]) < scale:
+#            x = splitted[0] + "0"*(scale - len(splitted[0]))
+#        else:
+#            x = splitted[0]
+#
+#        return  minus + x + "." + splitted[1]
 
     def __getRanges(self, min, max):
         min = float(min)
@@ -564,7 +624,7 @@ class Test(unittest.TestCase):
 
         x = regexpgen.real("%lf", -6.1, -3.3)
         self.assertFalse(re.match(x, "-6.8")) # powinno byc None
-        
+
         self.assertFalse(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.0"))
         self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.9"))
         self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.92"))
