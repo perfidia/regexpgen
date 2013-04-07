@@ -13,6 +13,7 @@ import math
 class Test(unittest.TestCase):
 
     def testDefault(self):
+        self.__testForShorterReal()
         self.__testForWrongFormat()
         self.__testForWrongInput()
 
@@ -31,18 +32,18 @@ class Test(unittest.TestCase):
                         self.__runTest2(scale, False, True, j, k);
                         self.__runTest2(scale, True, False, j, k);
                         self.__runTest2(scale, True, True, j, k);
-#                         self.__runTest3(scale, False, False, j, k);
-#                         self.__runTest3(scale, False, True, j, k);
-#                         self.__runTest3(scale, True, False, j, k);
-#                         self.__runTest3(scale, True, True, j, k);
-#                         self.__runTest4(scale, False, False, j, k);
-#                         self.__runTest4(scale, False, True, j, k);
-#                         self.__runTest4(scale, True, False, j, k);
-#                         self.__runTest4(scale, True, True, j, k);
-#                         self.__runTest5(scale, False, False, j, k);
-#                         self.__runTest5(scale, False, True, j, k);
-#                         self.__runTest5(scale, True, False, j, k);
-#                         self.__runTest5(scale, True, True, j, k);
+                        self.__runTest3(scale, False, False, j, k);
+                        self.__runTest3(scale, False, True, j, k);
+                        self.__runTest3(scale, True, False, j, k);
+                        self.__runTest3(scale, True, True, j, k);
+                        self.__runTest4(scale, False, False, j, k);
+                        self.__runTest4(scale, False, True, j, k);
+                        self.__runTest4(scale, True, False, j, k);
+                        self.__runTest4(scale, True, True, j, k);
+                        self.__runTest5(scale, False, False, j, k);
+                        self.__runTest5(scale, False, True, j, k);
+                        self.__runTest5(scale, True, False, j, k);
+                        self.__runTest5(scale, True, True, j, k);
  #                       self.__runTest6(scale, False, False, j, k);
 #                         self.__runTest6(scale, False, True, j, k);
 #                         self.__runTest6(scale, True, False, j, k);
@@ -138,6 +139,14 @@ class Test(unittest.TestCase):
             while i <= rangeRight:
                 self.assertFalse(re.search(regexp, self.__str(i)), info(self.__str(i)))
                 i = i + step
+
+        if setMax and float(max) > 0:
+            splitted = self.__str(max).split(".")
+            if len(splitted[1]) > 1:
+                test = splitted[0] + "." + splitted[1][:-1]
+                test = float(test)
+                self.assertTrue(re.match(regexp, self.__str(test)), info(self.__str(test)))
+
 
 
 
@@ -515,6 +524,56 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, regexpgen.real,"%lf", None, 10000)
         self.assertRaises(ValueError, regexpgen.real,"%0.2lf", None, 10000)
         self.assertRaises(ValueError, regexpgen.real,"%.2lf", None, 1000)
+
+    def __testForShorterReal(self):
+        x = regexpgen.real("%lf", 7.009, 7.698)
+        self.assertTrue(re.match(x, "7.69")) # powinno byc match
+
+        x = regexpgen.real("%lf", 7.09, 7.98)
+        self.assertTrue(re.match(x, "7.69")) # powinno byc match
+
+        x = regexpgen.real("%lf", None, 0.02)
+        self.assertFalse(re.match(x, "0.04")) # powinno byc None
+
+        x = regexpgen.real("%lf", -25.2691864655, -25.0697582645)
+        self.assertFalse(re.match(x, "-25.8042065349")) # powinno byc None
+
+        x = regexpgen.real("%lf", 6.063, 9.493)
+        self.assertTrue(re.match(x, "9.49")) # powinno byc match
+
+        x = regexpgen.real("%lf", 15.07, None)
+        self.assertTrue(re.match(x, "15.3")) # powinno byc match
+
+        x = regexpgen.real("%lf", None, 0.4)
+        self.assertFalse(re.match(x, "0.8")) # powinno byc None
+
+        x = regexpgen.real("%lf", None, 14.00)
+        self.assertTrue(re.match(x, "0.519")) # powinno byc match
+
+        x = regexpgen.real("%lf", 40.822, 46.202)
+        self.assertFalse(re.match(x, "46.21")) # powinno byc None
+
+        x = regexpgen.real("%lf", 0.97, 1.04)
+        self.assertFalse(re.match(x, "0.9")) # powinno byc None
+
+        x = regexpgen.real("%lf", None, 13.077)
+        self.assertFalse(re.match(x, "13.088")) # powinno byc None
+
+        x = regexpgen.real("%lf", None, 13.93)
+        self.assertTrue(re.match(x, "13.9")) # powinno byc match
+
+        x = regexpgen.real("%lf", -6.1, -3.3)
+        self.assertFalse(re.match(x, "-6.8")) # powinno byc None
+        
+        self.assertFalse(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.0"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.9"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.92"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.920"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.9207"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.92071"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.920716"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.9207166"))
+        self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.92071665"))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

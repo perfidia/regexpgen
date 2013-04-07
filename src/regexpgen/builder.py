@@ -494,22 +494,25 @@ class RegexBuilder(object):
         if miIntPart == maIntPart:
             if min == max:
                 return "{0}\.{1}".format(miIntPart, min)
-            x = self.__generateAlternativesForReal(format, int(min), int(max) - 1, remove)
             if digits == None:
-                x = re.sub("\[0\-9\](?!\*)", "",x)
-                return "{0}\.({1}[0-9]*|{2}0*)".format(miIntPart, x, maxBefore)
+                x = self.__generateAlternativesForReal(format, int(min), int(max) - 1, remove)
+            else:
+                x = self.__executeIntegerCalculation(format, int(min), int(max) - 1)
+            if digits == None:
+                #x = re.sub("\[0\-9\](?!\*)", "",x)
+                return "{0}\.({1}|{2}0*)".format(miIntPart, x, maxBefore)
             else:
                 return "{0}\.({1}|{2})".format(miIntPart, x, max)
         else:
             if digits == None:
                 x =  self.__generateAlternativesForReal(format, int(min), "9"*len(min), remove)
             else:
-                x = self.__generateAlternativesForReal(format, int(min), "9"*len(min), remove)
+                x = self.__executeIntegerCalculation(format, int(min), "9"*len(min))
             if int(max) != 0:
                 if digits == None:
                     y = self.__generateAlternativesForReal(format, 0, int(max) - 1, remove)
                 else:
-                    y = self.__generateAlternativesForReal(format, 0, int(max) - 1, remove)
+                    y = self.__executeIntegerCalculation(format, 0, int(max) - 1)
             else:
                 y = None
 
@@ -539,7 +542,7 @@ class RegexBuilder(object):
     def __generateAlternativesForReal(self, format, min, max, remove):
         result = "(";
         if str(min) == str(max):
-            result += str(max) 
+            result += str(max)
 
         m = re.match('%0([0-9]+)d', format)
         if m:
@@ -554,23 +557,27 @@ class RegexBuilder(object):
 
         for i in xrange(len(str(max))):
             newMin = str(int(str("0"* (digits - len(str(min))) + str(min))[0:i + 1]) + 1)
-            
+            newMax = str(max)[0:i + 1]
             if newMin != "10":
-                newMax = str(max)[0:i + 1]
-                if newMin < newMax:
+                if int(newMin) <= int(newMax):
                     if i != len(str(max)) - 1:
                         x = digits - (sub - 1 - i)
-                        a = self.__executeIntegerCalculation("%0" + str(x) + "d", newMin, newMax)
+                        a = self.__executeIntegerCalculation("%0" + str(x) + "d", int(newMin), int(newMax))
                         #if remove:
-                            #a = re.sub("\[0\-9\](?!\*)", "", a)                            
+                            #a = re.sub("\[0\-9\](?!\*)", "", a)
                         result += a + "|"
                     else:
-                        a = self.__executeIntegerCalculation("%0" + str(digits) + "d", str(min)[0:i + 1], newMax)
+                        a = self.__executeIntegerCalculation("%0" + str(digits) + "d", int(str(min)[0:i + 1]), int(newMax))
                         if remove:
                            # a = re.sub("\[0\-9\](?!\*)", "", a)
                       #      a = re.sub("\]\|", "]*|", a)
                             a += "[0-9]*"
                         result += a
+            else:
+                a = self.__executeIntegerCalculation("%0" + str(digits) + "d", 9, int(newMax))
+                a += "[0-9]*"
+                result += a
+
         result += ")"
 
         return result
