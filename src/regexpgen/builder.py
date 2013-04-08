@@ -584,26 +584,16 @@ class RegexBuilder(object):
             newMin = str(int(str("0"* (digits - len(str(min))) + str(min))[0:i + 1]) + 1)
             newMax = str(max)[0:i + 1]
             x = digits - (sub - 1 - i)
-         #   if newMin != "10":
             if int(newMin) <= int(newMax):
                 if i != len(str(max)) - 1:
-
                     a = self.__executeIntegerCalculation("%0" + str(x) + "d", int(newMin), int(newMax))
                     result += a + "|"
                 else:
                     a = self.__executeIntegerCalculation("%0" + str(digits) + "d", int(str(min)[0:i + 1]), int(newMax))
-                  #  if remove:
-                  #      a += "[0-9]*"
                     result += a
-        #    else:
-        #        a = self.__executeIntegerCalculation("%0" + str(x) + "d", 9, int(newMax))
-        #        a += "[0-9]*"
-        #        result += a
 
         result += "[0-9]*)"
         return result
-
-
 
     def __buildPartRegEx(self):
         result = ""
