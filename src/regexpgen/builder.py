@@ -571,6 +571,13 @@ class RegexBuilder(object):
                 result +=  count * "0" + "|"
                 count -= 1
 
+        temp = str(min)
+        while temp[-1] == "0":
+            temp = temp[:-1]
+
+        if len(temp) != len(str(min)):
+            result += temp + "|"
+
         for i in xrange(len(str(max))):
             newMin = str(int(str("0"* (digits - len(str(min))) + str(min))[0:i + 1]) + 1)
             newMax = str(max)[0:i + 1]
