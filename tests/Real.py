@@ -24,29 +24,29 @@ class Test(unittest.TestCase):
                 for j in [True, False]:
                     for k in [True, False]:
                         scale = len(self.__str(i))
-#                        self.__runTest1(scale, False, False, j, k);
-#                        self.__runTest1(scale, False, True, j, k);
-#                        self.__runTest1(scale, True, False, j, k);
-#                        self.__runTest1(scale, True, True, j, k);
-#                        self.__runTest2(scale, False, False, j, k);
-#                        self.__runTest2(scale, False, True, j, k);
-#                        self.__runTest2(scale, True, False, j, k);
-#                        self.__runTest2(scale, True, True, j, k);
-#                        self.__runTest3(scale, False, False, j, k);
-#                        self.__runTest3(scale, False, True, j, k);
-#                        self.__runTest3(scale, True, False, j, k);
-#                        self.__runTest3(scale, True, True, j, k);
-#                        self.__runTest4(scale, False, False, j, k);
-#                        self.__runTest4(scale, False, True, j, k);
-#                        self.__runTest4(scale, True, False, j, k);
-#                        self.__runTest4(scale, True, True, j, k);
-#                        self.__runTest5(scale, False, False, j, k);
-#                        self.__runTest5(scale, False, True, j, k);
-#                        self.__runTest5(scale, True, False, j, k);
-#                        self.__runTest5(scale, True, True, j, k);
-                        self.__runTest6(scale, False, False, j, k);
+                        self.__runTest1(scale, False, False, j, k);
+                        self.__runTest1(scale, False, True, j, k);
+                        self.__runTest1(scale, True, False, j, k);
+                        self.__runTest1(scale, True, True, j, k);
+                        self.__runTest2(scale, False, False, j, k);
+                        self.__runTest2(scale, False, True, j, k);
+                        self.__runTest2(scale, True, False, j, k);
+                        self.__runTest2(scale, True, True, j, k);
+                        self.__runTest3(scale, False, False, j, k);
+                        self.__runTest3(scale, False, True, j, k);
+                        self.__runTest3(scale, True, False, j, k);
+                        self.__runTest3(scale, True, True, j, k);
+                        self.__runTest4(scale, False, False, j, k);
+                        self.__runTest4(scale, False, True, j, k);
+                        self.__runTest4(scale, True, False, j, k);
+                        self.__runTest4(scale, True, True, j, k);
+                        self.__runTest5(scale, False, False, j, k);
+                        self.__runTest5(scale, False, True, j, k);
+                        self.__runTest5(scale, True, False, j, k);
+                        self.__runTest5(scale, True, True, j, k);
+#                       self.__runTest6(scale, False, False, j, k);
 #                         self.__runTest6(scale, False, True, j, k);
-                        self.__runTest6(scale, True, False, j, k);
+ #                       self.__runTest6(scale, True, False, j, k);
 #                         self.__runTest6(scale, True, True, j, k);
                 print a,i
 
@@ -512,9 +512,7 @@ class Test(unittest.TestCase):
         else:
             minus = ""
 
-        if len(splitted[0]) > scale:
-            x = splitted[0][0:scale]
-        elif len(splitted[0]) < scale:
+        if len(splitted[0]) < scale:
             x = "0"*(scale - len(splitted[0])) + splitted[0]
         else:
             x = splitted[0]
