@@ -574,8 +574,10 @@ class RegexBuilder(object):
         temp = str(min)
         while temp[-1] == "0":
             temp = temp[:-1]
+            if len(temp) == 0:
+                break
 
-        if len(temp) != len(str(min)):
+        if len(temp) != 0 and len(temp) != len(str(min)):
             result += temp + "|"
 
         for i in xrange(len(str(max))):
