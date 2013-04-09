@@ -6,9 +6,11 @@ Created on Apr 27, 2011
 
 import regexpgen
 import re
-x = regexpgen.real("%lf", 368.14969733, 368.675088072)
+x =regexpgen.real("%03.1lf", 9.0, None)
 print x
-print (re.match(x, "368.14969733"))
+
+print re.match(x, "010.0")
+
 #print regexpgen.nnint("%04d", 71, 2319)
 #print regexpgen.integer("%0d", -521, 132)
 #print regexpgen.real("%lf", -12.7, 23.5)

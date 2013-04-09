@@ -24,29 +24,29 @@ class Test(unittest.TestCase):
                 for j in [True, False]:
                     for k in [True, False]:
                         scale = len(self.__str(i))
-                        self.__runTest1(scale, False, False, j, k);
-                        self.__runTest1(scale, False, True, j, k);
-                        self.__runTest1(scale, True, False, j, k);
-                        self.__runTest1(scale, True, True, j, k);
-                        self.__runTest2(scale, False, False, j, k);
-                        self.__runTest2(scale, False, True, j, k);
-                        self.__runTest2(scale, True, False, j, k);
-                        self.__runTest2(scale, True, True, j, k);
-                        self.__runTest3(scale, False, False, j, k);
-                        self.__runTest3(scale, False, True, j, k);
-                        self.__runTest3(scale, True, False, j, k);
-                        self.__runTest3(scale, True, True, j, k);
-                        self.__runTest4(scale, False, False, j, k);
-                        self.__runTest4(scale, False, True, j, k);
-                        self.__runTest4(scale, True, False, j, k);
-                        self.__runTest4(scale, True, True, j, k);
-                        self.__runTest5(scale, False, False, j, k);
-                        self.__runTest5(scale, False, True, j, k);
-                        self.__runTest5(scale, True, False, j, k);
-                        self.__runTest5(scale, True, True, j, k);
-#                       self.__runTest6(scale, False, False, j, k);
+#                        self.__runTest1(scale, False, False, j, k);
+#                        self.__runTest1(scale, False, True, j, k);
+#                        self.__runTest1(scale, True, False, j, k);
+#                        self.__runTest1(scale, True, True, j, k);
+#                        self.__runTest2(scale, False, False, j, k);
+#                        self.__runTest2(scale, False, True, j, k);
+#                        self.__runTest2(scale, True, False, j, k);
+#                        self.__runTest2(scale, True, True, j, k);
+#                        self.__runTest3(scale, False, False, j, k);
+#                        self.__runTest3(scale, False, True, j, k);
+#                        self.__runTest3(scale, True, False, j, k);
+#                        self.__runTest3(scale, True, True, j, k);
+#                        self.__runTest4(scale, False, False, j, k);
+#                        self.__runTest4(scale, False, True, j, k);
+#                        self.__runTest4(scale, True, False, j, k);
+#                        self.__runTest4(scale, True, True, j, k);
+#                        self.__runTest5(scale, False, False, j, k);
+#                        self.__runTest5(scale, False, True, j, k);
+#                        self.__runTest5(scale, True, False, j, k);
+#                        self.__runTest5(scale, True, True, j, k);
+                        self.__runTest6(scale, False, False, j, k);
 #                         self.__runTest6(scale, False, True, j, k);
- #                       self.__runTest6(scale, True, False, j, k);
+                        self.__runTest6(scale, True, False, j, k);
 #                         self.__runTest6(scale, True, True, j, k);
                 print a,i
 
@@ -379,9 +379,9 @@ class Test(unittest.TestCase):
                 y = self.__sliceFloat(i, scaleR)
                 z = self.__sliceFloat(i, scaleR + 1)
 
-                x = self.__sliceFloatIntPart(x, scaleI + 1)
-                y = self.__sliceFloatIntPart(y, scaleI + 1)
-                z = self.__sliceFloatIntPart(z, scaleI + 1)
+                x = self.__sliceFloatIntPart(x, scaleI)
+                y = self.__sliceFloatIntPart(y, scaleI)
+                z = self.__sliceFloatIntPart(z, scaleI)
 
                 if scale > 1:
                     self.assertFalse(re.match(regexp, self.__str(x)), info(self.__str(x)))
@@ -390,88 +390,33 @@ class Test(unittest.TestCase):
                 i = i + step
             i = i + step
         while float(self.__str(i)) <= float(self.__str(max)):
-            if i >= 0:
-                a = "0" + self.__str(i); b = "00" + self.__str(i); c = "000" + self.__str(i); d = "0000" + self.__str(i);
-            else:
-                a = "-0" + self.__str(-i); b = "-00" + self.__str(-i); c = "-000" + self.__str(-i); d = "-0000" + self.__str(-i);
 
             x = self.__sliceFloat(i, scaleR - 1 if scaleR > 1 else 0)
             y = self.__sliceFloat(i, scaleR)
             z = self.__sliceFloat(i, scaleR + 1)
-            a = self.__sliceFloat(a, scaleR)
-            b = self.__sliceFloat(b, scaleR)
-            c = self.__sliceFloat(c, scaleR)
-            d = self.__sliceFloat(d, scaleR)
-            aa = self.__sliceFloat(a, scaleR + 1)
-            bb = self.__sliceFloat(b, scaleR + 1)
-            cc = self.__sliceFloat(c, scaleR + 1)
-            dd = self.__sliceFloat(d, scaleR + 1)
 
-            x = self.__sliceFloatIntPart(x, scaleI - 1 if scaleI > 1 else 0)
+            x = self.__sliceFloatIntPart(x, scaleI)
             y = self.__sliceFloatIntPart(y, scaleI)
             z = self.__sliceFloatIntPart(z, scaleI)
-            a = self.__sliceFloatIntPart(a, scaleI)
-            b = self.__sliceFloatIntPart(b, scaleI)
-            c = self.__sliceFloatIntPart(c, scaleI)
-            d = self.__sliceFloatIntPart(d, scaleI)
-            aa = self.__sliceFloatIntPart(aa, scaleI)
-            bb = self.__sliceFloatIntPart(bb, scaleI)
-            cc = self.__sliceFloatIntPart(cc, scaleI)
-            dd = self.__sliceFloatIntPart(dd, scaleI)
 
             self.assertTrue(re.match(regexp, self.__str(y)), info(self.__str(y)))
             if scale > 2:
                 self.assertFalse(re.match(regexp, self.__str(x)), info(self.__str(x)))
-
             self.assertFalse(re.match(regexp, self.__str(z)), info(self.__str(z)))
-            self.assertTrue(re.match(regexp, a), info(a))
-            self.assertTrue(re.match(regexp, b), info(b))
-            self.assertTrue(re.match(regexp, c), info(c))
-            self.assertTrue(re.match(regexp, d), info(d))
-            self.assertFalse(re.match(regexp, aa), info(aa))
-            self.assertFalse(re.match(regexp, bb), info(bb))
-            self.assertFalse(re.match(regexp, cc), info(cc))
-            self.assertFalse(re.match(regexp, dd), info(dd))
 
-            ######################################################################
-
-            x = self.__sliceFloat(i, scaleR - 1 if scaleR > 1 else 0)
+            x = self.__sliceFloat(i, scaleR)
             y = self.__sliceFloat(i, scaleR)
             z = self.__sliceFloat(i, scaleR)
-            a = self.__sliceFloat(a, scaleR)
-            b = self.__sliceFloat(b, scaleR)
-            c = self.__sliceFloat(c, scaleR)
-            d = self.__sliceFloat(d, scaleR)
-            aa = self.__sliceFloat(a, scaleR)
-            bb = self.__sliceFloat(b, scaleR)
-            cc = self.__sliceFloat(c, scaleR)
-            dd = self.__sliceFloat(d, scaleR)
 
             x = self.__sliceFloatIntPart(x, scaleI - 1 if scaleI > 1 else 0)
             y = self.__sliceFloatIntPart(y, scaleI)
-            z = self.__sliceFloatIntPart(z, scaleI + 1)
-            a = self.__sliceFloatIntPart(a, scaleI)
-            b = self.__sliceFloatIntPart(b, scaleI)
-            c = self.__sliceFloatIntPart(c, scaleI)
-            d = self.__sliceFloatIntPart(d, scaleI)
-            aa = self.__sliceFloatIntPart(aa, scaleI + 1)
-            bb = self.__sliceFloatIntPart(bb, scaleI + 1)
-            cc = self.__sliceFloatIntPart(cc, scaleI + 1)
-            dd = self.__sliceFloatIntPart(dd, scaleI + 1)
+            z = self.__sliceFloatIntPart(z, scaleI + 1, "1")
 
             self.assertTrue(re.match(regexp, self.__str(y)), info(self.__str(y)))
             if scale > 2:
                 self.assertFalse(re.match(regexp, self.__str(x)), info(self.__str(x)))
-
             self.assertTrue(re.match(regexp, self.__str(z)), info(self.__str(z)))
-            self.assertTrue(re.match(regexp, a), info(a))
-            self.assertTrue(re.match(regexp, b), info(b))
-            self.assertTrue(re.match(regexp, c), info(c))
-            self.assertTrue(re.match(regexp, d), info(d))
-            self.assertTrue(re.match(regexp, aa), info(aa))
-            self.assertTrue(re.match(regexp, bb), info(bb))
-            self.assertTrue(re.match(regexp, cc), info(cc))
-            self.assertTrue(re.match(regexp, dd), info(dd))
+
             i = i + step
         if setMax:
             i = i + step
@@ -494,7 +439,7 @@ class Test(unittest.TestCase):
         if len(splitted[1]) > scale:
             x = splitted[1][0:scale]
         elif len(splitted[1]) < scale:
-            x = splitted[1] + "0"*(scale -len(splitted[1]))
+            x = "0"*(scale -len(splitted[1])) + splitted[1]
         else:
             x = splitted[1]
 
@@ -503,7 +448,7 @@ class Test(unittest.TestCase):
 
         return splitted[0] + "." + x
 
-    def __sliceFloatIntPart(self, f, scale):
+    def __sliceFloatIntPart(self, f, scale, add = "0"):
         splitted = self.__str(f).split(".")
 
         if str(f).find("-") >= 0:
@@ -513,7 +458,10 @@ class Test(unittest.TestCase):
             minus = ""
 
         if len(splitted[0]) < scale:
-            x = "0"*(scale - len(splitted[0])) + splitted[0]
+            if minus == "":
+                x = add * (scale - len(splitted[0])) + splitted[0]
+            else:
+                x = splitted[0]
         else:
             x = splitted[0]
 
@@ -632,6 +580,53 @@ class Test(unittest.TestCase):
         self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.920716"))
         self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.9207166"))
         self.assertTrue(re.match(regexpgen.real("%lf", 88.7653193745, 88.920716654), "88.92071665"))
+
+
+
+        self.assertTrue(re.match(regexpgen.real("%03.1lf", 5.1, None), "8.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf", 5.1, None), "88.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf", -5.1, None), "-4.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf", -5.1, None), "55.9"))
+        self.assertFalse(re.match(regexpgen.real("%03.1lf", -5.1, None), "-55.1"))
+        self.assertTrue(re.match(regexpgen.real("%04.1lf", 5.9, None), "05.9"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf", 5.9, None), "05.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf", 5.9, None), "005.90"))
+        self.assertFalse(re.match(regexpgen.real("%04.2lf", 5.9, None), "3335.9"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf", -5.9, None), "-05.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf", -5.9, None), "-005.90"))
+
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",None, 5.1), "4.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",None, 5.1), "-88.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",None, -5.1), "-5.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",None, -5.1), "-55.9"))
+        self.assertFalse(re.match(regexpgen.real("%03.1lf",None, -5.1), "55.1"))
+        self.assertTrue(re.match(regexpgen.real("%04.1lf",None, 5.9), "05.9"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf",None, 5.9), "05.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf",None, 5.9), "005.90"))
+        self.assertFalse(re.match(regexpgen.real("%06.2lf",None, 5.9), "05.90"))
+        self.assertFalse(re.match(regexpgen.real("%04.2lf",None, 5.9), "3335.91"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf",None, -5.9), "-05.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf",None, -5.9), "-005.90"))
+        self.assertFalse(re.match(regexpgen.real("%03.1lf",None, -9.1), "99.1"))
+        self.assertTrue(re.match(regexpgen.real("%04.1lf",None, 9.9), "09.9"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf",None, 9.9), "09.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf",None, 9.9), "009.90"))
+
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",3.1, 5.1), "4.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",-7.3, 5.1), "-6.9"))
+        self.assertTrue(re.match(regexpgen.real("%03.1lf",-8.9, -5.1), "-5.9"))
+        self.assertFalse(re.match(regexpgen.real("%03.1lf",-5.1, -5.0), "55.1"))
+        self.assertTrue(re.match(regexpgen.real("%04.1lf",4.1, 5.9), "05.9"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf",1.0, 5.9), "05.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf",1.0, 5.9), "005.90"))
+        self.assertFalse(re.match(regexpgen.real("%06.2lf",1.2, 5.9), "05.90"))
+        self.assertFalse(re.match(regexpgen.real("%04.2lf",2.8, 5.9), "3335.91"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf",-22.8, -5.9), "-05.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf",-22.8, -5.9), "-005.90"))
+        self.assertFalse(re.match(regexpgen.real("%03.1lf",-9.3, -9.1), "99.1"))
+        self.assertTrue(re.match(regexpgen.real("%04.1lf",1.2, 9.9), "09.9"))
+        self.assertFalse(re.match(regexpgen.real("%05.1lf",1.2, 9.9), "09.9"))
+        self.assertTrue(re.match(regexpgen.real("%06.2lf",1.2, 9.9), "009.90"))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
