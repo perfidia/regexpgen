@@ -387,7 +387,10 @@ class RegexBuilder(object):
                 maxV = minV + 1
                 ans = self.calculateRealRegex(minV, maxV, digitsReal, formatInt)
                 ans = re.sub("\\\.", "[0-9]*\.", ans)
-                ans2 = self.__executeIntegerCalculation(formatInt, int(math.floor(maxV)), None)
+                if digitsInt == 1:
+                    ans2 = self.__executeIntegerCalculation("%0d", int(math.floor(maxV)), None)
+                else:
+                    ans2 = self.__executeIntegerCalculation(formatInt, int(math.floor(maxV)), None)
                 if digitsReal == None:
                     return r"^-({0}|({1})[0-9]*\.{2})$".format(ans, ans2, endingReal)
                 else:
@@ -435,14 +438,11 @@ class RegexBuilder(object):
                             result += "|-{0}({1})".format(zeros,self.calculateRealRegex(maxV, -minV, digitsReal, formatInt).replace("?", ""))
 
                         return "^({0})$".format(result)
-
                 else:
                     if digitsReal == None:
                         return "^({0}({1}))$".format(zeros, self.calculateRealRegex(minV, maxV, digitsReal, formatInt))
                     else:
                         return "^({0}({1}))$".format(zeros, self.calculateRealRegex(minV, maxV, digitsReal, formatInt)).replace("?", "")
-
-
 
     def createNNIntegerRegex(self, frmt, minV, maxV):
         try:
