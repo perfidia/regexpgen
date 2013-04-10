@@ -268,13 +268,13 @@ class RegexBuilder(object):
         #%0d
         if minV is None and maxV is None:
             if frmt == "%lf":
-                self.__addElement("-?([0-9]+(\.[0-9]+|0)?)")
+                ans = "-?" + zeros + "([0-9]+|0)\.[0-9]+"
             if frmt == "%0lf":
-                self.__addElement("-?(([1-9][0-9]*|0)(\.[0-9]+)?)")
+                ans = "-?" + zeros + "([1-9][0-9]*|0)\.[0-9]+"
             if digitsReal != None:
-                self.__addElement("-?{0}(([1-9][0-9]*|0)(\.{1})?)".format(zeros, endingReal))
+                ans = "-?{0}([1-9][0-9]*|0)(\.{1})".format(zeros, endingReal)
 
-            return "^({0})$".format(self.__buildRegEx())
+            return "^({0})$".format(ans)
 
         if minV is None and maxV is not None:
             if maxV < 0:
@@ -419,7 +419,7 @@ class RegexBuilder(object):
                     ans2 = self.__calculateRealRegex(minV, maxV, digitsReal, formatInt)
                     result += "|-?({0})".format(ans2.replace("?", ""))
                 return "^({0})$".format(result)
-            
+
         if minV is not None and maxV is not None:
             if minV < 0 and maxV < 0:
                 tempMinV = minV
