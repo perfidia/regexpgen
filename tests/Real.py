@@ -25,30 +25,30 @@ class Test(unittest.TestCase):
                 for j in [True, False]:
                     for k in [True, False]:
                         scale = len(self.__str(i))
-#                        self.__runTest1(scale, False, False, j, k);
-#                        self.__runTest1(scale, False, True, j, k);
-#                        self.__runTest1(scale, True, False, j, k);
-#                        self.__runTest1(scale, True, True, j, k);
-#                        self.__runTest2(scale, False, False, j, k);
-#                        self.__runTest2(scale, False, True, j, k);
-#                        self.__runTest2(scale, True, False, j, k);
-#                        self.__runTest2(scale, True, True, j, k);
-#                        self.__runTest3(scale, False, False, j, k);
-#                        self.__runTest3(scale, False, True, j, k);
-#                        self.__runTest3(scale, True, False, j, k);
-#                        self.__runTest3(scale, True, True, j, k);
-#                        self.__runTest4(scale, False, False, j, k);
-#                        self.__runTest4(scale, False, True, j, k);
-#                        self.__runTest4(scale, True, False, j, k);
-#                        self.__runTest4(scale, True, True, j, k);
-#                        self.__runTest5(scale, False, False, j, k);
-#                        self.__runTest5(scale, False, True, j, k);
-#                        self.__runTest5(scale, True, False, j, k);
-#                        self.__runTest5(scale, True, True, j, k);
-                        self.__runTest6(scale, False, False, j, k);
-                        self.__runTest6(scale, False, True, j, k);
-                        self.__runTest6(scale, True, False, j, k);
-                        self.__runTest6(scale, True, True, j, k);
+                        self.__runTest1(scale, False, False, j, k)
+                        self.__runTest1(scale, False, True, j, k)
+                        self.__runTest1(scale, True, False, j, k)
+                        self.__runTest1(scale, True, True, j, k)
+                        self.__runTest2(scale, False, False, j, k)
+                        self.__runTest2(scale, False, True, j, k)
+                        self.__runTest2(scale, True, False, j, k)
+                        self.__runTest2(scale, True, True, j, k)
+                        self.__runTest3(scale, False, False, j, k)
+                        self.__runTest3(scale, False, True, j, k)
+                        self.__runTest3(scale, True, False, j, k)
+                        self.__runTest3(scale, True, True, j, k)
+                        self.__runTest4(scale, False, False, j, k)
+                        self.__runTest4(scale, False, True, j, k)
+                        self.__runTest4(scale, True, False, j, k)
+                        self.__runTest4(scale, True, True, j, k)
+                        self.__runTest5(scale, False, False, j, k)
+                        self.__runTest5(scale, False, True, j, k)
+                        self.__runTest5(scale, True, False, j, k)
+                        self.__runTest5(scale, True, True, j, k)
+                        self.__runTest6(scale, False, False, j, k)
+                        self.__runTest6(scale, False, True, j, k)
+                        self.__runTest6(scale, True, False, j, k)
+                        self.__runTest6(scale, True, True, j, k)
                 print a,i
 
     def __runTest1(self, scale, setMin, setMax, useInt, stepInt):
@@ -536,6 +536,8 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, regexpgen.real,"aaaaaaaaa", None, 1000.0)
         self.assertRaises(ValueError, regexpgen.real, "%0.2lf", None, 1000)
         self.assertRaises(ValueError, regexpgen.real, None, None, 1000)
+        self.assertRaises(ValueError, regexpgen.real, 123)
+        self.assertRaises(ValueError, regexpgen.real, 12.3)
 
     def __testForWrongInput(self):
         self.assertRaises(ValueError, regexpgen.real,"%lf", -100, 1000)
@@ -543,6 +545,8 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, regexpgen.real,"%lf", None, 10000)
         self.assertRaises(ValueError, regexpgen.real,"%0.2lf", None, 10000)
         self.assertRaises(ValueError, regexpgen.real,"%.2lf", None, 1000)
+        self.assertRaises(ValueError, regexpgen.real, "%lf", "123", 123)
+        self.assertRaises(ValueError, regexpgen.real, "%lf", 123, "123")
 
     def __testForShorterReal(self):
         x = regexpgen.real("%lf", 7.009, 7.698)

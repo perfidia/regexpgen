@@ -18,22 +18,22 @@ class Test(unittest.TestCase):
 		self.__testForWrongFormat()
 		self.__testForWrongInput()
 
-		random.seed(0);
+		random.seed(0)
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self.__runTest1(scale, False, False);
-			self.__runTest1(scale, False, True);
-			self.__runTest1(scale, True, False);
-			self.__runTest1(scale, True, True);
-			self.__runTest2(scale, False, False);
-			self.__runTest2(scale, False, True);
-			self.__runTest2(scale, True, False);
-			self.__runTest2(scale, True, True);
-			self.__runTest3(scale, False, False);
-			self.__runTest3(scale, False, True);
-			self.__runTest3(scale, True, False);
-			self.__runTest3(scale, True, True);
+			self.__runTest1(scale, False, False)
+			self.__runTest1(scale, False, True)
+			self.__runTest1(scale, True, False)
+			self.__runTest1(scale, True, True)
+			self.__runTest2(scale, False, False)
+			self.__runTest2(scale, False, True)
+			self.__runTest2(scale, True, False)
+			self.__runTest2(scale, True, True)
+			self.__runTest3(scale, False, False)
+			self.__runTest3(scale, False, True)
+			self.__runTest3(scale, True, False)
+			self.__runTest3(scale, True, True)
 			print i
 
 	def __runTest1(self, scale, setMin, setMax):
@@ -86,11 +86,11 @@ class Test(unittest.TestCase):
 		regexp = regexpgen.nnint(format, min if setMin else None, max if setMax else None)
 		info = lambda value: self.__getInfo(value, regexp, format, min if setMin else None, max if setMax else None)
 		for i in xrange(-max * 2, -1):
-			a = "-" + getZeros(i) + str(math.fabs(i));
+			a = "-" + getZeros(i) + str(math.fabs(i))
 			self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 			self.assertFalse(re.match(regexp, a), info(a))
 		for i in xrange(0, min - 1):
-			a = getZeros(i) + str(i);
+			a = getZeros(i) + str(i)
 			self.assertFalse(re.match(regexp, str(i)), info(str(i)))
 			self.assertFalse(re.match(regexp, a), info(a))
 		for i in xrange(min, max):
@@ -137,7 +137,8 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.nnint, "aaaaaaaaa", None, 1000)
 		self.assertRaises(ValueError, regexpgen.nnint, "%0.2lf", None, 1000)
 		self.assertRaises(ValueError, regexpgen.nnint, None, None, 1000)
-		
+		self.assertRaises(ValueError, regexpgen.nnint, 123)
+		self.assertRaises(ValueError, regexpgen.nnint, 12.3)		
 
 	def __testForWrongInput(self):
 		self.assertRaises(ValueError, regexpgen.nnint, "%0d", 100.6757, 100)
@@ -148,6 +149,8 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100.435, -100)
 		self.assertRaises(ValueError, regexpgen.nnint, "%d", -100, 100)
 		self.assertRaises(ValueError, regexpgen.nnint, "%d", 100, -100)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", "123", 123)
+		self.assertRaises(ValueError, regexpgen.nnint, "%d", 123, "123")
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']

@@ -20,18 +20,18 @@ class Test(unittest.TestCase):
 
 		for i in xrange(0, 1100):
 			scale = len(str(i))
-			self.__runTest1(scale, False, False);
-			self.__runTest1(scale, False, True);
-			self.__runTest1(scale, True, False);
-			self.__runTest1(scale, True, True);
-			self.__runTest2(scale, False, False);
-			self.__runTest2(scale, False, True);
-			self.__runTest2(scale, True, False);
-			self.__runTest2(scale, True, True);
-			self.__runTest3(scale, False, False);
-			self.__runTest3(scale, False, True);
-			self.__runTest3(scale, True, False);
-			self.__runTest3(scale, True, True);
+			self.__runTest1(scale, False, False)
+			self.__runTest1(scale, False, True)
+			self.__runTest1(scale, True, False)
+			self.__runTest1(scale, True, True)
+			self.__runTest2(scale, False, False)
+			self.__runTest2(scale, False, True)
+			self.__runTest2(scale, True, False)
+			self.__runTest2(scale, True, True)
+			self.__runTest3(scale, False, False)
+			self.__runTest3(scale, False, True)
+			self.__runTest3(scale, True, False)
+			self.__runTest3(scale, True, True)
 			print i
 
 	def __runTest1(self, scale, setMin, setMax):
@@ -191,6 +191,8 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.integer, "aaaaaaaaa", None, 1000)
 		self.assertRaises(ValueError, regexpgen.integer, "%0.2lf", None, 1000)
 		self.assertRaises(ValueError, regexpgen.integer, None, None, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, 123)
+		self.assertRaises(ValueError, regexpgen.integer, 12.3)
 
 	def __testForWrongInput(self):
 		self.assertRaises(ValueError, regexpgen.integer, "%0d", 100.6757, 100)
@@ -198,6 +200,8 @@ class Test(unittest.TestCase):
 		self.assertRaises(ValueError, regexpgen.integer, "%d", 100.34, 100.0)
 		self.assertRaises(ValueError, regexpgen.integer, "%d", 100.435, 100)
 		self.assertRaises(ValueError, regexpgen.integer, "%d", -1000.3, 1000)
+		self.assertRaises(ValueError, regexpgen.integer, "%d", "123", 123)
+		self.assertRaises(ValueError, regexpgen.integer, "%d", 123, "123")
 
 if __name__ == "__main__":
 	#import sys;sys.argv = ['', 'Test.testName']
