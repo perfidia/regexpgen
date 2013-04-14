@@ -97,7 +97,12 @@ def real(format, min = None, max = None, matchStartEnd = True):
 	'''
 
 	b = builder.RegexBuilder()
-	return  b.createRealRegex(format, min, max)
+	return b.createRealRegex(format, min, max)
+
+def time(format, min = None, max = None):
+	b = builder.RegexBuilder()
+	return b.createTimeRegex(format, min, max)
+
 
 def concatenate(concatenationList):
 	result = ""
