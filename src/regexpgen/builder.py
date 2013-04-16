@@ -1114,7 +1114,8 @@ class RegexBuilder(object):
                         rM2 = reg(0, 59)
                         rM3 = reg(0, g2("M") - 1)
                         rI0 = reg(g1("I") + 1, 11)
-                        rI1 = reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 12 else "")
+                        rI1 = "(" + reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 1 else "") + ")"
+                        rI1 = rI1 if g2("I") != 12 else None
 
                         return res([
                                    fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
@@ -1129,8 +1130,8 @@ class RegexBuilder(object):
                         rM2 = reg(0, 59)
                         rM3 = reg(0, g2("M"))
                         rI0 = reg(g1("I") + 1, 11)
-                        rI1 = "(" + reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 12 else "") + ")"
-
+                        rI1 = "(" + reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 1 else "") + ")"
+                        rI1 = rI1 if g2("I") != 12 else None
                         return res([
                                    fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
                                    fill([(PnamePrc, g1(Pname)), ("%I", rI0),      ("%M", rM2)]),
@@ -1139,7 +1140,8 @@ class RegexBuilder(object):
                                    ])
                 else:
                     rI1 = reg(g1("I"), 11)
-                    rI2 = "(" + reg(12, 12) + (("|" + reg(1, g2("I"))) if g2("I") != 12 else "") + ")"
+                    rI2 = "(" + reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 1 else "") + ")"
+                    rI2 = rI2 if g2("I") != 12 else None
                     return res([
                                fill([(PnamePrc, g1(Pname)), ("%I", rI1)]),
                                fill([(PnamePrc, g2(Pname)), ("%I", rI2)])
