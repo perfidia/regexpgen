@@ -1078,7 +1078,10 @@ class RegexBuilder(object):
                             rM1 = reg(g1("M") + 1, 59)
                             rM2 = reg(0, 59)
                             rM3 = reg(0, g2("M") - 1)
-                            rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
+                            if g1(Pname).lower() == "pm" and g1("I") == 12:
+                                rI2 = "(12{0})".format("|" + reg(1, g2("I") - 1)) if g2("I") != 1 else None
+                            else:
+                                rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
                             return res([
                                          fill([(PnamePrc, g1(Pname)),("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
                                          fill([(PnamePrc, g1(Pname)),("%I", gz1("I")), ("%M", rM1),      ("%S", rS2)]),
