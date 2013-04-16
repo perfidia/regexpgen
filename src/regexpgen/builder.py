@@ -885,6 +885,8 @@ class RegexBuilder(object):
         eq = lambda g: self.__eq(m1, m2, g) 
         g1 = lambda g: m1.group(g) if g == "p" or g == "P" else int(m1.group(g))
         g2 = lambda g: m2.group(g) if g == "p" or g == "P" else int(m2.group(g))
+        gz1 = lambda g: ("0" + m1.group(g))[-2:]
+        gz2 = lambda g: ("0" + m2.group(g))[-2:]
         reg = lambda a, b: self.__executeIntegerCalculation("%02d", a, b)
         fill = lambda l: self.__fillTimeRegex(f, l)
         res = lambda l: "|".join(filter(None, l))
@@ -898,13 +900,16 @@ class RegexBuilder(object):
             if H:
                 minT = minT.replace("%H", "00")
             if I:
-                if g1(Pname).lower() == "am":
-                    minT = minT.replace("%I", "00")
+                minT = minT.replace("%I", "00")
+                if p:
+                    minT = minT.replace("%p", "am") 
                 else:
-                    minT = minT.replace("%I", "12")
+                    minT = minT.replace("%P", "AM")  
             if M:
                 minT = minT.replace("%M", "00")
             if S:
+                minT = minT.replace("%S", "00")
+            if p:
                 minT = minT.replace("%S", "00")
                 
         if maxT is None:
@@ -913,6 +918,10 @@ class RegexBuilder(object):
                 maxT = maxT.replace("%H", "23")
             if I:
                 maxT = maxT.replace("%I", "11")
+                if p:
+                    minT = minT.replace("%p", "pm") 
+                else:
+                    minT = minT.replace("%P", "PM")  
             if M:
                 maxT = maxT.replace("%M", "59")
             if S:
@@ -960,11 +969,11 @@ class RegexBuilder(object):
                     raise ValueError("Bad input")                   
         else:
             if M and not le("M"):
-                pass #ok
+                raise ValueError("Bad input")
             if M and S and eq("M") and not le("S"):
-                pass #ok
+                raise ValueError("Bad input")
             if not M and S and not le("S"):
-                pass #ok                
+                raise ValueError("Bad input")               
             
         if H:
             if eq("H"):
@@ -972,9 +981,9 @@ class RegexBuilder(object):
                     if eq("M"):
                         if S:              
                             rS = reg(g1("S"), g2("S"))
-                            return fill([("%H", g1("H")), ("%M", g1("M")), ("%S", rS)])
+                            return fill([("%H", gz1("H")), ("%M", gz1("M")), ("%S", rS)])
                         else:
-                            return fill([("%H", g1("H")), ("%M", g1("M"))])
+                            return fill([("%H", gz1("H")), ("%M", gz1("M"))])
                     else:
                         if S:
                             rS1 = reg(g1("S"), 59)
@@ -982,35 +991,31 @@ class RegexBuilder(object):
                             rS3 = reg(0, g2("S")) 
                             rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None  
                             return res([
-                                         fill([("%H", g1("H")), ("%M", g1("M")), ("%S", rS1)]),
-                                         fill([("%H", g1("H")), ("%M", rM),      ("%S", rS2)]),
-                                         fill([("%H", g1("H")), ("%M", g2("M")), ("%S", rS3)])                                             
+                                         fill([("%H", gz1("H")), ("%M", gz1("M")), ("%S", rS1)]),
+                                         fill([("%H", gz1("H")), ("%M", rM),       ("%S", rS2)]),
+                                         fill([("%H", gz1("H")), ("%M", gz2("M")), ("%S", rS3)])                                             
                                          ]) 
                         else:
                             rM = reg(g1("M"), g2("M"))
-                            return fill([("%H", g1("H")), ("%M", rM)]) #fill rH same
+                            return fill([("%H", gz1("H")), ("%M", rM)]) #fill rH same
                 else:
-                    return fill([("%H", g1("H"))])
+                    return fill([("%H", gz1("H"))])
             else:
                 if M:
                     if S:
                         rS1 = reg(g1("S"), 59)
                         rS2 = reg(0, 59)
                         rS3 = reg(0, g2("S"))
-                        rM0 = g1("M")
                         rM1 = reg(g1("M") + 1, 59)
-                        rM2 = reg(0, 59)     
-                        rM3 = reg(0, g2("M") - 1)    
-                        rM4 = g2("M")   
-                        rI1 = g1("H")
+                        rM2 = reg(0, 59)
+                        rM3 = reg(0, g2("M") - 1)
                         rI2 = reg(g1("H") + 1, g2("H") - 1) if g1("H") + 1 < g2("H") else None
-                        rI3 = g2("H")
                         return res([
-                                     fill([("%H", rI1), ("%M", rM0), ("%S", rS1)]),
-                                     fill([("%H", rI1), ("%M", rM1), ("%S", rS2)]),
-                                     fill([("%H", rI2), ("%M", rM2), ("%S", rS2)]), 
-                                     fill([("%H", rI3), ("%M", rM3), ("%S", rS2)]),
-                                     fill([("%H", rI3), ("%M", rM4), ("%S", rS3)])                                               
+                                     fill([("%H", gz1("H")), ("%M", gz1("M")), ("%S", rS1)]),
+                                     fill([("%H", gz1("H")), ("%M", rM1),      ("%S", rS2)]),
+                                     fill([("%H", rI2),      ("%M", rM2),      ("%S", rS2)]), 
+                                     fill([("%H", gz2("H")), ("%M", rM3),      ("%S", rS2)]),
+                                     fill([("%H", gz2("H")), ("%M", gz2("M")), ("%S", rS3)])                                               
                                      ])
                     else: 
                         rM1 = reg(g1("M"), 59)
@@ -1018,9 +1023,9 @@ class RegexBuilder(object):
                         rM3 = reg(0, g2("M"))
                         rI = reg(g1("H") + 1, g2("H") - 1) if g1("H") + 1 < g2("H") else None 
                         return res([
-                                     fill([("%H", g1("H")), ("%M", rM1)]),
-                                     fill([("%H", rI),      ("%M", rM2)]),
-                                     fill([("%H", g2("H")), ("%M", rM3)])                                             
+                                     fill([("%H", gz1("H")), ("%M", rM1)]),
+                                     fill([("%H", rI),       ("%M", rM2)]),
+                                     fill([("%H", gz2("H")), ("%M", rM3)])                                             
                                      ])        
                 else:
                     rH = reg(g1("H"), g2("H"))
@@ -1032,9 +1037,9 @@ class RegexBuilder(object):
                         if eq("M"):
                             if S:              
                                 rS = reg(g1("S"), g2("S"))
-                                return fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g1("M")), ("%S", rS)])
+                                return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS)])
                             else:
-                                return fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g1("M"))])
+                                return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M"))])
                         else:
                             if S:
                                 rS1 = reg(g1("S"), 59)
@@ -1042,9 +1047,9 @@ class RegexBuilder(object):
                                 rS3 = reg(0, g2("S"))
                                 rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None
                                 return res([
-                                             fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g1("M")), ("%S", rS1)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", rM),      ("%S", rS2)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g2("M")), ("%S", rS3)])                                              
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM),       ("%S", rS2)]),
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz2("M")), ("%S", rS3)])                                              
                                              ])
                             else: 
                                 rM1 = reg(g1("M"), 59)
@@ -1052,74 +1057,67 @@ class RegexBuilder(object):
                                 rM3 = reg(0, g2("M"))     
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None 
                                 return res([
-                                             fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", rM1)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", rI2), ("%M", rM2)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", g2("I")), ("%M", rM3)])                                             
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
+                                             fill([(PnamePrc, g1(Pname)), ("%I", rI2),      ("%M", rM2)]),
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz2("I")), ("%M", rM3)])                                             
                                              ]) 
                     else:
-                        return fill([(PnamePrc, g1(Pname)), ("%I", g1("I"))])      
+                        return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I"))])      
                 else:
                     if M:
                         if eq("M"):
                             if S:              
                                 rS = reg(g1("S"), g2("S"))
-                                return fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g1("M")), ("%S", rS)])
+                                return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS)])
                             else:
-                                return fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g1("M"))])
+                                return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M"))])
                         else:
                             if S:
                                 rS1 = reg(g1("S"), 59)
                                 rS2 = reg(0, 59)
                                 rS3 = reg(0, g2("S"))
-                                rM0 = g1("M")
                                 rM1 = reg(g1("M") + 1, 59)
                                 rM2 = reg(0, 59)     
-                                rM3 = reg(0, g2("M") - 1)    
-                                rM4 = g2("M")   
-                                rI1 = g1("I")
+                                rM3 = reg(0, g2("M") - 1)
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
-                                rI3 = g2("I")
                                 return res([
-                                             fill([(PnamePrc, g1(Pname)),("%I", rI1), ("%M", rM0), ("%S", rS1)]),
-                                             fill([(PnamePrc, g1(Pname)),("%I", rI1), ("%M", rM1), ("%S", rS2)]),
-                                             fill([(PnamePrc, g1(Pname)),("%I", rI2), ("%M", rM2), ("%S", rS2)]), 
-                                             fill([(PnamePrc, g1(Pname)),("%I", rI3), ("%M", rM3), ("%S", rS2)]),
-                                             fill([(PnamePrc, g1(Pname)),("%I", rI3), ("%M", rM4), ("%S", rS3)])                                               
+                                             fill([(PnamePrc, g1(Pname)),("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
+                                             fill([(PnamePrc, g1(Pname)),("%I", gz1("I")), ("%M", rM1),      ("%S", rS2)]),
+                                             fill([(PnamePrc, g1(Pname)),("%I", rI2),      ("%M", rM2),      ("%S", rS2)]), 
+                                             fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", rM3),      ("%S", rS2)]),
+                                             fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", gz2("M")), ("%S", rS3)])                                               
                                              ])
                             else: 
                                 rM1 = reg(g1("M"), 59)
                                 rM2 = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None     
-                                rM3 = reg(0, g2("M"))    
-                                rI1 = g1("I")
+                                rM3 = reg(0, g2("M"))
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
-                                rI3 = g2("I")   
                                 return res([
-                                             fill([(PnamePrc, g1(Pname)), ("%I", rI1), ("%M", rM1)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", rI2), ("%M", rM2)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", rI3), ("%M", rM3)])                                             
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
+                                             fill([(PnamePrc, g1(Pname)), ("%I", rI2),      ("%M", rM2)]),
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz2("I")), ("%M", rM3)])                                             
                                              ]) 
                     else:
-                        return fill([(PnamePrc, g1(Pname)), ("%I", g1("I"))])     
+                        return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I"))])     
             else:
                 if M:
                     if S:
                         rS1 = reg(g1("S"), 59)
                         rS2 = reg(0, 59)
                         rS3 = reg(0, g2("S"))
-                        
                         rM1 = reg(g1("M"), 59)
                         rM2 = reg(0, 59)
                         rM3 = reg(0, g2("M") - 1)
                         rI0 = reg(g1("I") + 1, 11)
                         rI1 = reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 12 else "")
-
+                        
                         return res([
-                                   fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", g1("M")), ("%S", rS1)]),
-                                   fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", rM1),     ("%S", rS2)]), 
-                                   fill([(PnamePrc, g1(Pname)), ("%I", rI0),     ("%M", rM2),     ("%S", rS2)]),
-                                   fill([(PnamePrc, g2(Pname)), ("%I", rI1),     ("%M", rM2),     ("%S", rS2)]),
-                                   fill([(PnamePrc, g2(Pname)), ("%I", g2("I")), ("%M", rM3),     ("%S", rS2)]),
-                                   fill([(PnamePrc, g2(Pname)), ("%I", g2("I")), ("%M", g2("M")), ("%S", rS3)])
+                                   fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
+                                   fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1),      ("%S", rS2)]), 
+                                   fill([(PnamePrc, g1(Pname)), ("%I", rI0),      ("%M", rM2),      ("%S", rS2)]),
+                                   fill([(PnamePrc, g2(Pname)), ("%I", rI1),      ("%M", rM2),      ("%S", rS2)]),
+                                   fill([(PnamePrc, g2(Pname)), ("%I", gz2("I")), ("%M", rM3),      ("%S", rS2)]),
+                                   fill([(PnamePrc, g2(Pname)), ("%I", gz2("I")), ("%M", gz2("M")), ("%S", rS3)])
                                    ])
                     else:
                         rM1 = reg(g1("M"), 59)
@@ -1129,10 +1127,10 @@ class RegexBuilder(object):
                         rI1 = "(" + reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 12 else "") + ")"
 
                         return res([
-                                   fill([(PnamePrc, g1(Pname)), ("%I", g1("I")), ("%M", rM1)]),
-                                   fill([(PnamePrc, g1(Pname)), ("%I", rI0), ("%M", rM2)]), 
-                                   fill([(PnamePrc, g2(Pname)), ("%I", rI1), ("%M", rM2)]),
-                                   fill([(PnamePrc, g2(Pname)), ("%I", g2("I")), ("%M", rM3)])
+                                   fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
+                                   fill([(PnamePrc, g1(Pname)), ("%I", rI0),      ("%M", rM2)]), 
+                                   fill([(PnamePrc, g2(Pname)), ("%I", rI1),      ("%M", rM2)]),
+                                   fill([(PnamePrc, g2(Pname)), ("%I", gz2("I")), ("%M", rM3)])
                                    ])
                 else:
                     rI1 = reg(g1("I"), 11)
@@ -1143,19 +1141,18 @@ class RegexBuilder(object):
                                ])
         else:
             if M and S:                   
-                if eq("M"):
-                    rM = g1("M")
+                if eq("M"): 
                     rS = reg(g1("S"), g2("S"))
-                    return fill([("%M", rM), ("%S", rS)])
+                    return fill([("%M", gz1("M")), ("%S", rS)])
                 else:
                     rS1 = reg(g1("S"), 59)
                     rS2 = reg(0, 59)
                     rS3 = reg(0, g2("S"))
                     rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None 
                     return res([
-                                fill([("%M", g1("M")), ("%S", rS1)]),
-                                fill([("%M", rM), ("%S", rS2)]),
-                                fill([("%M", g2("M")), ("%S", rS3)])
+                                fill([("%M", gz1("M")), ("%S", rS1)]),
+                                fill([("%M", rM),       ("%S", rS2)]),
+                                fill([("%M", gz2("M")), ("%S", rS3)])
                                 ])
             if M:
                 rM = reg(g1("M"), g2("M")) 
