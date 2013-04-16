@@ -910,8 +910,10 @@ class RegexBuilder(object):
         P = p or P
         Pname = "p" if p else "P" if P else None
         PnamePrc = "%" + str(Pname)
-
+       # WasMinSet = False
+        
         if minT is None:
+        #    WasMinSet = True
             minT = frmt
             if H:
                 minT = minT.replace("%H", "00")
@@ -950,7 +952,6 @@ class RegexBuilder(object):
             raise ValueError("Bad input")
 
 
-
         if H:
             if not le("H"):
                 raise ValueError("Bad input")
@@ -960,7 +961,7 @@ class RegexBuilder(object):
                 raise ValueError("Bad input")
         elif I:
             if P:
-                if eq(Pname) and not le("I") and minT is not None and g1("I") != "12":
+                if eq(Pname) and not le("I") and g1("I") != 12:
                     raise ValueError("Bad input")
                 if not le(Pname):
                     raise ValueError("Bad input")
