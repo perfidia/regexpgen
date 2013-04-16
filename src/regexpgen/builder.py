@@ -79,15 +79,15 @@ class RegexBuilder(object):
         if minV != None and not (isinstance(minV, int) or isinstance(minV, long)):
             raise ValueError("Bad input")
         if maxV != None and not (isinstance(maxV, int) or isinstance(maxV, long)):
-            raise ValueError("Bad input") 
-        
+            raise ValueError("Bad input")
+
         if minV is not None:
             if str(minV) != str(int(minV)):
                 raise ValueError("Bad input")
         if maxV is not None:
             if str(maxV) != str(int(maxV)):
                 raise ValueError("Bad input")
-            
+
         if (frmt is None) or (not isinstance(frmt, str)) or (frmt not in ["%d", "%0d"]) and not re.match("^%0[0-9]+d$", frmt):
             raise ValueError("Bad format")
 
@@ -186,15 +186,15 @@ class RegexBuilder(object):
     def __executeIntegerCalculation(self, frmt, minV, maxV):
         b = RegexBuilder()
         minV = None if minV is None else int(minV)
-        maxV = None if maxV is None else int(maxV) 
+        maxV = None if maxV is None else int(maxV)
         return b.createIntegerRegex(frmt, minV, maxV).replace("^", "").replace("$", "")
 
     def createRealRegex(self, frmt, minV, maxV):
         if minV != None and not isinstance(minV, float):
             raise ValueError("Bad input")
         if maxV != None and not isinstance(maxV, float):
-            raise ValueError("Bad input") 
-        
+            raise ValueError("Bad input")
+
         try:
             if minV is not None:
                 float(minV)
@@ -458,8 +458,8 @@ class RegexBuilder(object):
         if minV != None and not (isinstance(minV, int) or isinstance(minV, long)):
             raise ValueError("Bad input")
         if maxV != None and not (isinstance(maxV, int) or isinstance(maxV, long)):
-            raise ValueError("Bad input") 
-        
+            raise ValueError("Bad input")
+
         if minV is not None:
             if str(minV) != str(int(minV)):
                 raise ValueError("Bad input")
@@ -646,7 +646,7 @@ class RegexBuilder(object):
             temp = temp[:-1]
             if len(temp) == 0:
                 break
-            
+
         if len(temp) != 0:
             result.append(temp + "|")
 
@@ -848,11 +848,11 @@ class RegexBuilder(object):
             raise ValueError("Bad input")
         if (maxT is not None and not isinstance(maxT, str)):
             raise ValueError("Bad input")
-        
+
         for t in ["%H", "%I", "%M", "%p", "%P", "%S"]:
             if frmt.count(t) > 1:
                 raise ValueError("Bad input")
-        
+
         H, I, M, p, P, S = False, False, False, False, False, False
         if "%H" in frmt:
             H = True
@@ -866,7 +866,20 @@ class RegexBuilder(object):
             P = True
         if "%S" in frmt:
             S = True
-            
+
+        if H and I:
+            raise ValueError("Wrong format")
+        if p and P:
+            raise ValueError("Wrong format")
+        if I and not p and not P:
+            raise ValueError("Wrong format")
+        if (H or I) and S and not M:
+            raise ValueError("Wrong format")
+        if H and (p or P):
+            raise ValueError("Wrong format")
+        if not H and not I and not M and not S:
+            raise ValueError("Wrong format")
+
         frmtRegExp = re.escape(frmt).replace("\%", "%")
 
         if H:
@@ -881,11 +894,11 @@ class RegexBuilder(object):
             frmtRegExp = frmtRegExp.replace("%p", "(?P<p>am|pm)")
         if P:
             frmtRegExp = frmtRegExp.replace("%P", "(?P<P>AM|PM)")
-        
+
         f = re.escape(frmt).replace("\%", "%")
-        
+
         le = lambda g: self.__le(m1, m2, g)
-        eq = lambda g: self.__eq(m1, m2, g) 
+        eq = lambda g: self.__eq(m1, m2, g)
         g1 = lambda g: m1.group(g) if g == "p" or g == "P" else int(m1.group(g))
         g2 = lambda g: m2.group(g) if g == "p" or g == "P" else int(m2.group(g))
         gz1 = lambda g: ("0" + m1.group(g))[-2:]
@@ -893,11 +906,11 @@ class RegexBuilder(object):
         reg = lambda a, b: self.__executeIntegerCalculation("%02d", a, b)
         fill = lambda l: self.__fillTimeRegex(f, l)
         res = lambda l: "|".join(filter(None, l))
-        
+
         P = p or P
         Pname = "p" if p else "P" if P else None
         PnamePrc = "%" + str(Pname)
-        
+
         if minT is None:
             minT = frmt
             if H:
@@ -905,16 +918,16 @@ class RegexBuilder(object):
             if I:
                 minT = minT.replace("%I", "00")
                 if p:
-                    minT = minT.replace("%p", "am") 
+                    minT = minT.replace("%p", "am")
                 else:
-                    minT = minT.replace("%P", "AM")  
+                    minT = minT.replace("%P", "AM")
             if M:
                 minT = minT.replace("%M", "00")
             if S:
                 minT = minT.replace("%S", "00")
             if p:
                 minT = minT.replace("%S", "00")
-                
+
         if maxT is None:
             maxT = frmt
             if H:
@@ -922,67 +935,56 @@ class RegexBuilder(object):
             if I:
                 maxT = maxT.replace("%I", "11")
                 if p:
-                    minT = minT.replace("%p", "pm") 
+                    maxT = maxT.replace("%p", "pm")
                 else:
-                    minT = minT.replace("%P", "PM")  
+                    maxT = maxT.replace("%P", "PM")
             if M:
                 maxT = maxT.replace("%M", "59")
             if S:
                 maxT = maxT.replace("%S", "59")
-            
+
         m1 = re.match(frmtRegExp, minT)
         m2 = re.match(frmtRegExp, maxT)
-        
+
         if (m1 is None or m2 is None):
             raise ValueError("Bad input")
-        
-        if H and I:
-            raise ValueError("Wrong format")
-        if p and P:
-            raise ValueError("Wrong format")
-        if I and not p and not P:
-            raise ValueError("Wrong format")
-        if (H or I) and S and not M:
-            raise ValueError("Wrong format")
-        if H and (p or P):
-            raise ValueError("Wrong format")
-        if not H and not I and not M and not S:
-            raise ValueError("Wrong format")
-        
+
+
+
         if H:
             if not le("H"):
                 raise ValueError("Bad input")
             if eq("H") and not le("M"):
                 raise ValueError("Bad input")
             if eq("H") and eq("M") and not le("S"):
-                raise ValueError("Bad input") 
+                raise ValueError("Bad input")
         elif I:
             if P:
-                if eq(Pname) and not le("I") and g1("I") != "12":
+                if eq(Pname) and not le("I") and minT is not None and g1("I") != "12":
                     raise ValueError("Bad input")
                 if not le(Pname):
                     raise ValueError("Bad input")
                 if (g1(Pname).lower() == "am" and (g1("I") < 0 or g1("I") > 11)):
                     raise ValueError("Bad input")
                 if (g1(Pname).lower() == "pm" and (g1("I") < 1 or g1("I") > 12)):
-                    raise ValueError("Bad input")   
+                    raise ValueError("Bad input")
                 if (g2(Pname).lower() == "am" and (g2("I") < 0 or g2("I") > 11)):
                     raise ValueError("Bad input")
                 if (g2(Pname).lower() == "pm" and (g2("I") < 1 or g2("I") > 12)):
-                    raise ValueError("Bad input")                   
+                    raise ValueError("Bad input")
         else:
             if M and not le("M"):
                 raise ValueError("Bad input")
             if M and S and eq("M") and not le("S"):
                 raise ValueError("Bad input")
             if not M and S and not le("S"):
-                raise ValueError("Bad input")               
-            
+                raise ValueError("Bad input")
+
         if H:
             if eq("H"):
                 if M:
                     if eq("M"):
-                        if S:              
+                        if S:
                             rS = reg(g1("S"), g2("S"))
                             return fill([("%H", gz1("H")), ("%M", gz1("M")), ("%S", rS)])
                         else:
@@ -991,13 +993,13 @@ class RegexBuilder(object):
                         if S:
                             rS1 = reg(g1("S"), 59)
                             rS2 = reg(0, 59)
-                            rS3 = reg(0, g2("S")) 
-                            rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None  
+                            rS3 = reg(0, g2("S"))
+                            rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None
                             return res([
                                          fill([("%H", gz1("H")), ("%M", gz1("M")), ("%S", rS1)]),
                                          fill([("%H", gz1("H")), ("%M", rM),       ("%S", rS2)]),
-                                         fill([("%H", gz1("H")), ("%M", gz2("M")), ("%S", rS3)])                                             
-                                         ]) 
+                                         fill([("%H", gz1("H")), ("%M", gz2("M")), ("%S", rS3)])
+                                         ])
                         else:
                             rM = reg(g1("M"), g2("M"))
                             return fill([("%H", gz1("H")), ("%M", rM)]) #fill rH same
@@ -1016,29 +1018,29 @@ class RegexBuilder(object):
                         return res([
                                      fill([("%H", gz1("H")), ("%M", gz1("M")), ("%S", rS1)]),
                                      fill([("%H", gz1("H")), ("%M", rM1),      ("%S", rS2)]),
-                                     fill([("%H", rI2),      ("%M", rM2),      ("%S", rS2)]), 
+                                     fill([("%H", rI2),      ("%M", rM2),      ("%S", rS2)]),
                                      fill([("%H", gz2("H")), ("%M", rM3),      ("%S", rS2)]),
-                                     fill([("%H", gz2("H")), ("%M", gz2("M")), ("%S", rS3)])                                               
+                                     fill([("%H", gz2("H")), ("%M", gz2("M")), ("%S", rS3)])
                                      ])
-                    else: 
+                    else:
                         rM1 = reg(g1("M"), 59)
-                        rM2 = reg(0, 59)     
+                        rM2 = reg(0, 59)
                         rM3 = reg(0, g2("M"))
-                        rI = reg(g1("H") + 1, g2("H") - 1) if g1("H") + 1 < g2("H") else None 
+                        rI = reg(g1("H") + 1, g2("H") - 1) if g1("H") + 1 < g2("H") else None
                         return res([
                                      fill([("%H", gz1("H")), ("%M", rM1)]),
                                      fill([("%H", rI),       ("%M", rM2)]),
-                                     fill([("%H", gz2("H")), ("%M", rM3)])                                             
-                                     ])        
+                                     fill([("%H", gz2("H")), ("%M", rM3)])
+                                     ])
                 else:
                     rH = reg(g1("H"), g2("H"))
-                    return fill([("%H", rH)]) 
+                    return fill([("%H", rH)])
         elif I:
             if eq(Pname):
                 if eq("I"):
                     if M:
                         if eq("M"):
-                            if S:              
+                            if S:
                                 rS = reg(g1("S"), g2("S"))
                                 return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS)])
                             else:
@@ -1052,24 +1054,24 @@ class RegexBuilder(object):
                                 return res([
                                              fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
                                              fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM),       ("%S", rS2)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz2("M")), ("%S", rS3)])                                              
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz2("M")), ("%S", rS3)])
                                              ])
-                            else: 
+                            else:
                                 rM1 = reg(g1("M"), 59)
-                                rM2 = reg(0, 59)     
-                                rM3 = reg(0, g2("M"))     
-                                rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None 
+                                rM2 = reg(0, 59)
+                                rM3 = reg(0, g2("M"))
+                                rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
                                 return res([
                                              fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
                                              fill([(PnamePrc, g1(Pname)), ("%I", rI2),      ("%M", rM2)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", gz2("I")), ("%M", rM3)])                                             
-                                             ]) 
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz2("I")), ("%M", rM3)])
+                                             ])
                     else:
-                        return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I"))])      
+                        return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I"))])
                 else:
                     if M:
                         if eq("M"):
-                            if S:              
+                            if S:
                                 rS = reg(g1("S"), g2("S"))
                                 return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS)])
                             else:
@@ -1080,28 +1082,28 @@ class RegexBuilder(object):
                                 rS2 = reg(0, 59)
                                 rS3 = reg(0, g2("S"))
                                 rM1 = reg(g1("M") + 1, 59)
-                                rM2 = reg(0, 59)     
+                                rM2 = reg(0, 59)
                                 rM3 = reg(0, g2("M") - 1)
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
                                 return res([
                                              fill([(PnamePrc, g1(Pname)),("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
                                              fill([(PnamePrc, g1(Pname)),("%I", gz1("I")), ("%M", rM1),      ("%S", rS2)]),
-                                             fill([(PnamePrc, g1(Pname)),("%I", rI2),      ("%M", rM2),      ("%S", rS2)]), 
+                                             fill([(PnamePrc, g1(Pname)),("%I", rI2),      ("%M", rM2),      ("%S", rS2)]),
                                              fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", rM3),      ("%S", rS2)]),
-                                             fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", gz2("M")), ("%S", rS3)])                                               
+                                             fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", gz2("M")), ("%S", rS3)])
                                              ])
-                            else: 
+                            else:
                                 rM1 = reg(g1("M"), 59)
-                                rM2 = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None     
+                                rM2 = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None
                                 rM3 = reg(0, g2("M"))
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
                                 return res([
                                              fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
                                              fill([(PnamePrc, g1(Pname)), ("%I", rI2),      ("%M", rM2)]),
-                                             fill([(PnamePrc, g1(Pname)), ("%I", gz2("I")), ("%M", rM3)])                                             
-                                             ]) 
+                                             fill([(PnamePrc, g1(Pname)), ("%I", gz2("I")), ("%M", rM3)])
+                                             ])
                     else:
-                        return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I"))])     
+                        return fill([(PnamePrc, g1(Pname)), ("%I", gz1("I"))])
             else:
                 if M:
                     if S:
@@ -1113,10 +1115,10 @@ class RegexBuilder(object):
                         rM3 = reg(0, g2("M") - 1)
                         rI0 = reg(g1("I") + 1, 11)
                         rI1 = reg(12, 12) + (("|" + reg(1, g2("I") - 1)) if g2("I") != 12 else "")
-                        
+
                         return res([
                                    fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", gz1("M")), ("%S", rS1)]),
-                                   fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1),      ("%S", rS2)]), 
+                                   fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1),      ("%S", rS2)]),
                                    fill([(PnamePrc, g1(Pname)), ("%I", rI0),      ("%M", rM2),      ("%S", rS2)]),
                                    fill([(PnamePrc, g2(Pname)), ("%I", rI1),      ("%M", rM2),      ("%S", rS2)]),
                                    fill([(PnamePrc, g2(Pname)), ("%I", gz2("I")), ("%M", rM3),      ("%S", rS2)]),
@@ -1131,7 +1133,7 @@ class RegexBuilder(object):
 
                         return res([
                                    fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
-                                   fill([(PnamePrc, g1(Pname)), ("%I", rI0),      ("%M", rM2)]), 
+                                   fill([(PnamePrc, g1(Pname)), ("%I", rI0),      ("%M", rM2)]),
                                    fill([(PnamePrc, g2(Pname)), ("%I", rI1),      ("%M", rM2)]),
                                    fill([(PnamePrc, g2(Pname)), ("%I", gz2("I")), ("%M", rM3)])
                                    ])
@@ -1143,44 +1145,44 @@ class RegexBuilder(object):
                                fill([(PnamePrc, g2(Pname)), ("%I", rI2)])
                                ])
         else:
-            if M and S:                   
-                if eq("M"): 
+            if M and S:
+                if eq("M"):
                     rS = reg(g1("S"), g2("S"))
                     return fill([("%M", gz1("M")), ("%S", rS)])
                 else:
                     rS1 = reg(g1("S"), 59)
                     rS2 = reg(0, 59)
                     rS3 = reg(0, g2("S"))
-                    rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None 
+                    rM = reg(g1("M") + 1, g2("M") - 1) if g1("M") + 1 < g2("M") else None
                     return res([
                                 fill([("%M", gz1("M")), ("%S", rS1)]),
                                 fill([("%M", rM),       ("%S", rS2)]),
                                 fill([("%M", gz2("M")), ("%S", rS3)])
                                 ])
             if M:
-                rM = reg(g1("M"), g2("M")) 
-                return fill([("%M", rM)]) 
+                rM = reg(g1("M"), g2("M"))
+                return fill([("%M", rM)])
             elif S:
                 rS = reg(g1("S"), g2("S"))
-                return fill([("%S", rS)]) 
-  
+                return fill([("%S", rS)])
+
     def __fillTimeRegex(self, frmt, l):
         for e in l:
             if e[1] is None:
                 return None
             frmt = frmt.replace(e[0], str(e[1]))
         return frmt
-             
+
     def __le(self, m1, m2, g):
         if g == "P" or g == "p":
             return m1.group(g).lower() == "am" or m2.group(g).lower() == "pm"
-        
+
         if g == "I":
             if m1.group(g) == 12:
                 return True
             elif m2.group(g) == 12:
-                return m1.group(g) == 12 
-            
+                return m1.group(g) == 12
+
         return int(m1.group(g)) <= int(m2.group(g))
 
     def __eq(self, m1, m2, g):
