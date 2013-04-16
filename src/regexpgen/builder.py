@@ -869,7 +869,7 @@ class RegexBuilder(object):
         if H:
             frmtRegExp = frmtRegExp.replace("%H", "(?P<H>[01][0-9]|2[0-3])")
         if I:
-            frmtRegExp = frmtRegExp.replace("%I", "(?P<I>0[0-9]|1[01])")
+            frmtRegExp = frmtRegExp.replace("%I", "(?P<I>0[0-9]|1[0-2])")
         if M:
             frmtRegExp = frmtRegExp.replace("%M", "(?P<M>[0-5][0-9])")
         if S:
@@ -878,25 +878,6 @@ class RegexBuilder(object):
             frmtRegExp = frmtRegExp.replace("%p", "(?P<p>am|pm)")
         if P:
             frmtRegExp = frmtRegExp.replace("%P", "(?P<P>AM|PM)")
-        
-        m1 = re.match(frmtRegExp, minT)
-        m2 = re.match(frmtRegExp, maxT)
-        
-        if (m1 is None or m2 is None):
-            raise ValueError("Bad input")
-        
-        if H and I:
-            pass #fail
-        if p and P:
-            pass #fail
-        if I and not p and not P:
-            pass #fail
-        if (H or I) and S and not M:
-            pass #fail
-        if H and (p or P):
-            pass #fail
-        if not H and not I and not M and not S:
-            pass #fail
         
         f = re.escape(frmt).replace("\%", "%")
         
@@ -910,39 +891,79 @@ class RegexBuilder(object):
         
         P = p or P
         Pname = "p" if p else "P" if P else None
-        PnamePrc = "%" + Pname
+        PnamePrc = "%" + str(Pname)
+        
+        if minT is None:
+            minT = frmt
+            if H:
+                minT = minT.replace("%H", "00")
+            if I:
+                if g1(Pname).lower() == "am":
+                    minT = minT.replace("%I", "00")
+                else:
+                    minT = minT.replace("%I", "12")
+            if M:
+                minT = minT.replace("%M", "00")
+            if S:
+                minT = minT.replace("%S", "00")
+                
+        if maxT is None:
+            maxT = frmt
+            if H:
+                maxT = maxT.replace("%H", "23")
+            if I:
+                maxT = maxT.replace("%I", "11")
+            if M:
+                maxT = maxT.replace("%M", "59")
+            if S:
+                maxT = maxT.replace("%S", "59")
+            
+        m1 = re.match(frmtRegExp, minT)
+        m2 = re.match(frmtRegExp, maxT)
+        
+        if (m1 is None or m2 is None):
+            raise ValueError("Bad input")
+        
+        if H and I:
+            raise ValueError("Wrong format")
+        if p and P:
+            raise ValueError("Wrong format")
+        if I and not p and not P:
+            raise ValueError("Wrong format")
+        if (H or I) and S and not M:
+            raise ValueError("Wrong format")
+        if H and (p or P):
+            raise ValueError("Wrong format")
+        if not H and not I and not M and not S:
+            raise ValueError("Wrong format")
         
         if H:
-            if le("H"):
-                pass #ok trzeba dac not \ fail
-            if eq("H") and le("M"):
-                pass #ok
-            if eq("H") and eq("M") and le("S"):
-                pass #ok 
+            if not le("H"):
+                raise ValueError("Bad input")
+            if eq("H") and not le("M"):
+                raise ValueError("Bad input")
+            if eq("H") and eq("M") and not le("S"):
+                raise ValueError("Bad input") 
         elif I:
             if P:
-                if eq(Pname) and le("I"):
-                    pass #ok
-                if le(Pname):
-                    pass #ok
+                if eq(Pname) and not le("I") and g1("I") != "12":
+                    raise ValueError("Bad input")
+                if not le(Pname):
+                    raise ValueError("Bad input")
                 if (g1(Pname).lower() == "am" and (g1("I") < 0 or g1("I") > 11)):
-                    pass #fail
+                    raise ValueError("Bad input")
                 if (g1(Pname).lower() == "pm" and (g1("I") < 1 or g1("I") > 12)):
-                    pass #fail   
+                    raise ValueError("Bad input")   
                 if (g2(Pname).lower() == "am" and (g2("I") < 0 or g2("I") > 11)):
-                    pass #fail
+                    raise ValueError("Bad input")
                 if (g2(Pname).lower() == "pm" and (g2("I") < 1 or g2("I") > 12)):
-                    pass #fail                   
-                else:
-                    pass #fail
-            else:
-                pass #fail checked before
+                    raise ValueError("Bad input")                   
         else:
-            if M and le("M"):
+            if M and not le("M"):
                 pass #ok
-            if (M and S and eq("M") and le("S")):
+            if M and S and eq("M") and not le("S"):
                 pass #ok
-            if (not M and S) or (M and not S):
+            if not M and S and not le("S"):
                 pass #ok                
             
         if H:
