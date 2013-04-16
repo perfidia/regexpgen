@@ -1079,7 +1079,7 @@ class RegexBuilder(object):
                             rM2 = reg(0, 59)
                             rM3 = reg(0, g2("M") - 1)
                             if g1(Pname).lower() == "pm" and g1("I") == 12:
-                                rI2 = "(12{0})".format("|" + reg(1, g2("I") - 1)) if g2("I") != 1 else None
+                                rI2 = reg(1, g2("I") - 1) if g2("I") != 1 else None
                             else:
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
                             return res([
@@ -1094,7 +1094,7 @@ class RegexBuilder(object):
                             rM2 = reg(0, 59)
                             rM3 = reg(0, g2("M"))
                             if g1(Pname).lower() == "pm" and g1("I") == 12:
-                                rI2 = "(12{0})".format("|" + reg(1, g2("I") - 1)) if g2("I") != 1 else None
+                                rI2 = reg(1, g2("I") - 1) if g2("I") != 1 else None
                             else:
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
                             
