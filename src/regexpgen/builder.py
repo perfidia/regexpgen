@@ -839,6 +839,9 @@ class RegexBuilder(object):
 # %S    sekundy (00..59)
 
     def createTimeRegex(self, frmt, minT, maxT):
+        return "^{0}$".format(self.__calcTimeRegex(frmt, minT, maxT))
+
+    def __calcTimeRegex(self, frmt, minT, maxT):
         if (frmt is None or not isinstance(frmt, str)):
             raise ValueError("Bad input")
         if (minT is not None and not isinstance(minT, str)):
