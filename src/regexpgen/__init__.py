@@ -17,30 +17,26 @@ def integer(frmt, minV = None, maxV = None):
 	:param minV: optional minimum value
 	:param maxV: optional maximum value
 	:return: regular expression for a given format
-
-	:return: regular expression for a given format
+	
 	Generating regular expressions for integers (-2, -1, 0, 1, 2, 3...).
-
-
+ 
 	Supported formats:
 
 	FORMAT = '%d'
 	description: leading zeros are optional,
-	correct examples: 0, 1, 001, 012
+	correct examples: -1, -005, 0, 1, 001, 012
 	incorrect examples: N/A
 
 	FORMAT = '%0d'
 	description: leading zeros are forbidden
-	correct examples: 0, 1, 255
+	correct examples: -2, -2123, 0, 1, 255
 	incorrect examples: 001, 012
 
 	FORMAT = '%0Xd'
 	description: number written with X characters, in case of number lesser than int('9'*X) it should be leaded with zeros,
-		  leading zeros are required
-	correct examples for %04d: 0001, 45678
-	incorrect examples for %04d: 00011, 11
-
-
+	correct examples for %04d: 0001, 5678
+	incorrect examples for %04d: 00011, 111
+ 
 	Examples of use:
 
 	print regexpgen.integer("%0d", -10, 10)
@@ -69,7 +65,7 @@ def nnint(frmt, minV = None, maxV = None):
 
 	Supported formats:
 
-	the same like for integers
+	the same as for integers
 
 
 	Examples of use:
@@ -86,16 +82,14 @@ def nnint(frmt, minV = None, maxV = None):
 	return b.createNNIntegerRegex(frmt, minV, maxV)
 
 def real(format, min = None, max = None):
-	"""
-
+	""" 
 	Generating regular expressions for real numbers with accuracy of float() function.
 
 	:param format: format similar to C printf function (description below)
 	:param min: optional minimum value
 	:param max: optional maximum value
 	:return: regular expression for a given format
-
-
+ 
 	Supported formats:
 
 	FORMAT = '%lf'
