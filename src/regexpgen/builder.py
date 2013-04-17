@@ -625,8 +625,7 @@ class RegexBuilder(object):
             return ans
 
     def __generateAlternativesForReal(self, format, min, max, remove):
-        result = []
-        result.append("(")
+        result = ["(",]
         if str(min) == str(max):
             result.append(str(max))
 
@@ -829,15 +828,6 @@ class RegexBuilder(object):
                 break
         return "".join(sames)
 
-
-
-# %H    godzina (00..23)
-# %I    godzina (00..12)
-# %M    minuty (00..59)
-# %p    AM lub PM ?
-# %P    am lub pm ?
-# %S    sekundy (00..59)
-
     def createTimeRegex(self, frmt, minT, maxT):
         return "^{0}$".format(self.__calcTimeRegex(frmt, minT, maxT))
 
@@ -910,10 +900,8 @@ class RegexBuilder(object):
         P = p or P
         Pname = "p" if p else "P" if P else None
         PnamePrc = "%" + str(Pname)
-       # WasMinSet = False
         
         if minT is None:
-        #    WasMinSet = True
             minT = frmt
             if H:
                 minT = minT.replace("%H", "00")
@@ -950,7 +938,6 @@ class RegexBuilder(object):
 
         if (m1 is None or m2 is None):
             raise ValueError("Bad input")
-
 
         if H:
             if not le("H"):
@@ -1089,7 +1076,7 @@ class RegexBuilder(object):
                                          fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", rM3),      ("%S", rS2)]),
                                          fill([(PnamePrc, g1(Pname)),("%I", gz2("I")), ("%M", gz2("M")), ("%S", rS3)])
                                          ])
-                        else: #am/am or pm/pm, i not equal, m
+                        else:
                             rM1 = reg(g1("M"), 59)
                             rM2 = reg(0, 59)
                             rM3 = reg(0, g2("M"))

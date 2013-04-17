@@ -63,7 +63,7 @@ def integer(frmt, minV = None, maxV = None, matchStartEnd = True):
 
 def real(format, min = None, max = None, matchStartEnd = True):
 	'''
-	Generowanie wyrażenie regularnego dla liczba rzeczywistych.
+	Generowanie wyrażenia regularnego dla liczb rzeczywistych z dokładnością taką samą jak funkcja float().
 
 	Supported format:
 
@@ -100,9 +100,15 @@ def real(format, min = None, max = None, matchStartEnd = True):
 	return b.createRealRegex(format, min, max)
 
 def time(format, min = None, max = None):
+	'''
+	Generowanie wyrażenie regularnego dla czasu.
+
+	Supported format:
+
+	patrz datetime
+	'''
 	b = builder.RegexBuilder()
 	return b.createTimeRegex(format, min, max)
-
 
 def concatenate(concatenationList):
 	result = ""
@@ -121,9 +127,6 @@ def concatenate(concatenationList):
 			raise ValueError("Bad input")
 	return "^({0})$".format(result.replace("^", "").replace("$", ""))
 
-#def date(format, min = None, max = None, timezone = None, matchStartEnd = True):
-#	return startEndMatcher(mdate.run(format, min, max, timezone), matchStartEnd)
-#
 #def time(format, min = None, max = None, timezone = None, matchStartEnd = True):
 #	return startEndMatcher(mtime.run(format, min, max, timezone), matchStartEnd)
 #

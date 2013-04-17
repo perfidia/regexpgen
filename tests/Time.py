@@ -1,7 +1,7 @@
 '''
 Created on Mar 16, 2012
 
-@author: Bartosz Alchimowicz
+@authors: Joanna Binczewska, Dawid Kowalski
 '''
 
 import unittest
