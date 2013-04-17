@@ -63,7 +63,7 @@ def integer(frmt, minV = None, maxV = None, matchStartEnd = True):
 
 def real(format, min = None, max = None, matchStartEnd = True):
 	'''
-	Generowanie wyrażenia regularnego dla liczb rzeczywistych z dokładnością taką samą jak funkcja float().
+	Generowanie wyrażenie regularnego dla liczba rzeczywistych.
 
 	Supported format:
 
