@@ -11,8 +11,6 @@ import itertools
 
 class Test(unittest.TestCase):
 
-
-
 	def testDefault(self):
 		regexp = regexpgen.time("%H")
 
@@ -130,12 +128,11 @@ class Test(unittest.TestCase):
 
 		self.assertTrue(re.match(regexp, "12:56 PM"))
 		self.assertTrue(re.match(regexp, "12:13 PM"))
-		self.assertTrue(re.match(regexp, "16:59 PM"))
+		self.assertTrue(re.match(regexp, "04:59 PM"))
 
 		self.assertFalse(re.match(regexp, "00:39 AM"))
 		self.assertFalse(re.match(regexp, "12:01 PM"))
 		self.assertFalse(re.match(regexp, "12:12 PM"))
-
 
 	def testForMax(self):
 		regexp = regexpgen.time("%H", None, "10")
@@ -247,7 +244,6 @@ class Test(unittest.TestCase):
 		self.assertTrue(re.match(regexp, "12:12 PM"))
 
 def testForDifferentSeparator(self):
-
 		regexp = regexpgen.time("%H::%M")
 
 		self.assertTrue(re.match(regexp, "01::00"))
