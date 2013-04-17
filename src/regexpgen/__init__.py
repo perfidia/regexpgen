@@ -8,107 +8,143 @@ import builder
 import re
 #import mdate, mtime, mdatetime
 
-def nnint(frmt, minV = None, maxV = None, matchStartEnd = True):
-	"""Generate regular expression for a non negative integer.
-
-	:param frmt: frmt similar to C printf function
-	:param minV: optional minimum value
-	:param maxV: optional maximum value
-	:param matchStartEnd: True if ^ at the beginning and $ at the ending of regexp are required
-
-	:return: regular expression for a given frmt
-	Generowanie wyrażenie regularnego dla non-negative integers (0, 1, 2, 3...).
-
-	Supported frmt:
-
-	frmt jak dla interger
+def integer(frmt, minV = None, maxV = None):
 	"""
-	
-	b = builder.RegexBuilder()
-	return b.createNNIntegerRegex(frmt, minV, maxV)
 
-def integer(frmt, minV = None, maxV = None, matchStartEnd = True):
-	"""Generate regular expression for an integer.
+	Generating regular expression for integer numbers.
 
-	:param frmt: frmt similar to C printf function
+	:param frmt: format similar to C printf function (description below)
 	:param minV: optional minimum value
 	:param maxV: optional maximum value
-	:param matchStartEnd: True if ^ at the beginning and $ at the ending of regexp are required
+	:return: regular expression for a given format
 
-	:return: regular expression for a given frmt
-	Generowanie wyrażenie regularnego dla integers (-2, -1, 0, 1, 2, 3...).
+	:return: regular expression for a given format
+	Generating regular expressions for integers (-2, -1, 0, 1, 2, 3...).
 
-	Supported frmt:
+
+	Supported formats:
 
 	FORMAT = '%d'
-	opis: zera wiodące są opcjonalne,
-	przykłady poprawne: 0, 1, 001, 012
-	przykłady niepoprawne: N/A
+	description: leading zeros are optional,
+	correct examples: 0, 1, 001, 012
+	incorrect examples: N/A
 
 	FORMAT = '%0d'
-	opis: zera wiodące niedowolone
-	przykłady poprawne: 0, 1
-	przykłady niepoprawne: 001, 012
+	description: leading zeros are forbidden
+	correct examples: 0, 1, 255
+	incorrect examples: 001, 012
 
 	FORMAT = '%0Xd'
-	opis: liczba zapisana przy pomocy X znaków, w przypadku liczb
-		  mniejszych od int('9'*X) należy liczbą poprzedzić zerami,
-		  zera wiodące są wymagane
-	przykłady poprawne dla %04d: 0001, 45678
-	przykłady niepoprawne dla %04d: 00011, 11
+	description: number written with X characters, in case of number lesser than int('9'*X) it should be leaded with zeros,
+		  leading zeros are required
+	correct examples for %04d: 0001, 45678
+	incorrect examples for %04d: 00011, 11
+
+
+	Examples of use:
+
+	print regexpgen.integer("%0d", -10, 10)
+	^(-?([0-9]|10))$
+
+	print regexpgen.integer("%04d", -10, 10)
+	^(-?(000[0-9]|0010))$
+
 	"""
-	
+
 	b = builder.RegexBuilder()
 	return b.createIntegerRegex(frmt, minV, maxV)
 
-def real(format, min = None, max = None, matchStartEnd = True):
-	'''
-	Generowanie wyrażenie regularnego dla liczba rzeczywistych.
+def nnint(frmt, minV = None, maxV = None):
+	"""
 
-	Supported format:
+	Generating regular expression for a non negative integer numbers.
+
+	:param frmt: format similar to C printf function (description below)
+	:param minV: optional minimum value
+	:param maxV: optional maximum value
+	:return: regular expression for a given format
+
+	Generating regular expressions for non-negative integers (0, 1, 2, 3...).
+
+
+	Supported formats:
+
+	the same like for integers
+
+
+	Examples of use:
+
+	print regexpgen.nnint("%0d")
+	^([1-9][0-9]*|0)$
+
+	print regexpgen.nnint("%04d", 71, 85)
+	^(007[1-9]|008[0-5])$
+
+	"""
+
+	b = builder.RegexBuilder()
+	return b.createNNIntegerRegex(frmt, minV, maxV)
+
+def real(format, min = None, max = None):
+	"""
+
+	Generating regular expressions for real numbers with accuracy of float() function.
+
+	:param format: format similar to C printf function (description below)
+	:param min: optional minimum value
+	:param max: optional maximum value
+	:return: regular expression for a given format
+
+
+	Supported formats:
 
 	FORMAT = '%lf'
-	opis: zera wiodące są dozwolone,
-	przykłady poprawne: 0.1, 1.32, 001.21, 012.123
+	description: leading zeros are optional
+	correct examples: 0.1, 1.32, 001.21, 012.123
 
 	FORMAT = '%0lf'
-	opis: zera wiodące są niedowolone
-	przykłady poprawne: 22.1, 1.1
-	przykłady niepoprawne: 001.2, 012.9
+	description: leading zeros are forbidden
+	correct examples: 22.1, 1.1
+	incorrect examples: 001.2, 012.9
 
 	FORMAT = '%0.Ylf'
-	opis: zera wiodące są niedowolone, po przecinku można wprowadzić dokładnie Y cyfr
-	przykłady poprawne: 22.1, 1.1
-	przykłady niepoprawne: 001.2, 012.9
+	description: leading zeros are forbidden, after the comma exactly Y characters are expected
+	correct examples for %0.1lf: 22.1, 1.1
+	incorrect examples for %0.1lf: 001.2, 012.9
 
 	FORMAT = '%.Ylf'
-	opis: zera wiodące są opcjonalne, po przecinku można wprowadzić dokładnie Y cyfr
-	przykłady poprawne: 022.1, 1.1, 001.2, 012.9
+	description: leading zeros are optional, after the comma exactly Y characters are expected
+	correct examples for %0.1lf: 022.1, 1.1, 001.2, 012.9
+	incorrect examples for %0.1lf: 3.222, 0.22
 
 	FORMAT = '%X.Ylf'
-	opis: X jest ignorowany (działa jak '%.Ylf')
+	description: X  is ignored (works like '%.Ylf')
 
 	FORMAT = '%0X.Ylf'
-	opis: zera wiodące są wymagane, liczba jest zapisana przy wykorzystaniu co najmniej X znaków (łącznie z kropoką),
-		  po przecinku można wprowadzić dokładnie Y cyfr,
-		  jeżeli liczba zaweira mniej niż X znaków to przestrzeń należy wypełnić zerami
-	przykłady poprawne dla %5.2lf: 022.1, 32431.2, 012.9
-	przykłady poprawne dla %5.2lf: 22.1, 111.122
-	'''
+	description: leading zeros are required, number written with at least X characters (including dot),
+		  after the comma exactly Y characters are expected,
+		  if number of characters is lesser than X, it should be leaded with zeros
+	correct examples for %5.1lf: 002.1, 32431.2, 022.9
+	incorrect examples for %5.2lf: 22.111, 1.1
+
+
+	Examples of use:
+
+	print regexpgen.real("%lf", -1.5, 2.5)
+	^(-?(0*((0)\.0|(0)(\.(([0-9])[0-9]*))|(1)(\.(([0-3]|4)[0-9]*))|(1)\.50*))|0*((1)\.5|(1)(\.(5|([5-9])[0-9]*))|(2)(\.(([0-3]|4)[0-9]*))|(2)\.50*))$
+
+	print regexpgen.real("%0.1lf", -1.0, 2.0)
+	^(-?(((0)\.(([0-9]))|(1)\.0))|((1)\.(([0-9]))|(2)\.0))$
+
+	"""
 
 	b = builder.RegexBuilder()
 	return b.createRealRegex(format, min, max)
 
 def time(format, min = None, max = None):
-	'''
-	Generowanie wyrażenie regularnego dla czasu.
-
-	Supported format:
-
-	patrz datetime
-	'''
 	b = builder.RegexBuilder()
 	return b.createTimeRegex(format, min, max)
+
 
 def concatenate(concatenationList):
 	result = ""
@@ -127,8 +163,8 @@ def concatenate(concatenationList):
 			raise ValueError("Bad input")
 	return "^({0})$".format(result.replace("^", "").replace("$", ""))
 
-#def time(format, min = None, max = None, timezone = None, matchStartEnd = True):
-#	return startEndMatcher(mtime.run(format, min, max, timezone), matchStartEnd)
+#def date(format, min = None, max = None, timezone = None, matchStartEnd = True):
+#	return startEndMatcher(mdate.run(format, min, max, timezone), matchStartEnd)
 #
 #def datetime(format, date_min = None, date_max = None, time_min = None, time_max = None, timezone = None, matchStartEnd = True):
 #	return startEndMatcher(mdatetime.run(format, date_min, date_max, time_min, time_max, timezone), matchStartEnd)
