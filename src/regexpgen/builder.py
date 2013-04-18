@@ -829,7 +829,7 @@ class RegexBuilder(object):
         return "".join(sames)
 
     def createTimeRegex(self, frmt, minT, maxT):
-        return "^{0}$".format(self.__calcTimeRegex(frmt, minT, maxT))
+        return "^({0})$".format(self.__calcTimeRegex(frmt, minT, maxT))
 
     def __calcTimeRegex(self, frmt, minT, maxT):
         if (frmt is None or not isinstance(frmt, str)):
@@ -900,7 +900,7 @@ class RegexBuilder(object):
         P = p or P
         Pname = "p" if p else "P" if P else None
         PnamePrc = "%" + str(Pname)
-        
+
         if minT is None:
             minT = frmt
             if H:
@@ -942,9 +942,9 @@ class RegexBuilder(object):
         if H:
             if not le("H"):
                 raise ValueError("Bad input")
-            if eq("H") and not le("M"):
+            if eq("H") and M and not le("M"):
                 raise ValueError("Bad input")
-            if eq("H") and eq("M") and not le("S"):
+            if eq("H") and M and eq("M") and S and not le("S"):
                 raise ValueError("Bad input")
         elif I:
             if P:
@@ -1084,8 +1084,8 @@ class RegexBuilder(object):
                                 rI2 = reg(1, g2("I") - 1) if g2("I") != 1 else None
                             else:
                                 rI2 = reg(g1("I") + 1, g2("I") - 1) if g1("I") + 1 < g2("I") else None
-                            
-                                
+
+
                             return res([
                                          fill([(PnamePrc, g1(Pname)), ("%I", gz1("I")), ("%M", rM1)]),
                                          fill([(PnamePrc, g1(Pname)), ("%I", rI2),      ("%M", rM2)]),
