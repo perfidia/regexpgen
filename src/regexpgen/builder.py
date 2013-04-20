@@ -887,8 +887,8 @@ class RegexBuilder(object):
 
         f = re.escape(frmt).replace("\%", "%")
 
-        le = lambda g: self.__le(m1, m2, g)
-        eq = lambda g: self.__eq(m1, m2, g)
+        le = lambda g: self.__leT(m1, m2, g)
+        eq = lambda g: self.__eqT(m1, m2, g)
         g1 = lambda g: m1.group(g) if g == "p" or g == "P" else int(m1.group(g))
         g2 = lambda g: m2.group(g) if g == "p" or g == "P" else int(m2.group(g))
         gz1 = lambda g: ("0" + m1.group(g))[-2:]
@@ -1164,7 +1164,7 @@ class RegexBuilder(object):
             frmt = frmt.replace(e[0], str(e[1]))
         return frmt
 
-    def __le(self, m1, m2, g):
+    def __leT(self, m1, m2, g):
         if g == "P" or g == "p":
             return m1.group(g).lower() == "am" or m2.group(g).lower() == "pm"
 
@@ -1176,7 +1176,202 @@ class RegexBuilder(object):
 
         return int(m1.group(g)) <= int(m2.group(g))
 
-    def __eq(self, m1, m2, g):
+    def __eqT(self, m1, m2, g):
         if g == "P" or g == "p":
             return m1.group(g) == m2.group(g)
+        return int(m1.group(g)) == int(m2.group(g))
+
+    def createDateRegex(self, frmt, minD, maxD):
+        return "^({0})$".format(self.__calcDateRegex(frmt, minD, maxD))
+
+    def __calcDateRegex(self, frmt, minD, maxD): 
+        if (frmt is None or not isinstance(frmt, str)):
+            raise ValueError("Bad input")
+        if (minD is not None and not isinstance(minD, str)):
+            raise ValueError("Bad input") 
+        if (maxD is not None and not isinstance(maxD, str)):
+            raise ValueError("Bad input")
+
+        for t in ["%d", "%m", "%y", "%Y"]:
+            if frmt.count(t) > 1:
+                raise ValueError("Bad input")
+
+        Y, y, m, d = False, False, False, False  
+        if "%Y" in frmt:
+            Y = True
+        if "%y" in frmt:
+            y = True
+        if "%m" in frmt:
+            m = True
+        if "%d" in frmt:
+            d = True
+        
+        if (Y or y) and not m and d:
+            raise ValueError("Bad input")
+        if not Y and not y and not m and not d:
+            raise ValueError("Bad input")
+        if y and Y:
+            raise ValueError("Bad input")
+ 
+        frmtRegExp = re.escape(frmt).replace("\%", "%")
+         
+# %d    dzień miesiąca (01..31)
+# %m    numer miesiąca (01..12)
+# %y    dwie ostatnich cyfr roku (00..99)
+# %Y    rok (1997..)
+         
+        if y:
+            frmtRegExp = frmtRegExp.replace("%y", "(?P<y>[0-9]{2})")
+        if Y:
+            frmtRegExp = frmtRegExp.replace("%Y", "(?P<Y>19[7-9][0-9]|20[0-9][0-9])")
+        if m:
+            frmtRegExp = frmtRegExp.replace("%m", "(?P<m>0[1-9]|1[0-2])")
+        if d:
+            frmtRegExp = frmtRegExp.replace("%d", "(?P<d>0[1-9]|[12][0-9]|3[01])")
+        
+        f = re.escape(frmt).replace("\%", "%")  
+         
+        m1 = re.match(frmtRegExp, minD)
+        m2 = re.match(frmtRegExp, maxD)
+        
+        if m1 is None or m2 is None:
+            raise ValueError("Bad input")
+                   
+        y = y or Y
+        yName = "Y" if Y else "y"
+        yPrc = "%" + yName
+                 
+        eq = lambda g: self.__eqD(m1, m2, g)
+        le = lambda g: self.__leD(m1, m2, g)
+        fill = lambda l: self.__fillDateRegex(f, l)
+        g1 = lambda g: int(m1.group(g))
+        g2 = lambda g: int(m2.group(g))
+        reg = lambda a, b:  None if a > b else self.__executeIntegerCalculation("%02d", a, b) if len(str(a)) <= 2 else self.__executeIntegerCalculation("%04d", a, b)
+        res = lambda l: "|".join(filter(None, sum([[i] if isinstance(i, str) else i for i in l], []))) 
+        lastD = lambda m: 31 if int(m) in [1, 3, 5, 7, 8, 10, 12] else 30 if int(m) != 2 else 28
+        vMD = lambda m, d: d <= lastD(m)  
+        vYMD = lambda y, m, d: vMD(m, d) if m != 2 or d != 29 else (y % 4 == 0 and y % 100 != 0) or y % 400 == 0 
+        multiFillM = lambda a, b: None if a > b else (lambda y: [fill([y, ("%m", i), ("%d", reg(1, lastD(i)))]) for i in xrange(a, b+1)]) if a != 1 or b != 12 else \
+        lambda y: [
+         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30])")]), 
+         fill([y, ("%m", "(04|06|09|11)"), ("%d", "31")]), 
+         fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0})".format("9" if vYMD(y, 2, 29) else "8"))])
+        ]
+        multiFillY = lambda a, b: None if a > b else sum([multiFillM(1, 12)((yPrc, y)) for y in xrange(a, b+1)], [])
+        
+        if y:
+            if Y:
+                if g1(yName) < 1970 or 2099 < g1(yName):
+                    raise ValueError("Bad input")
+            else:
+                if g1(yName) < 0 or 99 < g1(yName) :
+                    raise ValueError("Bad input")
+            if not le(yName):
+                raise ValueError("Bad input")
+            if eq(yName) and m and not le("m"):
+                raise ValueError("Bad input")
+            if eq(yName) and m and eq("m") and d and not le("d"):
+                raise ValueError("Bad input")
+            if m and d and not vYMD(g1(yName), g1("m"), g1("d")):
+                raise ValueError("Bad input")
+            if m and d and not vYMD(g2(yName), g2("m"), g2("d")):
+                raise ValueError("Bad input")
+        
+        elif m:
+            if not le("m"):
+                raise ValueError("Bad input")
+            if eq("m") and d and not le("d"):
+                raise ValueError("Bad input")
+            if d and not vMD(g1("m"), g1("d")):
+                raise ValueError("Bad input") 
+            if d and not vMD(g2("m"), g2("d")):
+                raise ValueError("Bad input")             
+        else:
+            if not le("d"):
+                raise ValueError("Bad input")
+            
+        if y:
+            if eq(yName):
+                if m:
+                    if eq("m"):
+                        if d:
+                            rD = reg(g1("d"), g2("d"))
+                            return fill([(yPrc, g1(yName)), ("%m", g1("m")), ("%d", rD)])
+                        else:
+                            return fill([(yPrc, g1(yName)), ("%m", g1("m"))])
+                    else:
+                        if d:
+                            rD1 = reg(g1("d"), lastD(g1("m")))
+                            rD3 = reg(1, g2("d"))
+                            
+                            return res([
+                                        fill([(yPrc, g1(yName)),         ("%m", g1("m")), ("%d", rD1)]),
+                                        multiFillM(g1("m"), g2("m"))    ((yPrc, g1(yName))),
+                                        fill([(yPrc, g1(yName)),         ("%m", g2("m")), ("%d", rD3)])
+                                        ])
+                        else:             
+                            rM = reg(g1("m"), g2("m"))           
+                            return fill([(yPrc, g1(yName)), ("%m", rM)])
+                else:
+                    return fill([(yPrc, g1(yName))])
+            else:            
+                if m:
+                    if d:
+                        rD1 = reg(g1("d"), lastD(g1("m")))
+                        rD2 = reg(1, g2("d")) 
+                        return res([
+                                    fill([(yPrc, g1(yName)),     ("%m", g1("m")), ("%d", rD1)]),
+                                    multiFillM(g1("m") + 1, 12) ((yPrc, g1(yName))),
+                                    multiFillY(g1(yName) + 1, g2(yName) - 1),
+                                    multiFillM(1, g2("m") - 1)  ((yPrc, g2(yName))),
+                                    fill([(yPrc, g2(yName)),     ("%m", g2("m")), ("%d", rD2)])                                    
+                                   ])
+                    else:
+                        rM1 = reg(g1("m"), 12)
+                        rM2 = reg(1, 12)
+                        rM3 = reg(1, g2("m"))
+                        rY = reg(g1(yName) + 1, g2(yName) - 1)
+                        return res([
+                                    fill((yPrc, g1(yName)), ("%m", rM1)),
+                                    fill((yPrc, rY),        ("%m", rM2)),
+                                    fill((yPrc, g2(yName)), ("%m", rM3))
+                                    ])
+                else:
+                    rY = reg(g1(yName), g2(yName))           
+                    return fill([(yPrc, rY)])
+        elif m:
+            if eq("m"):
+                if d:
+                    rD = reg(g1("d"), g2("d"))
+                    return fill([("%m", g1("m")), ("%d", rD)])
+                else:
+                    return fill([("%m", g1("m"))])
+            else:
+                if d:
+                    rD1 = reg(g1("d"), lastD(g1("m")))
+                    rD3 = reg(1, g2("d"))
+                    
+                    return res([
+                                fill([("%m", g1("m")),           ("%d", rD1)]),
+                                multiFillM(g1("m"), g2("m"))    ((yPrc, g1(yName))),
+                                fill([("%m", g2("m")),           ("%d", rD3)])
+                                ])
+                else:
+                    rM = reg(g1("m"), g2("m"))           
+                    return fill([("%m", rM)])
+        else:
+            rD = reg(g1("d"), g2("d"))           
+            return fill([("%d", rD)])
+   
+    def __fillDateRegex(self, frmt, l):
+        for e in l:
+            if e[1] is None:
+                return None
+            frmt = frmt.replace(e[0], str(e[1]))
+        return frmt
+
+    def __leD(self, m1, m2, g):
+        return int(m1.group(g)) <= int(m2.group(g))
+
+    def __eqD(self, m1, m2, g): 
         return int(m1.group(g)) == int(m2.group(g))

@@ -173,6 +173,10 @@ def time(format, min = None, max = None):
     b = builder.RegexBuilder()
     return b.createTimeRegex(format, min, max)
 
+def date(format, min = None, max = None):
+    b = builder.RegexBuilder()
+    return b.createDateRegex(format, min, max)
+    
 
 def concatenate(concatenationList):
     result = ""
