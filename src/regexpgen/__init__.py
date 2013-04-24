@@ -6,7 +6,6 @@ Set of functions to generate regular expressions from a pattern similar to print
 
 import builder
 import re
-#import mdate, mtime, mdatetime
 
 def integer(frmt, minV = None, maxV = None):
     """
@@ -39,11 +38,13 @@ def integer(frmt, minV = None, maxV = None):
 
     Examples of use:
 
-    print regexpgen.integer("%0d", -10, 10)
-    ^(-?([0-9]|10))$
+    >>> import regexpgen
 
-    print regexpgen.integer("%04d", -10, 10)
-    ^(-?(000[0-9]|0010))$
+    >>> regexpgen.integer("%0d", -10, 10)
+    '^(-?([0-9]|10))$'
+
+    >>> regexpgen.integer("%04d", -10, 10)
+    '^(-?(000[0-9]|0010))$'
 
     """
 
@@ -70,11 +71,13 @@ def nnint(frmt, minV = None, maxV = None):
 
     Examples of use:
 
-    print regexpgen.nnint("%0d")
-    ^([1-9][0-9]*|0)$
+    >>> import regexpgen
 
-    print regexpgen.nnint("%04d", 71, 85)
-    ^(007[1-9]|008[0-5])$
+    >>> regexpgen.nnint("%0d")
+    '^([1-9][0-9]*|0)$'
+
+    >>> regexpgen.nnint("%04d", 71, 85)
+    '^(007[1-9]|008[0-5])$'
 
     """
 
@@ -124,11 +127,13 @@ def real(frmt, minV = None, maxV = None):
 
     Examples of use:
 
-    print regexpgen.real("%lf", -1.5, 2.5)
-    ^(-?(0*((0)\.0|(0)(\.(([0-9])[0-9]*))|(1)(\.(([0-3]|4)[0-9]*))|(1)\.50*))|0*((1)\.5|(1)(\.(5|([5-9])[0-9]*))|(2)(\.(([0-3]|4)[0-9]*))|(2)\.50*))$
+    >>> import regexpgen
 
-    print regexpgen.real("%0.1lf", -1.0, 2.0)
-    ^(-?(((0)\.(([0-9]))|(1)\.0))|((1)\.(([0-9]))|(2)\.0))$
+    >>> regexpgen.real("%lf", -1.5, 2.5)
+    '^(-?(0*((0)\\.0|(0)(\\.(([0-9])[0-9]*))|(1)(\\.(([0-3]|4)[0-9]*))|(1)\\.50*))|0*((1)\\.5|(1)(\\.(5|([5-9])[0-9]*))|(2)(\\.(([0-3]|4)[0-9]*))|(2)\\.50*))$'
+
+    >>> regexpgen.real("%0.1lf", -1.0, 2.0)
+    '^(-?(((0)\\.(([0-9]))|(1)\\.0))|((1)\\.(([0-9]))|(2)\\.0))$'
 
     """
 
@@ -163,11 +168,14 @@ def time(frmt, minV = None, maxV = None):
 
 
     Examples of use:
-    print regexpgen.time("%H:%M", "12:24", "17:59")
-    ^(12\:(2[4-9]|[3-4][0-9]|5[0-9])|(1[3-5]|16)\:[0-5][0-9]|17\:[0-5][0-9])$
 
-    print regexpgen.time("%I-%M-%S %P", "01-00-00 AM", None)
-    ^(11\-00\-[0-5][0-9]\ PM|11\-(0[1-9]|1[0-9]|[2-4][0-9]|5[0-8])\-[0-5][0-9]\ PM|11\-59\-[0-5][0-9]\ PM)$
+    >>> import regexpgen
+
+    >>> regexpgen.time("%H:%M", "12:24", "17:59")
+    '^(12\\:(2[4-9]|[3-4][0-9]|5[0-9])|(1[3-5]|16)\\:[0-5][0-9]|17\\:[0-5][0-9])$'
+
+    >>> regexpgen.time("%I-%M-%S %P", "10-00-00 PM", None)
+    '^(10\\-00\\-[0-5][0-9]\\ PM|10\\-(0[1-9]|1[0-9]|[2-4][0-9]|5[0-9])\\-[0-5][0-9]\\ PM|11\\-(0[0-9]|1[0-9]|[2-4][0-9]|5[0-8])\\-[0-5][0-9]\\ PM|11\\-59\\-[0-5][0-9]\\ PM)$'
 
     """
     b = builder.RegexBuilder()
@@ -194,6 +202,10 @@ def concatenate(concatenationList):
         else:
             raise ValueError("Bad input")
     return "^({0})$".format(result.replace("^", "").replace("$", ""))
+
+import doctest
+doctest.testfile("__init__.py")
+
 
 #def datetime(format, date_min = None, date_max = None, time_min = None, time_max = None, timezone = None, matchStartEnd = True):
 #    return startEndMatcher(mdatetime.run(format, date_min, date_max, time_min, time_max, timezone), matchStartEnd)
