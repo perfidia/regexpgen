@@ -549,55 +549,54 @@ class RegexBuilder(object):
 
         if(len(groupMin) > 1):
             miIntPart = str(mi).split(".")[0]
-            min = str(mi).split(".")[1]
+            minV = str(mi).split(".")[1]
         else:
             miIntPart = str(mi)
-            min = "0"
+            minV = "0"
 
         if(len(groupMax) > 1):
             maIntPart = str(ma).split(".")[0]
-            max = str(ma).split(".")[1]
+            maxV = str(ma).split(".")[1]
         else:
             maIntPart = str(ma)
-            max = "0"
+            maxV = "0"
 
-        maxBefore = max
-        minBefore = min
+        maxBefore = maxV
+        minBefore = minV
 
-        while len(min) < len(str(max)) or len(min) < digits:
-            min = min + "0"
-        while len(str(min)) > len(max) or len(max) < digits:
-            max = max + "0"
+        while len(minV) < len(str(maxV)) or len(minV) < digits:
+            minV = minV + "0"
+        while len(str(minV)) > len(maxV) or len(maxV) < digits:
+            maxV = maxV + "0"
 
         if digits is None:
-            format =  "%0" + str(len(max))+ "d"
+            frmt =  "%0" + str(len(maxV))+ "d"
         else:
-            format =  "%0" + str(digits)+ "d"
+            frmt =  "%0" + str(digits)+ "d"
 
         remove = digits is None
 
         if miIntPart == maIntPart:
-            if min == max:
-                return "{0}\.{1}".format(self.__executeIntegerCalculation(formatInt, miIntPart, miIntPart), min)
+            if minV == maxV:
+                return "{0}\.{1}".format(self.__executeIntegerCalculation(formatInt, miIntPart, miIntPart), minV)
             if digits is None:
-                x = self.__generateAlternativesForReal(format, int(min), int(max) - 1, remove)
+                x = self.__generateAlternativesForReal(frmt, int(minV), int(maxV) - 1, remove)
             else:
-                x = self.__executeIntegerCalculation(format, int(min), int(max) - 1)
+                x = self.__executeIntegerCalculation(frmt, int(minV), int(maxV) - 1)
             if digits is None:
-                #x = re.sub("\[0\-9\](?!\*)", "",x)
                 return "{0}\.({1}|{2}0*)".format(self.__executeIntegerCalculation(formatInt, miIntPart, miIntPart), x, maxBefore)
             else:
-                return "{0}\.({1}|{2})".format(self.__executeIntegerCalculation(formatInt, miIntPart, miIntPart), x, max)
+                return "{0}\.({1}|{2})".format(self.__executeIntegerCalculation(formatInt, miIntPart, miIntPart), x, maxV)
         else:
             if digits is None:
-                x =  self.__generateAlternativesForReal(format, int(min), "9"*len(min), remove)
+                x =  self.__generateAlternativesForReal(frmt, int(minV), "9"*len(minV), remove)
             else:
-                x = self.__executeIntegerCalculation(format, int(min), "9"*len(min))
-            if int(max) != 0:
+                x = self.__executeIntegerCalculation(frmt, int(minV), "9"*len(minV))
+            if int(maxV) != 0:
                 if digits is None:
-                    y = self.__generateAlternativesForReal(format, 0, int(max) - 1, remove)
+                    y = self.__generateAlternativesForReal(frmt, 0, int(maxV) - 1, remove)
                 else:
-                    y = self.__executeIntegerCalculation(format, 0, int(max) - 1)
+                    y = self.__executeIntegerCalculation(frmt, 0, int(maxV) - 1)
             else:
                 y = None
 
@@ -620,27 +619,27 @@ class RegexBuilder(object):
                     ans += "|{0}\.[0-9]{{{1}}}".format(z, digits)
                 if y != None:
                     ans += "|{0}\.({1})".format(self.__executeIntegerCalculation(formatInt, maIntPart, maIntPart), y)
-                ans += "|{0}\.{1}".format(self.__executeIntegerCalculation(formatInt, maIntPart, maIntPart), max)
+                ans += "|{0}\.{1}".format(self.__executeIntegerCalculation(formatInt, maIntPart, maIntPart), maxV)
 
             return ans
 
-    def __generateAlternativesForReal(self, format, min, max, remove):
+    def __generateAlternativesForReal(self, frmt, minV, maxV, remove):
         result = ["(",]
-        if str(min) == str(max):
-            result.append(str(max))
+        if str(minV) == str(maxV):
+            result.append(str(maxV))
 
-        m = re.match('%0([0-9]+)d', format)
+        m = re.match('%0([0-9]+)d', frmt)
         if m:
             digits = int(m.group(1))
 
-        sub = len(str(max))
+        sub = len(str(maxV))
         if sub < digits:
             count = digits - sub
             while count != 0:
                 result.append(count * "0" + "|")
                 count -= 1
 
-        temp = "0"*(digits - len(str(min))) + str(min)
+        temp = "0"*(digits - len(str(minV))) + str(minV)
         while temp[-1] == "0":
             temp = temp[:-1]
             if len(temp) == 0:
@@ -649,16 +648,16 @@ class RegexBuilder(object):
         if len(temp) != 0:
             result.append(temp + "|")
 
-        for i in xrange(len(str(max))):
-            newMin = str(int(str("0"* (digits - len(str(min))) + str(min))[0:i + 1]) + 1)
-            newMax = str(max)[0:i + 1]
+        for i in xrange(len(str(maxV))):
+            newMin = str(int(str("0"* (digits - len(str(minV))) + str(minV))[0:i + 1]) + 1)
+            newMax = str(maxV)[0:i + 1]
             x = digits - (sub - 1 - i)
             if int(newMin) <= int(newMax):
-                if i != len(str(max)) - 1:
+                if i != len(str(maxV)) - 1:
                     a = self.__executeIntegerCalculation("%0" + str(x) + "d", int(newMin), int(newMax))
                     result.append(a + "|")
                 else:
-                    a = self.__executeIntegerCalculation("%0" + str(digits) + "d", int(str(min)[0:i + 1]), int(newMax))
+                    a = self.__executeIntegerCalculation("%0" + str(digits) + "d", int(str(minV)[0:i + 1]), int(newMax))
                     result.append(a)
 
         result.append("[0-9]*)")
@@ -811,8 +810,8 @@ class RegexBuilder(object):
         newNumber = ma
         if self.zeros != 0 and len(str(ma)) != self.zeros:
             newNumber = (self.zeros - len(str(ma)))* "0" + str(ma)
-        xeas = self.__buildRegEx()
-        m = re.match("^(" + xeas + ")$", str(newNumber))
+            
+        m = re.match("^(" + self.__buildRegEx() + ")$", str(newNumber))
         if m is None:
             self.__addRange(ma, ma)
             self.__startNextAlternative()
@@ -1184,11 +1183,11 @@ class RegexBuilder(object):
     def createDateRegex(self, frmt, minD, maxD):
         return "^({0})$".format(self.__calcDateRegex(frmt, minD, maxD))
 
-    def __calcDateRegex(self, frmt, minD, maxD): 
+    def __calcDateRegex(self, frmt, minD, maxD):
         if (frmt is None or not isinstance(frmt, str)):
             raise ValueError("Bad input")
         if (minD is not None and not isinstance(minD, str)):
-            raise ValueError("Bad input") 
+            raise ValueError("Bad input")
         if (maxD is not None and not isinstance(maxD, str)):
             raise ValueError("Bad input")
 
@@ -1196,7 +1195,7 @@ class RegexBuilder(object):
             if frmt.count(t) > 1:
                 raise ValueError("Bad input")
 
-        Y, y, m, d = False, False, False, False  
+        Y, y, m, d = False, False, False, False
         if "%Y" in frmt:
             Y = True
         if "%y" in frmt:
@@ -1205,21 +1204,16 @@ class RegexBuilder(object):
             m = True
         if "%d" in frmt:
             d = True
-        
+
         if (Y or y) and not m and d:
             raise ValueError("Bad input")
         if not Y and not y and not m and not d:
             raise ValueError("Bad input")
         if y and Y:
             raise ValueError("Bad input")
- 
+
         frmtRegExp = re.escape(frmt).replace("\%", "%")
-         
-# %d    dzień miesiąca (01..31)
-# %m    numer miesiąca (01..12)
-# %y    dwie ostatnich cyfr roku (00..99)
-# %Y    rok (1997..)
-         
+
         if y:
             frmtRegExp = frmtRegExp.replace("%y", "(?P<y>[0-9]{2})")
         if Y:
@@ -1228,37 +1222,70 @@ class RegexBuilder(object):
             frmtRegExp = frmtRegExp.replace("%m", "(?P<m>0[1-9]|1[0-2])")
         if d:
             frmtRegExp = frmtRegExp.replace("%d", "(?P<d>0[1-9]|[12][0-9]|3[01])")
-        
-        f = re.escape(frmt).replace("\%", "%")  
-         
+
+        f = re.escape(frmt).replace("\%", "%")
+
+        if minD is None:
+            minD = frmt
+            if Y:
+                minD = minD.replace("%Y", "1970")
+            if y:
+                minD = minD.replace("%y", "00")
+            if m:
+                minD = minD.replace("%m", "01")
+            if d:
+                minD = minD.replace("%d", "01")
+
+        if maxD is None:
+            maxD = frmt
+            if Y:
+                maxD = maxD.replace("%Y", "2099")
+            if y:
+                maxD = maxD.replace("%y", "99")
+            if m:
+                maxD = maxD.replace("%m", "12")
+            if d:
+                maxD = maxD.replace("%d", "31")
+
+
         m1 = re.match(frmtRegExp, minD)
         m2 = re.match(frmtRegExp, maxD)
-        
+
         if m1 is None or m2 is None:
             raise ValueError("Bad input")
-                   
+
         y = y or Y
         yName = "Y" if Y else "y"
         yPrc = "%" + yName
-                 
+
         eq = lambda g: self.__eqD(m1, m2, g)
         le = lambda g: self.__leD(m1, m2, g)
         fill = lambda l: self.__fillDateRegex(f, l)
         g1 = lambda g: int(m1.group(g))
         g2 = lambda g: int(m2.group(g))
+        gz1 = lambda g: m1.group(g)
+        gz2 = lambda g: m2.group(g)
         reg = lambda a, b:  None if a > b else self.__executeIntegerCalculation("%02d", a, b) if len(str(a)) <= 2 else self.__executeIntegerCalculation("%04d", a, b)
-        res = lambda l: "|".join(filter(None, sum([[i] if isinstance(i, str) else i for i in l], []))) 
+        res = lambda l: "|".join(filter(None, sum(filter(None, [[i] if isinstance(i, str) else i for i in l]), [])))
         lastD = lambda m: 31 if int(m) in [1, 3, 5, 7, 8, 10, 12] else 30 if int(m) != 2 else 28
-        vMD = lambda m, d: d <= lastD(m)  
-        vYMD = lambda y, m, d: vMD(m, d) if m != 2 or d != 29 else (y % 4 == 0 and y % 100 != 0) or y % 400 == 0 
-        multiFillM = lambda a, b: None if a > b else (lambda y: [fill([y, ("%m", i), ("%d", reg(1, lastD(i)))]) for i in xrange(a, b+1)]) if a != 1 or b != 12 else \
+        vYMD = lambda y, m, d: vMD(m, d) if m != 2 or d != 29 else (y % 4 == 0 and y % 100 != 0) or y % 400 == 0
+        vMD = lambda m, d: d <= lastD(m)
+        lastDY = lambda m, y: 31 if int(m) in [1, 3, 5, 7, 8, 10, 12] else 30 if int(m) != 2 else (29 if y is not None and vYMD(int(y[1]), 2, 29) else 28)
+        multiFillM = lambda a, b: (lambda y: None) if a > b else (lambda y: [fill([y, ("%m", "0{0}".format(i)[-2:]), ("%d", reg(1, lastDY(i, y)))]) for i in xrange(a, b+1)]) if a != 1 or b != 12 else \
         lambda y: [
-         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30])")]), 
-         fill([y, ("%m", "(04|06|09|11)"), ("%d", "31")]), 
-         fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0})".format("9" if vYMD(y, 2, 29) else "8"))])
+         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30])")]),
+         fill([y, ("%m", "(04|06|09|11)"), ("%d", "31")]),
+         fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0}])".format("9" if y is None or vYMD(y[1], 2, 29) else "8"))])
         ]
-        multiFillY = lambda a, b: None if a > b else sum([multiFillM(1, 12)((yPrc, y)) for y in xrange(a, b+1)], [])
-        
+        multiFillMNaive = lambda a: lambda y: [
+         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30)")]),
+         fill([y, ("%m", "(04|06|09|11)"), ("%d", "31")]),
+         fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0}])".format("9" if a else "8"))])
+        ]
+        multiFillY = lambda a, b: None if a > b else (sum([multiFillM(1, 12)((yPrc, y)) for y in xrange(a, b+1)], []) if b - a < 5 else \
+                                                      multiFillMNaive(False)((yPrc, "({0})".format("|".join([str(i) for i in xrange(a, b+1) if not vYMD(i, 2, 29)])))) + 
+                                                      multiFillMNaive(True) ((yPrc, "({0})".format("|".join([str(i) for i in xrange(a, b+1) if vYMD(i, 2, 29)])))))
+
         if y:
             if Y:
                 if g1(yName) < 1970 or 2099 < g1(yName):
@@ -1276,55 +1303,55 @@ class RegexBuilder(object):
                 raise ValueError("Bad input")
             if m and d and not vYMD(g2(yName), g2("m"), g2("d")):
                 raise ValueError("Bad input")
-        
+
         elif m:
             if not le("m"):
                 raise ValueError("Bad input")
             if eq("m") and d and not le("d"):
                 raise ValueError("Bad input")
             if d and not vMD(g1("m"), g1("d")):
-                raise ValueError("Bad input") 
+                raise ValueError("Bad input")
             if d and not vMD(g2("m"), g2("d")):
-                raise ValueError("Bad input")             
+                raise ValueError("Bad input")
         else:
             if not le("d"):
                 raise ValueError("Bad input")
-            
+
         if y:
             if eq(yName):
                 if m:
                     if eq("m"):
                         if d:
                             rD = reg(g1("d"), g2("d"))
-                            return fill([(yPrc, g1(yName)), ("%m", g1("m")), ("%d", rD)])
+                            return fill([(yPrc, gz1(yName)), ("%m", gz1("m")), ("%d", rD)])
                         else:
-                            return fill([(yPrc, g1(yName)), ("%m", g1("m"))])
+                            return fill([(yPrc, gz1(yName)), ("%m", gz1("m"))])
                     else:
                         if d:
-                            rD1 = reg(g1("d"), lastD(g1("m")))
+                            rD1 = reg(g1("d"), lastDY(g1("m"), g1(yName)))
                             rD3 = reg(1, g2("d"))
-                            
+
                             return res([
-                                        fill([(yPrc, g1(yName)),         ("%m", g1("m")), ("%d", rD1)]),
-                                        multiFillM(g1("m"), g2("m"))    ((yPrc, g1(yName))),
-                                        fill([(yPrc, g1(yName)),         ("%m", g2("m")), ("%d", rD3)])
+                                        fill([(yPrc, gz1(yName)),         ("%m", gz1("m")), ("%d", rD1)]),
+                                        multiFillM(g1("m"), g2("m"))    ((yPrc, gz1(yName))),
+                                        fill([(yPrc, gz1(yName)),         ("%m", gz2("m")), ("%d", rD3)])
                                         ])
-                        else:             
-                            rM = reg(g1("m"), g2("m"))           
-                            return fill([(yPrc, g1(yName)), ("%m", rM)])
+                        else:
+                            rM = reg(g1("m"), g2("m"))
+                            return fill([(yPrc, gz1(yName)), ("%m", rM)])
                 else:
-                    return fill([(yPrc, g1(yName))])
-            else:            
+                    return fill([(yPrc, gz1(yName))])
+            else:
                 if m:
                     if d:
-                        rD1 = reg(g1("d"), lastD(g1("m")))
-                        rD2 = reg(1, g2("d")) 
+                        rD1 = reg(g1("d"), lastDY(g1("m"), g1(yName)))
+                        rD2 = reg(1, g2("d"))
                         return res([
-                                    fill([(yPrc, g1(yName)),     ("%m", g1("m")), ("%d", rD1)]),
-                                    multiFillM(g1("m") + 1, 12) ((yPrc, g1(yName))),
+                                    fill([(yPrc, gz1(yName)),     ("%m", gz1("m")), ("%d", rD1)]),
+                                    multiFillM(g1("m") + 1, 12) ((yPrc, gz1(yName))),
                                     multiFillY(g1(yName) + 1, g2(yName) - 1),
-                                    multiFillM(1, g2("m") - 1)  ((yPrc, g2(yName))),
-                                    fill([(yPrc, g2(yName)),     ("%m", g2("m")), ("%d", rD2)])                                    
+                                    multiFillM(1, g2("m") - 1)  ((yPrc, gz2(yName))),
+                                    fill([(yPrc, gz2(yName)),     ("%m", gz2("m")), ("%d", rD2)])
                                    ])
                     else:
                         rM1 = reg(g1("m"), 12)
@@ -1332,46 +1359,48 @@ class RegexBuilder(object):
                         rM3 = reg(1, g2("m"))
                         rY = reg(g1(yName) + 1, g2(yName) - 1)
                         return res([
-                                    fill((yPrc, g1(yName)), ("%m", rM1)),
-                                    fill((yPrc, rY),        ("%m", rM2)),
-                                    fill((yPrc, g2(yName)), ("%m", rM3))
+                                    fill([(yPrc, gz1(yName)), ("%m", rM1)]),
+                                    fill([(yPrc, rY),         ("%m", rM2)]),
+                                    fill([(yPrc, gz2(yName)), ("%m", rM3)])
                                     ])
                 else:
-                    rY = reg(g1(yName), g2(yName))           
+                    rY = reg(g1(yName), g2(yName))
                     return fill([(yPrc, rY)])
         elif m:
             if eq("m"):
                 if d:
                     rD = reg(g1("d"), g2("d"))
-                    return fill([("%m", g1("m")), ("%d", rD)])
+                    return fill([("%m", gz1("m")), ("%d", rD)])
                 else:
-                    return fill([("%m", g1("m"))])
+                    return fill([("%m", gz1("m"))])
             else:
                 if d:
                     rD1 = reg(g1("d"), lastD(g1("m")))
                     rD3 = reg(1, g2("d"))
-                    
+ 
                     return res([
-                                fill([("%m", g1("m")),           ("%d", rD1)]),
-                                multiFillM(g1("m"), g2("m"))    ((yPrc, g1(yName))),
-                                fill([("%m", g2("m")),           ("%d", rD3)])
+                                fill([("%m", gz1("m")),           ("%d", rD1)]),
+                                multiFillM(g1("m") + 1, g2("m") - 1)    (None),
+                                fill([("%m", gz2("m")),           ("%d", rD3)])
                                 ])
                 else:
-                    rM = reg(g1("m"), g2("m"))           
+                    rM = reg(g1("m"), g2("m"))
                     return fill([("%m", rM)])
         else:
-            rD = reg(g1("d"), g2("d"))           
+            rD = reg(g1("d"), g2("d"))
             return fill([("%d", rD)])
-   
+
     def __fillDateRegex(self, frmt, l):
         for e in l:
+            if e is None:
+                continue
             if e[1] is None:
                 return None
             frmt = frmt.replace(e[0], str(e[1]))
-        return frmt
+        return frmt               
 
     def __leD(self, m1, m2, g):
         return int(m1.group(g)) <= int(m2.group(g))
 
-    def __eqD(self, m1, m2, g): 
+    def __eqD(self, m1, m2, g):
         return int(m1.group(g)) == int(m2.group(g))

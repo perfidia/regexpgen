@@ -81,13 +81,13 @@ def nnint(frmt, minV = None, maxV = None):
     b = builder.RegexBuilder()
     return b.createNNIntegerRegex(frmt, minV, maxV)
 
-def real(format, min = None, max = None):
+def real(frmt, minV = None, maxV = None):
     """
     Generating regular expressions for real numbers with accuracy of float() function.
 
-    :param format: format similar to C printf function (description below)
-    :param min: optional minimum value
-    :param max: optional maximum value
+    :param frmt: format similar to C printf function (description below)
+    :param minV: optional minimum value
+    :param maxV: optional maximum value
     :return: regular expression for a given format
 
     Supported formats:
@@ -133,9 +133,9 @@ def real(format, min = None, max = None):
     """
 
     b = builder.RegexBuilder()
-    return b.createRealRegex(format, min, max)
+    return b.createRealRegex(frmt, minV, maxV)
 
-def time(format, min = None, max = None):
+def time(frmt, minV = None, maxV = None):
     """
     Generating regular expressions for time.
 
@@ -171,12 +171,12 @@ def time(format, min = None, max = None):
 
     """
     b = builder.RegexBuilder()
-    return b.createTimeRegex(format, min, max)
+    return b.createTimeRegex(frmt, minV, maxV)
 
-def date(format, min = None, max = None):
+def date(frmt, minV = None, maxV = None):
     b = builder.RegexBuilder()
-    return b.createDateRegex(format, min, max)
-    
+    return b.createDateRegex(frmt, minV, maxV)
+
 
 def concatenate(concatenationList):
     result = ""
@@ -195,8 +195,5 @@ def concatenate(concatenationList):
             raise ValueError("Bad input")
     return "^({0})$".format(result.replace("^", "").replace("$", ""))
 
-#def date(format, min = None, max = None, timezone = None, matchStartEnd = True):
-#    return startEndMatcher(mdate.run(format, min, max, timezone), matchStartEnd)
-#
 #def datetime(format, date_min = None, date_max = None, time_min = None, time_max = None, timezone = None, matchStartEnd = True):
 #    return startEndMatcher(mdatetime.run(format, date_min, date_max, time_min, time_max, timezone), matchStartEnd)
