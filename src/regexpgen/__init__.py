@@ -160,6 +160,7 @@ def time(frmt, minV = None, maxV = None):
 
     Additional information:
 
+    :It is possible to add a time zone to the regexp - it should be added directly to format, eg. "%H:%M:%S +01"
     :%I must come with %p or %P
     :%H can not come with %I, %p or %P
     :%P and %p can not come together
