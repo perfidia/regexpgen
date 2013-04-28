@@ -22,3 +22,4 @@ print regexpgen.concatenate([
 ])
 print regexpgen.time("%H:%M", "12:24", "17:59")
 print regexpgen.date("%Y-%m-%d", "2013-03-15", "2013-04-24")
+print regexpgen.date("%d/%m", "15/09")

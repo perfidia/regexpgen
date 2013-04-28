@@ -183,6 +183,39 @@ def time(frmt, minV = None, maxV = None):
     return b.createTimeRegex(frmt, minV, maxV)
 
 def date(frmt, minV = None, maxV = None):
+    """
+    Generating regular expressions for date.
+
+    :param format: format similar to C printf function (description below)
+    :param min: optional minimum value
+    :param max: optional maximum value
+    :return: regular expression for a given format
+
+    Supported formats consists following syntaxes:
+    %d    day (01..31)
+    %m    month (01..12)
+    %y    two last digits of year (00..99)
+    %Y    year (four digits)
+
+    Additional information:
+    :Leap years are supported
+    :Supported years: 1970 - 2099
+    :%Y or %y can not be only syntaxes
+    :%d can not come with %Y without %m
+    :%Y and %y can not come together
+
+    Examples of use:
+
+    >>> import regexpgen
+
+    >>> regexpgen.date("%Y-%m-%d", "2013-03-15", "2013-04-24")
+    '^(2013\\-03\\-(1[5-9]|2[0-9]|3[0-1])|2013\\-03\\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])|2013\\-04\\-(0[1-9]|1[0-9]|2[0-9]|30)|2013\\-04\\-(0[1-9]|1[0-9]|2[0-4]))$'
+
+    >>> regexpgen.date("%d/%m", "15/09")
+    '^((1[5-9]|2[0-9]|30)\\/09|(0[1-9]|1[0-9]|2[0-9]|3[0-1])\\/10|(0[1-9]|1[0-9]|2[0-9]|30)\\/11|(0[1-9]|1[0-9]|2[0-9]|3[0-1])\\/12)$'
+
+    """
+
     b = builder.RegexBuilder()
     return b.createDateRegex(frmt, minV, maxV)
 
