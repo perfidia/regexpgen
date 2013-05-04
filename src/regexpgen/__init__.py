@@ -221,21 +221,129 @@ def date(frmt, minV = None, maxV = None):
 
 
 def concatenate(concatenationList):
+    """
+    Concatenating regular expressions of integer, real, time and date.
+
+    :param concatenationList: list of tuples - if tuple has only one element is placed directly into regexp, otherwise appropriate function is called (first parameter of tuple should be string - real, int, date or time)
+
+    Supported formats consists syntaxtes from integer, real, date and time formats
+
+    Additional information:
+    :It is assumed that user knows if the single element should be escaped or not.
+
+    Examples of use:
+
+    >>> import regexpgen
+
+    >>> regexpgen.concatenate([('int', "%d", 100, 105), ('\.',), ('int', "%d", 250, 255)])
+    '^((0*(10[0-5]))\\.(0*(25[0-5])))$'
+
+    >>> regexpgen.concatenate([('date', "%m"), (' ',), ('time', "%M")])
+    '^(((0[1-9]|1[0-2])) ([0-5][0-9]))$'
+
+    """
     result = ""
     for element in concatenationList:
         if len(element) == 1:
             result += element[0]
         elif len(element) == 4:
+            b = builder.RegexBuilder()
             if element[0] == "int":
-                b = builder.RegexBuilder()
-                result += b.createIntegerRegex(element[1], int(element[2]), int(element[3])).replace("^", "")
+                result += b.createIntegerRegex(element[1], element[2], element[3]).replace("^", "")
             elif element[0] == "real":
-                result += b.createRealRegex(element[1], int(element[2]), int(element[3])).replace("^", "")
+                result += b.createRealRegex(element[1], element[2], element[3]).replace("^", "")
+            elif element[0] == "date":
+                result += b.createDateRegex(element[1], element[2], element[3]).replace("^", "")
+            elif element[0] == "time":
+                result += b.createTimeRegex(element[1], element[2], element[3]).replace("^", "")
+            else:
+                raise ValueError("Bad input")
+        elif len(element) == 3:
+            b = builder.RegexBuilder()
+            if element[0] == "int":
+                result += b.createIntegerRegex(element[1], element[2], None).replace("^", "")
+            elif element[0] == "real":
+                result += b.createRealRegex(element[1], element[2], None).replace("^", "")
+            elif element[0] == "date":
+                result += b.createDateRegex(element[1], element[2], None).replace("^", "")
+            elif element[0] == "time":
+                result += b.createTimeRegex(element[1], element[2], None).replace("^", "")
+            else:
+                raise ValueError("Bad input")
+        elif len(element) == 2:
+            b = builder.RegexBuilder()
+            if element[0] == "int":
+                result += b.createIntegerRegex(element[1], None, None).replace("^", "")
+            elif element[0] == "real":
+                result += b.createRealRegex(element[1], None, None).replace("^", "")
+            elif element[0] == "date":
+                result += b.createDateRegex(element[1], None, None).replace("^", "")
+            elif element[0] == "time":
+                result += b.createTimeRegex(element[1], None, None).replace("^", "")
             else:
                 raise ValueError("Bad input")
         else:
             raise ValueError("Bad input")
     return "^({0})$".format(result.replace("^", "").replace("$", ""))
+
+
+def getRegExp(frmt, minV = None, maxV = None):
+    """
+    Generating regular expressions for integer, real, date and time.
+
+    :param format: format similar to C printf function (description below)
+    :param min: optional minimum value
+    :param max: optional maximum value
+    :return: regular expression for a given format
+
+    Supported formats consists syntaxtes from integer, real, date and time formats
+
+    Additional information:
+    :Because single %d occurs as well in integer format and in date format, the integer function is preferred. To generate single %d for date please use regexpgen.date
+
+    Examples of use:
+
+    >>> import regexpgen
+
+    >>> regexpgen.getRegExp("%Y-%m-%d", "2013-03-15", "2013-04-24")
+    '^(2013\\-03\\-(1[5-9]|2[0-9]|3[0-1])|2013\\-03\\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])|2013\\-04\\-(0[1-9]|1[0-9]|2[0-9]|30)|2013\\-04\\-(0[1-9]|1[0-9]|2[0-4]))$'
+
+    >>> regexpgen.getRegExp("%0d", -10, 10)
+    '^(-?([0-9]|10))$'
+
+    """
+    if (frmt is None or not isinstance(frmt, str)):
+            raise ValueError("Bad input")
+
+    b = builder.RegexBuilder()
+    integerFormats = frmt in ["%d", "%0d"] or re.match("^%0[0-9]+d$", frmt)
+    integerFormatsNotd = frmt in ["%0d"] or re.match("^%0[0-9]+d$", frmt)
+    realFormats = frmt in ["%lf", "%0lf"] or re.match("^%\.[0-9]+lf$", frmt) or re.match("^%0\.[0-9]+lf$", frmt) or re.match("^%0[1-9][0-9]*\.[0-9]+lf$", frmt) or re.match("^%[1-9][0-9]*\.[0-9]+lf$", frmt)
+    timeFormats = str(frmt).find("%H") >= 0 or str(frmt).find("%I") >= 0 or str(frmt).find("%M") >= 0 or str(frmt).find("%p") >= 0 or str(frmt).find("%P") >= 0 or str(frmt).find("%S") >= 0
+    dateFormats = str(frmt).find("%d") >= 0 or str(frmt).find("%m") >= 0 or str(frmt).find("%Y") >= 0 or str(frmt).find("%y") >= 0
+
+    if integerFormats and realFormats:
+            raise ValueError("Bad input")
+    elif integerFormatsNotd and dateFormats:
+            raise ValueError("Bad input")
+    elif integerFormats and timeFormats:
+            raise ValueError("Bad input")
+    elif realFormats and dateFormats:
+            raise ValueError("Bad input")
+    elif realFormats and timeFormats:
+            raise ValueError("Bad input")
+    elif dateFormats and timeFormats:
+            raise ValueError("Bad input")
+    elif integerFormats:
+            return b.createIntegerRegex(frmt, minV, maxV)
+    elif realFormats:
+            return b.createRealRegex(frmt, minV, maxV)
+    elif dateFormats:
+            return b.createDateRegex(frmt, minV, maxV)
+    elif timeFormats:
+            return b.createTimeRegex(frmt, minV, maxV)
+    else:
+        raise ValueError("Bad input")
 
 import doctest
 doctest.testfile("__init__.py")
