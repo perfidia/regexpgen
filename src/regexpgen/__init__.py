@@ -48,7 +48,7 @@ def integer(frmt, minV = None, maxV = None):
 
     """
 
-    b = builder.RegexBuilder()
+    b = builder.RegexpBuilder()
     return b.createIntegerRegex(frmt, minV, maxV)
 
 def nnint(frmt, minV = None, maxV = None):
@@ -81,7 +81,7 @@ def nnint(frmt, minV = None, maxV = None):
 
     """
 
-    b = builder.RegexBuilder()
+    b = builder.RegexpBuilder()
     return b.createNNIntegerRegex(frmt, minV, maxV)
 
 def real(frmt, minV = None, maxV = None):
@@ -137,7 +137,7 @@ def real(frmt, minV = None, maxV = None):
 
     """
 
-    b = builder.RegexBuilder()
+    b = builder.RegexpBuilder()
     return b.createRealRegex(frmt, minV, maxV)
 
 def time(frmt, minV = None, maxV = None):
@@ -179,7 +179,7 @@ def time(frmt, minV = None, maxV = None):
     '^(10\\-00\\-[0-5][0-9]\\ PM|10\\-(0[1-9]|1[0-9]|[2-4][0-9]|5[0-9])\\-[0-5][0-9]\\ PM|11\\-(0[0-9]|1[0-9]|[2-4][0-9]|5[0-8])\\-[0-5][0-9]\\ PM|11\\-59\\-[0-5][0-9]\\ PM)$'
 
     """
-    b = builder.RegexBuilder()
+    b = builder.RegexpBuilder()
     return b.createTimeRegex(frmt, minV, maxV)
 
 def date(frmt, minV = None, maxV = None):
@@ -216,7 +216,7 @@ def date(frmt, minV = None, maxV = None):
 
     """
 
-    b = builder.RegexBuilder()
+    b = builder.RegexpBuilder()
     return b.createDateRegex(frmt, minV, maxV)
 
 
@@ -247,7 +247,7 @@ def concatenate(concatenationList):
         if len(element) == 1:
             result += element[0]
         elif len(element) == 4:
-            b = builder.RegexBuilder()
+            b = builder.RegexpBuilder()
             if element[0] == "int":
                 result += b.createIntegerRegex(element[1], element[2], element[3]).replace("^", "")
             elif element[0] == "real":
@@ -259,7 +259,7 @@ def concatenate(concatenationList):
             else:
                 raise ValueError("Bad input")
         elif len(element) == 3:
-            b = builder.RegexBuilder()
+            b = builder.RegexpBuilder()
             if element[0] == "int":
                 result += b.createIntegerRegex(element[1], element[2], None).replace("^", "")
             elif element[0] == "real":
@@ -271,7 +271,7 @@ def concatenate(concatenationList):
             else:
                 raise ValueError("Bad input")
         elif len(element) == 2:
-            b = builder.RegexBuilder()
+            b = builder.RegexpBuilder()
             if element[0] == "int":
                 result += b.createIntegerRegex(element[1], None, None).replace("^", "")
             elif element[0] == "real":
@@ -315,7 +315,7 @@ def getRegExp(frmt, minV = None, maxV = None):
     if (frmt is None or not isinstance(frmt, str)):
             raise ValueError("Bad input")
 
-    b = builder.RegexBuilder()
+    b = builder.RegexpBuilder()
     integerFormats = frmt in ["%d", "%0d"] or re.match("^%0[0-9]+d$", frmt)
     integerFormatsNotd = frmt in ["%0d"] or re.match("^%0[0-9]+d$", frmt)
     realFormats = frmt in ["%lf", "%0lf"] or re.match("^%\.[0-9]+lf$", frmt) or re.match("^%0\.[0-9]+lf$", frmt) or re.match("^%0[1-9][0-9]*\.[0-9]+lf$", frmt) or re.match("^%[1-9][0-9]*\.[0-9]+lf$", frmt)

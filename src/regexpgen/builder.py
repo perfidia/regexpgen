@@ -11,7 +11,7 @@ Builder object for regular expressions.
 import re
 import math
 
-class RegexBuilder(object):
+class RegexpBuilder(object):
     def __init__(self):
         self.alternatives = [[]]
         self.currentIndex = 0
@@ -184,7 +184,7 @@ class RegexBuilder(object):
                     return "^({0})$".format(result)
 
     def __executeIntegerCalculation(self, frmt, minV, maxV):
-        b = RegexBuilder()
+        b = RegexpBuilder()
         minV = None if minV is None else int(minV)
         maxV = None if maxV is None else int(maxV)
         return b.createIntegerRegex(frmt, minV, maxV).replace("^", "").replace("$", "")
@@ -1274,12 +1274,12 @@ class RegexBuilder(object):
         multiFillM = lambda a, b: (lambda y: None) if a > b else (lambda y: [fill([y, ("%m", "0{0}".format(i)[-2:]), ("%d", reg(1, lastDY(i, y)))]) for i in xrange(a, b+1)]) if a != 1 or b != 12 else \
         lambda y: [
          fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30])")]),
-         fill([y, ("%m", "(04|06|09|11)"), ("%d", "31")]),
+         fill([y, ("%m", "(01|03|05|07|08|10|12)"), ("%d", "31")]),
          fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0}])".format("9" if y is None or vYMD(y[1], 2, 29) else "8"))])
         ]
         multiFillMNaive = lambda a: lambda y: [
          fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30)")]),
-         fill([y, ("%m", "(04|06|09|11)"), ("%d", "31")]),
+         fill([y, ("%m", "(01|03|05|07|08|10|12)"), ("%d", "31")]),
          fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0}])".format("9" if a else "8"))])
         ]
         multiFillY = lambda a, b: None if a > b else (sum([multiFillM(1, 12)((yPrc, y)) for y in xrange(a, b+1)], []) if b - a < 5 else \
