@@ -1266,25 +1266,26 @@ class RegexpBuilder(object):
         gz1 = lambda g: m1.group(g)
         gz2 = lambda g: m2.group(g)
         reg = lambda a, b:  None if a > b else self.__executeIntegerCalculation("%02d", a, b) if len(str(a)) <= 2 else self.__executeIntegerCalculation("%04d", a, b)
+        regPl = lambda a, b:  None if a > b else self.__executeIntegerCalculation("%02d", a, b)[1:-1] if len(str(a)) <= 2 else self.__executeIntegerCalculation("%04d", a, b)[1:-1]
         res = lambda l: "|".join(filter(None, sum(filter(None, [[i] if isinstance(i, str) else i for i in l]), [])))
         lastD = lambda m: 31 if int(m) in [1, 3, 5, 7, 8, 10, 12] else 30 if int(m) != 2 else 28
         vYMD = lambda y, m, d: vMD(m, d) if m != 2 or d != 29 else (y % 4 == 0 and y % 100 != 0) or y % 400 == 0
         vMD = lambda m, d: d <= lastD(m)
         lastDY = lambda m, y: 31 if int(m) in [1, 3, 5, 7, 8, 10, 12] else 30 if int(m) != 2 else (29 if y is not None and vYMD(int(y[1]), 2, 29) else 28)
-        multiFillM = lambda a, b: (lambda y: None) if a > b else (lambda y: [fill([y, ("%m", "0{0}".format(i)[-2:]), ("%d", reg(1, lastDY(i, y)))]) for i in xrange(a, b+1)]) if a != 1 or b != 12 else \
+        multiFillM = lambda a, b: (lambda y: None) if a > b else (lambda y: [fill([(y[0], regPl(y[1], y[1])) if y is not None else None, ("%m", "0{0}".format(i)[-2:]), ("%d", reg(1, lastDY(i, y)))]) for i in xrange(a, b+1)]) if a != 1 or b != 12 else \
         lambda y: [
-         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30])")]),
+         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[1-9]|[12][0-9]|30])")]),
          fill([y, ("%m", "(01|03|05|07|08|10|12)"), ("%d", "31")]),
-         fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0}])".format("9" if y is None or vYMD(y[1], 2, 29) else "8"))])
+         fill([y, ("%m", "02"), ("%d", "(0[1-9]|1[0-9]|2[0-{0}])".format("9" if y is None or vYMD(int(y[1]), 2, 29) else "8"))])
         ]
         multiFillMNaive = lambda a: lambda y: [
-         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[0-9]|[12][0-9]|30)")]),
+         fill([y, ("%m", "(01|0[3-9]|1[0-2])"), ("%d", "(0[1-9]|[12][0-9]|30)")]),
          fill([y, ("%m", "(01|03|05|07|08|10|12)"), ("%d", "31")]),
-         fill([y, ("%m", "02"), ("%d", "(0[0-9]|1[0-9]|2[0-{0}])".format("9" if a else "8"))])
+         fill([y, ("%m", "02"), ("%d", "(0[1-9]|1[0-9]|2[0-{0}])".format("9" if a else "8"))])
         ]
-        multiFillY = lambda a, b: None if a > b else (sum([multiFillM(1, 12)((yPrc, y)) for y in xrange(a, b+1)], []) if b - a < 5 else \
-                                                      multiFillMNaive(False)((yPrc, "({0})".format("|".join([str(i) for i in xrange(a, b+1) if not vYMD(i, 2, 29)])))) + 
-                                                      multiFillMNaive(True) ((yPrc, "({0})".format("|".join([str(i) for i in xrange(a, b+1) if vYMD(i, 2, 29)])))))
+        multiFillY = lambda a, b: None if a > b else (sum([multiFillM(1, 12)((yPrc, regPl(y, y))) for y in xrange(a, b+1)], []) if b - a < 5 else \
+                                                      multiFillMNaive(False)((yPrc, "({0})".format("|".join([regPl(str(i), str(i)) for i in xrange(a, b+1) if not vYMD(i, 2, 29)])))) + 
+                                                      multiFillMNaive(True) ((yPrc, "({0})".format("|".join([regPl(str(i), str(i)) for i in xrange(a, b+1) if vYMD(i, 2, 29)])))))
 
         if y:
             if Y:
