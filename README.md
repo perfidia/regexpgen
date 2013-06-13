@@ -4,27 +4,14 @@
 Description
 -----------
 
-TODO
-
-Installation
-------------
-
-### Simple
-
-    python setup.py install
-
-### Using eggs
-
-    python setup.py bdist_egg
-    cd dist
-    easy_install <package_name>
+RegExpGen allows to generate regular expressions on the basis of format
+supported by well known ``printf`` function.
 
 Getting started
 ---------------
 
     >>> import regexpgen
-    >>> pattern = r"%d"
-    >>> regexp = regexpgen.integer(pattern)
+    >>> regexp = regexpgen.integer(r"%d")
     >>> print regexp
     ^-?[0-9]+$
 
