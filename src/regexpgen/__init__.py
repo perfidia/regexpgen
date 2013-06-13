@@ -9,15 +9,12 @@ import re
 
 def integer(frmt, minV = None, maxV = None):
     """
-
-    Generating regular expression for integer numbers.
+    Generating regular expression for integer numbers (-2, -1, 0, 1, 2, 3...).
 
     :param frmt: format similar to C printf function (description below)
     :param minV: optional minimum value
     :param maxV: optional maximum value
     :return: regular expression for a given format
-
-    Generating regular expressions for integers (-2, -1, 0, 1, 2, 3...).
 
     Supported formats:
 
@@ -63,11 +60,7 @@ def nnint(frmt, minV = None, maxV = None):
 
     Generating regular expressions for non-negative integers (0, 1, 2, 3...).
 
-
-    Supported formats:
-
-    the same as for integers
-
+    Supported formats: see :py:class:`regexpgen.integer`
 
     Examples of use:
 
@@ -95,9 +88,9 @@ def real(frmt, minV = None, maxV = None):
 
     Supported formats:
 
-    FORMAT = '%lf'
-    description: leading zeros are optional
-    correct examples: 0.1, 1.32, 001.21, 012.123
+   	FORMAT = '%lf'
+   	description: leading zeros are optional
+   	correct examples: 0.1, 1.32, 001.21, 012.123
 
     FORMAT = '%0lf'
     description: leading zeros are forbidden
@@ -229,7 +222,7 @@ def concatenate(concatenationList):
     Supported formats consists syntaxtes from integer, real, date and time formats
 
     Additional information:
-    :It is assumed that user knows if the single element should be escaped or not.
+    It is assumed that user knows if the single element should be escaped or not.
 
     Examples of use:
 
@@ -287,7 +280,7 @@ def concatenate(concatenationList):
     return "^({0})$".format(result.replace("^", "").replace("$", ""))
 
 
-def getRegExp(frmt, minV = None, maxV = None):
+def auto(frmt, minV = None, maxV = None):
     """
     Generating regular expressions for integer, real, date and time.
 
@@ -296,19 +289,20 @@ def getRegExp(frmt, minV = None, maxV = None):
     :param max: optional maximum value
     :return: regular expression for a given format
 
-    Supported formats consists syntaxtes from integer, real, date and time formats
+
+	Supported formats: see :py:class:`regexpgen.integer`, :py:class:`regexpgen.real`, :py:class:`regexpgen.date`, :py:class:`regexpgen.time`
 
     Additional information:
-    :Because single %d occurs as well in integer format and in date format, the integer function is preferred. To generate single %d for date please use regexpgen.date
+    Because single %d occurs as well in integer format and in date format, the integer function is preferred. To generate single %d for date please use regexpgen.date
 
     Examples of use:
 
     >>> import regexpgen
 
-    >>> regexpgen.getRegExp("%Y-%m-%d", "2013-03-15", "2013-04-24")
+    >>> regexpgen.auto("%Y-%m-%d", "2013-03-15", "2013-04-24")
     '^(2013\\-03\\-(1[5-9]|2[0-9]|3[0-1])|2013\\-03\\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])|2013\\-04\\-(0[1-9]|1[0-9]|2[0-9]|30)|2013\\-04\\-(0[1-9]|1[0-9]|2[0-4]))$'
 
-    >>> regexpgen.getRegExp("%0d", -10, 10)
+    >>> regexpgen.auto("%0d", -10, 10)
     '^(-?([0-9]|10))$'
 
     """
@@ -345,9 +339,6 @@ def getRegExp(frmt, minV = None, maxV = None):
     else:
         raise ValueError("Bad input")
 
-import doctest
-doctest.testfile("__init__.py")
-
-
-#def datetime(format, date_min = None, date_max = None, time_min = None, time_max = None, timezone = None, matchStartEnd = True):
-#    return startEndMatcher(mdatetime.run(format, date_min, date_max, time_min, time_max, timezone), matchStartEnd)
+if __name__ == "__main__":
+    import doctest
+    doctest.testfile("__init__.py")
