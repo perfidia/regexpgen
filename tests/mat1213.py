@@ -468,269 +468,269 @@ class Test(unittest.TestCase):
 
 		self.assertFalse (re.match(hm, "24{}60456789"))
 
-#	def testPhase3Stage2(self):
-#		def gen_date(from_Y = 1970, from_m = 1, from_d = 1):
-#			Y = from_Y
-#
-#			for m in xrange(from_m, 13):
-#				if m == 2:
-#					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
-#						if Y == from_Y and m == from_m:
-#							for d in xrange(from_d, 30):
-#								yield (Y, m, d)
-#						else:
-#							for d in xrange(1, 30):
-#								yield (Y, m, d)
-#					else:
-#						if Y == from_Y and m == from_m:
-#							for d in xrange(from_d, 29):
-#								yield (Y, m, d)
-#						else:
-#							for d in xrange(1, 29):
-#								yield (Y, m, d)
-#				elif m in [1, 3, 5, 7, 8, 10, 12]:
-#					if Y == from_Y and m == from_m:
-#						for d in xrange(from_d, 32):
-#							yield (Y, m, d)
-#					else:
-#						for d in xrange(1, 32):
-#							yield (Y, m, d)
-#				else:
-#					if Y == from_Y and m == from_m:
-#						for d in xrange(from_d, 31):
-#							yield (Y, m, d)
-#					else:
-#						for d in xrange(1, 31):
-#							yield (Y, m, d)
-#
-#			for Y, m in itertools.product(xrange(from_Y + 1, 2100), xrange(1, 13)):
-#				if m == 2:
-#					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
-#						for d in xrange(1, 30):
-#							yield (Y, m, d)
-#					else:
-#						for d in xrange(1, 29):
-#							yield (Y, m, d)
-#				elif m in [1, 3, 5, 7, 8, 10, 12]:
-#					for d in xrange(1, 32):
-#						yield (Y, m, d)
-#				else:
-#					for d in xrange(1, 31):
-#						yield (Y, m, d)
-#
-#		# 24 April 2013: date
-#
-#		func = regexpgen.date
-#
-#		self.assertRaises(ValueError, func, None)
-#		self.assertRaises(ValueError, func, None, None)
-#		self.assertRaises(ValueError, func, None, None, None)
-#
-#		y = func("%Y")
-#		for i in xrange(1970, 2100):
-#			self.assertTrue  (re.match(y, "%d" % i))
-#
-#		for i in [1, 12, 999, 1410, 1969, 2100, 2101]:
-#			self.assertFalse (re.match(y, "%d" % i))
-#
-#		for i in ['', 'a']:
-#			self.assertFalse (re.match(y, "%s" % i))
-#
-#		d = func("%d")
-#		for i in xrange(1, 32):
-#			self.assertTrue  (re.match(d, "%02d" % i))
-#
-#		for i in [-1, 0, 32, 100]:
-#			self.assertFalse (re.match(d, "%02d" % i))
-#
-#		for i in ['', 'a']:
-#			self.assertFalse (re.match(d, "%s" % i))
-#
-#		m = func("%m")
-#		for i in xrange(1, 13):
-#			self.assertTrue  (re.match(m, "%02d" % i))
-#
-#		for i in [-1, 0, 13, 14, 100]:
-#			self.assertFalse (re.match(m, "%02d" % i))
-#
-#		for i in ['', 'm']:
-#			self.assertFalse (re.match(m, "%s" % i))
-#
-#		self.assertFalse(re.match(func("%Y-%m-%d"), "%04d-%02d-%s" % (2010, 1, '--')))
-#		self.assertFalse(re.match(func("%y-%m-%d"), "%02d-%02d-%s" % (10, 1, '-')))
-#
-#		###########
-#
-#		conf = [
-#				(func("%Y-%m-%d"), func("%y-%m-%d"), "%04d-%02d-%02d", "%02d-%02d-%02d"),
-#				(func("%Y+%m+%d"), func("%y+%m+%d"), "%04d+%02d+%02d", "%02d+%02d+%02d"),
-#				(func("%Y %m %d"), func("%y %m %d"), "%04d %02d %02d", "%02d %02d %02d"),
-#				(func("%Y la %m ka %d"), func("%y la %m ka %d"), "%04d la %02d ka %02d", "%02d la %02d ka %02d"),
-#		]
-#
-#		for regexp_Ymd, regexp_ymd, fmt_Ymd, fmt_ymd in conf:
-#			for Y, m in itertools.product(xrange(1970, 2100), xrange(1, 13)):
-#				#print "(%4d, %02d, %02d)" % (Y, m, 0), y
-#
-#				y = Y - 2000 if Y >= 2000 else None
-#
-#				self.assertFalse(re.match(regexp_ymd, fmt_Ymd % (Y, m, 0))) # ISSUE #21
-#
-#				if m == 2:
-#					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
-#						for d in xrange(1, 30):
-#							#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
-#
-#							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d))) # ISSUE 22
-#
-#						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 31)))
-#						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 31))) # ISSUE 22
-#					else:
-#						for d in xrange(1, 29):
-#							#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
-#							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d))) # ISSUE 22
-#
-#						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 29)))
-#						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 30)))
-#						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 29)))
-#						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 30)))
-#				elif m in [1, 3, 5, 7, 8, 10, 12]:
-#					for d in xrange(1, 32):
-#						# (1971, 01, 31), (1971, 03, 31), (1971, 05, 31),
-#						# (1971, 07, 31), (1971, 8, 31), (1971, 10, 31),
-#						# (1971, 12, 31) - ISSUE #19
-#						#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
-#
-#						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d)))  # ISSUE 22
-#				else:
-#					for d in xrange(1, 31):
-#						#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
-#						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d))) # ISSUE 22
-#
-#					self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 31)))
-#					if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 31)))
-#
-#				self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 32)))
-#				if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 32)))
-#
-#			self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (2100, 1, 31)))
-#			self.assertFalse(re.match(regexp_ymd, fmt_ymd % (100, 1, 31)))
-#
-#		##########
-#
-#		conf = [
-#				(func("%m-%Y-%d"), func("%m-%y-%d"), "%02d-%04d-%02d", "%02d-%02d-%02d"),
-#				(func("%m+%Y+%d"), func("%m+%y+%d"), "%02d+%04d+%02d", "%02d+%02d+%02d"),
-#				(func("%m %Y %d"), func("%m %y %d"), "%02d %04d %02d", "%02d %02d %02d"),
-#				(func("%m la %Y ka %d"), func("%m la %y ka %d"), "%02d la %04d ka %02d", "%02d la %02d ka %02d"),
-#		]
-#
-#		for regexp_Ymd, regexp_ymd, fmt_Ymd, fmt_ymd in conf:
-#			for Y, m in itertools.product(xrange(1970, 2100), xrange(1, 13)):
-#				#print "(%4d, %02d, %02d)" % (Y, m, 0), y
-#
-#				y = Y - 2000 if Y >= 2000 else None
-#
-#				self.assertFalse(re.match(regexp_ymd, fmt_Ymd % (m, Y, 0))) # ISSUE #21
-#
-#				if m == 2:
-#					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
-#						for d in xrange(1, 30):
-#							#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
-#
-#							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d))) # ISSUE 22
-#
-#						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 31)))
-#						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 31))) # ISSUE 22
-#					else:
-#						for d in xrange(1, 29):
-#							#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
-#							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d))) # ISSUE 22
-#
-#						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 29)))
-#						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 30)))
-#						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 29)))
-#						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 30)))
-#				elif m in [1, 3, 5, 7, 8, 10, 12]:
-#					for d in xrange(1, 32):
-#						# (1971, 01, 31), (1971, 03, 31), (1971, 05, 31),
-#						# (1971, 07, 31), (1971, 8, 31), (1971, 10, 31),
-#						# (1971, 12, 31) - ISSUE #19
-#						#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
-#
-#						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d)))  # ISSUE 22
-#				else:
-#					for d in xrange(1, 31):
-#						#print "(%4d, %02d, %02d)" % (Y, m, d), y
-#						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
-#						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d))) # ISSUE 22
-#
-#					self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 31)))
-#					if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 31)))
-#
-#				self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 32)))
-#				if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 32)))
-#
-#			self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (1, 2100, 31)))
-#			self.assertFalse(re.match(regexp_ymd, fmt_ymd % (1, 100, 31)))
-#
-#		##############
-#
-#		regexp_Ym = func("%Y-%m")
-#		fmt_Ym = "%04d-%02d"
-#
-#		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (1969, 1)))
-#		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (1970, 0)))
-#		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (1970, 13)))
-#
-#		for Y, m in itertools.product(xrange(1970, 2100), xrange(1, 13)):
-#			self.assertTrue(re.match(regexp_Ym, fmt_Ym % (Y, m)))
-#
-#		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (2100, 1)))
-#		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (2100, 0)))
-#		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (2100, 13)))
-#
-#		# range
-#
-#		for i in xrange(1970, 2100):
-#			for j in xrange(i, 2100):
-#				regexp = func("%Y", str(i), str(j))
-#
-#				self.assertFalse(re.match(regexp, "0"))
-#
-#				for k in xrange(i, j):
-#					self.assertTrue(re.match(regexp, str(k)))
-#
-#				self.assertFalse(re.match(regexp, str(j + 1)))
-#
-#		for i in xrange(1, 13):
-#			for j in xrange(i, 13):
-#				regexp = func("%m", "%02d" % i, "%02d" % j)
-#
-#				self.assertFalse(re.match(regexp, "00"))
-#
-#				for k in xrange(i, j):
-#					self.assertTrue(re.match(regexp, "%02d" % k))
-#
-#				self.assertFalse(re.match(regexp, "%02d" % (j + 1)))
-#
-#		for i in xrange(1, 32):
-#			for j in xrange(i, 32):
-#				regexp = func("%d", "%02d" % i, "%02d" % j)
-#
-#				self.assertFalse(re.match(regexp, "00"))
-#
-#				for k in xrange(i, j):
-#					self.assertTrue(re.match(regexp, "%02d" % k))
-#
-#				self.assertFalse(re.match(regexp, "%02d" % (j + 1)))
+	def testPhase3Stage2(self):
+		def gen_date(from_Y = 1970, from_m = 1, from_d = 1):
+			Y = from_Y
+
+			for m in xrange(from_m, 13):
+				if m == 2:
+					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
+						if Y == from_Y and m == from_m:
+							for d in xrange(from_d, 30):
+								yield (Y, m, d)
+						else:
+							for d in xrange(1, 30):
+								yield (Y, m, d)
+					else:
+						if Y == from_Y and m == from_m:
+							for d in xrange(from_d, 29):
+								yield (Y, m, d)
+						else:
+							for d in xrange(1, 29):
+								yield (Y, m, d)
+				elif m in [1, 3, 5, 7, 8, 10, 12]:
+					if Y == from_Y and m == from_m:
+						for d in xrange(from_d, 32):
+							yield (Y, m, d)
+					else:
+						for d in xrange(1, 32):
+							yield (Y, m, d)
+				else:
+					if Y == from_Y and m == from_m:
+						for d in xrange(from_d, 31):
+							yield (Y, m, d)
+					else:
+						for d in xrange(1, 31):
+							yield (Y, m, d)
+
+			for Y, m in itertools.product(xrange(from_Y + 1, 2100), xrange(1, 13)):
+				if m == 2:
+					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
+						for d in xrange(1, 30):
+							yield (Y, m, d)
+					else:
+						for d in xrange(1, 29):
+							yield (Y, m, d)
+				elif m in [1, 3, 5, 7, 8, 10, 12]:
+					for d in xrange(1, 32):
+						yield (Y, m, d)
+				else:
+					for d in xrange(1, 31):
+						yield (Y, m, d)
+
+		# 24 April 2013: date
+
+		func = regexpgen.date
+
+		self.assertRaises(ValueError, func, None)
+		self.assertRaises(ValueError, func, None, None)
+		self.assertRaises(ValueError, func, None, None, None)
+
+		y = func("%Y")
+		for i in xrange(1970, 2100):
+			self.assertTrue  (re.match(y, "%d" % i))
+
+		for i in [1, 12, 999, 1410, 1969, 2100, 2101]:
+			self.assertFalse (re.match(y, "%d" % i))
+
+		for i in ['', 'a']:
+			self.assertFalse (re.match(y, "%s" % i))
+
+		d = func("%d")
+		for i in xrange(1, 32):
+			self.assertTrue  (re.match(d, "%02d" % i))
+
+		for i in [-1, 0, 32, 100]:
+			self.assertFalse (re.match(d, "%02d" % i))
+
+		for i in ['', 'a']:
+			self.assertFalse (re.match(d, "%s" % i))
+
+		m = func("%m")
+		for i in xrange(1, 13):
+			self.assertTrue  (re.match(m, "%02d" % i))
+
+		for i in [-1, 0, 13, 14, 100]:
+			self.assertFalse (re.match(m, "%02d" % i))
+
+		for i in ['', 'm']:
+			self.assertFalse (re.match(m, "%s" % i))
+
+		self.assertFalse(re.match(func("%Y-%m-%d"), "%04d-%02d-%s" % (2010, 1, '--')))
+		self.assertFalse(re.match(func("%y-%m-%d"), "%02d-%02d-%s" % (10, 1, '-')))
+
+		###########
+
+		conf = [
+				(func("%Y-%m-%d"), func("%y-%m-%d"), "%04d-%02d-%02d", "%02d-%02d-%02d"),
+				(func("%Y+%m+%d"), func("%y+%m+%d"), "%04d+%02d+%02d", "%02d+%02d+%02d"),
+				(func("%Y %m %d"), func("%y %m %d"), "%04d %02d %02d", "%02d %02d %02d"),
+				(func("%Y la %m ka %d"), func("%y la %m ka %d"), "%04d la %02d ka %02d", "%02d la %02d ka %02d"),
+		]
+
+		for regexp_Ymd, regexp_ymd, fmt_Ymd, fmt_ymd in conf:
+			for Y, m in itertools.product(xrange(1970, 2100), xrange(1, 13)):
+				#print "(%4d, %02d, %02d)" % (Y, m, 0), y
+
+				y = Y - 2000 if Y >= 2000 else None
+
+				self.assertFalse(re.match(regexp_ymd, fmt_Ymd % (Y, m, 0))) # ISSUE #21
+
+				if m == 2:
+					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
+						for d in xrange(1, 30):
+							#print "(%4d, %02d, %02d)" % (Y, m, d), y
+							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
+
+							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d))) # ISSUE 22
+
+						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 31)))
+						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 31))) # ISSUE 22
+					else:
+						for d in xrange(1, 29):
+							#print "(%4d, %02d, %02d)" % (Y, m, d), y
+							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
+							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d))) # ISSUE 22
+
+						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 29)))
+						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 30)))
+						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 29)))
+						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 30)))
+				elif m in [1, 3, 5, 7, 8, 10, 12]:
+					for d in xrange(1, 32):
+						# (1971, 01, 31), (1971, 03, 31), (1971, 05, 31),
+						# (1971, 07, 31), (1971, 8, 31), (1971, 10, 31),
+						# (1971, 12, 31) - ISSUE #19
+						#print "(%4d, %02d, %02d)" % (Y, m, d), y
+						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
+
+						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d)))  # ISSUE 22
+				else:
+					for d in xrange(1, 31):
+						#print "(%4d, %02d, %02d)" % (Y, m, d), y
+						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (Y, m, d)))
+						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (y, m, d))) # ISSUE 22
+
+					self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 31)))
+					if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 31)))
+
+				self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (Y, m, 32)))
+				if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (y, m, 32)))
+
+			self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (2100, 1, 31)))
+			self.assertFalse(re.match(regexp_ymd, fmt_ymd % (100, 1, 31)))
+
+		##########
+
+		conf = [
+				(func("%m-%Y-%d"), func("%m-%y-%d"), "%02d-%04d-%02d", "%02d-%02d-%02d"),
+				(func("%m+%Y+%d"), func("%m+%y+%d"), "%02d+%04d+%02d", "%02d+%02d+%02d"),
+				(func("%m %Y %d"), func("%m %y %d"), "%02d %04d %02d", "%02d %02d %02d"),
+				(func("%m la %Y ka %d"), func("%m la %y ka %d"), "%02d la %04d ka %02d", "%02d la %02d ka %02d"),
+		]
+
+		for regexp_Ymd, regexp_ymd, fmt_Ymd, fmt_ymd in conf:
+			for Y, m in itertools.product(xrange(1970, 2100), xrange(1, 13)):
+				#print "(%4d, %02d, %02d)" % (Y, m, 0), y
+
+				y = Y - 2000 if Y >= 2000 else None
+
+				self.assertFalse(re.match(regexp_ymd, fmt_Ymd % (m, Y, 0))) # ISSUE #21
+
+				if m == 2:
+					if (Y % 4 == 0 and Y % 100 != 0) or (Y % 400 == 0):
+						for d in xrange(1, 30):
+							#print "(%4d, %02d, %02d)" % (Y, m, d), y
+							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
+
+							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d))) # ISSUE 22
+
+						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 31)))
+						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 31))) # ISSUE 22
+					else:
+						for d in xrange(1, 29):
+							#print "(%4d, %02d, %02d)" % (Y, m, d), y
+							self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
+							if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d))) # ISSUE 22
+
+						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 29)))
+						self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 30)))
+						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 29)))
+						if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 30)))
+				elif m in [1, 3, 5, 7, 8, 10, 12]:
+					for d in xrange(1, 32):
+						# (1971, 01, 31), (1971, 03, 31), (1971, 05, 31),
+						# (1971, 07, 31), (1971, 8, 31), (1971, 10, 31),
+						# (1971, 12, 31) - ISSUE #19
+						#print "(%4d, %02d, %02d)" % (Y, m, d), y
+						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
+
+						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d)))  # ISSUE 22
+				else:
+					for d in xrange(1, 31):
+						#print "(%4d, %02d, %02d)" % (Y, m, d), y
+						self.assertTrue(re.match(regexp_Ymd, fmt_Ymd % (m, Y, d)))
+						if y: self.assertTrue(re.match(regexp_ymd, fmt_ymd % (m, y, d))) # ISSUE 22
+
+					self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 31)))
+					if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 31)))
+
+				self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (m, Y, 32)))
+				if y: self.assertFalse(re.match(regexp_ymd, fmt_ymd % (m, y, 32)))
+
+			self.assertFalse(re.match(regexp_Ymd, fmt_Ymd % (1, 2100, 31)))
+			self.assertFalse(re.match(regexp_ymd, fmt_ymd % (1, 100, 31)))
+
+		##############
+
+		regexp_Ym = func("%Y-%m")
+		fmt_Ym = "%04d-%02d"
+
+		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (1969, 1)))
+		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (1970, 0)))
+		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (1970, 13)))
+
+		for Y, m in itertools.product(xrange(1970, 2100), xrange(1, 13)):
+			self.assertTrue(re.match(regexp_Ym, fmt_Ym % (Y, m)))
+
+		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (2100, 1)))
+		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (2100, 0)))
+		self.assertFalse(re.match(regexp_Ym, fmt_Ym % (2100, 13)))
+
+		# range
+
+		for i in xrange(1970, 2100):
+			for j in xrange(i, 2100):
+				regexp = func("%Y", str(i), str(j))
+
+				self.assertFalse(re.match(regexp, "0"))
+
+				for k in xrange(i, j):
+					self.assertTrue(re.match(regexp, str(k)))
+
+				self.assertFalse(re.match(regexp, str(j + 1)))
+
+		for i in xrange(1, 13):
+			for j in xrange(i, 13):
+				regexp = func("%m", "%02d" % i, "%02d" % j)
+
+				self.assertFalse(re.match(regexp, "00"))
+
+				for k in xrange(i, j):
+					self.assertTrue(re.match(regexp, "%02d" % k))
+
+				self.assertFalse(re.match(regexp, "%02d" % (j + 1)))
+
+		for i in xrange(1, 32):
+			for j in xrange(i, 32):
+				regexp = func("%d", "%02d" % i, "%02d" % j)
+
+				self.assertFalse(re.match(regexp, "00"))
+
+				for k in xrange(i, j):
+					self.assertTrue(re.match(regexp, "%02d" % k))
+
+				self.assertFalse(re.match(regexp, "%02d" % (j + 1)))
 
 	def testPhase3Stage3(self):
 		# 8 May 2013: auto-detection, concatenate
