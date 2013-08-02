@@ -10,4 +10,4 @@ build
 
 *.svg
 
-docs/_build
+doc/_build
