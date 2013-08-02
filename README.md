@@ -7,6 +7,8 @@ Description
 RegExpGen allows to generate regular expressions on the basis of format
 supported by well known ``printf`` function.
 
+Documentation can be found on `readthedocs <https://regexpgen.readthedocs.org/en/latest/>`_..
+
 Getting started
 ---------------
 
