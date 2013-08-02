@@ -1,4 +1,4 @@
-Welcome to SeleShot 's documentation!
+Welcome to RegExpGen's documentation!
 ================================================
 
 SeleShot allows to get a screen shot of a whole webpage and a part of it.
